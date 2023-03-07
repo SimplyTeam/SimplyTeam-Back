@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -17,9 +18,13 @@ class AuthController extends Controller
                 'required',
                 'string',
                 'min:8',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W])[a-zA-Z\d\W]{8,}$/'
             ],
         ]);
+        
+        $messages = [
+            'password.regex' => 'The password must contain at least one uppercase letter, one lowercase letter, one special character, and one digit.'
+        ];
 
         $validatedData['password'] = bcrypt($request->password);
 
@@ -37,12 +42,14 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        if (!Auth::attempt($loginData)) {
-            return response(['message' => 'Invalid credentials']);
+        $user = User::where('email', $loginData['email'])->first();
+
+        if (!$user || !Hash::check($loginData['password'], $user->password)) {
+            return response(['errors' => ['message' => 'Invalid credentials']], 422);
         }
 
-        $accessToken = Auth::user()->createToken('authToken')->accessToken;
+        $accessToken = $user->createToken('authToken')->accessToken;
 
-        return response(['user' => Auth::user(), 'access_token' => $accessToken], 201);
+        return response(['user' => $user, 'access_token' => $accessToken], 201);
     }
 }
