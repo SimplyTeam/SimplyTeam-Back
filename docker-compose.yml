@@ -20,7 +20,8 @@ services:
         volumes:
             - '.:/var/www/html'
         networks:
-            - sail
+            sail:
+                ipv4_address: 172.21.73.2
         depends_on:
             - postgresql
             - redis
@@ -39,7 +40,8 @@ services:
         volumes:
             - 'sail-postgres:/var/lib/postgresql/data'
         networks:
-            - sail
+            sail:
+                ipv4_address: 172.21.73.3
         healthcheck:
             test:
                 - CMD
@@ -56,7 +58,8 @@ services:
         volumes:
             - 'sail-redis:/data'
         networks:
-            - sail
+            sail:
+                ipv4_address: 172.21.73.4
         healthcheck:
             test:
                 - CMD
@@ -72,7 +75,8 @@ services:
         volumes:
             - 'sail-meilisearch:/meili_data'
         networks:
-            - sail
+            sail:
+                ipv4_address: 172.21.0.5
         healthcheck:
             test:
                 - CMD
@@ -89,7 +93,8 @@ services:
             - '${FORWARD_MAILPIT_PORT:-1025}:1025'
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
-            - sail
+            sail:
+                ipv4_address: 172.21.73.6
     selenium:
         image: selenium/standalone-chrome
         extra_hosts:
@@ -97,11 +102,15 @@ services:
         volumes:
             - '/dev/shm:/dev/shm'
         networks:
-            - sail
+            sail:
+                ipv4_address: 172.21.73.7
 
 networks:
     sail:
         driver: bridge
+        ipam:
+            config:
+                - subnet: 172.21.0.0/16
 volumes:
     sail-postgres:
         driver: local
