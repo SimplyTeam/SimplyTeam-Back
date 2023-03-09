@@ -35,7 +35,7 @@ class AuthController extends Controller
         return response(['user' => $user, 'access_token' => $accessToken], 201);
     }
 
-    public function login(Request $request)
+    public function login(Request $request): \Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         $loginData = $request->validate([
             'email' => 'email|required',
@@ -51,5 +51,11 @@ class AuthController extends Controller
         $accessToken = $user->createToken('API Token')->accessToken;
 
         return response(['user' => $user, 'access_token' => $accessToken], 201);
+    }
+
+    public function logout(Request $request): \Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    {
+        $request->user()->token()->revoke();
+        return response(['message' => 'Successfully logged out'], 200);
     }
 }
