@@ -13,9 +13,15 @@ class AuthTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->artisan('passport:install');
+    }
+
     public function test_register_user_with_valid_data()
     {
-        $password = $this->faker->password(8);
+        $password = $this->faker->regexify('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W])[a-zA-Z\d\W]{10,}$/');
 
         $data = [
             'name' => $this->faker->name(),
@@ -136,5 +142,32 @@ class AuthTest extends TestCase
                 'user',
                 'access_token'
             ]);
+    }
+
+    /**
+     * Test successful logout.
+     *
+     * @return void
+     */
+    public function test_successful_logout()
+    {
+        // create a user and authenticate using Passport
+        $user = User::create(
+            [
+                'name' => $this->faker->name(),
+                'email' => $this->faker->unique()->safeEmail(),
+                'password' => $this->faker->regexify('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W])[a-zA-Z\d\W]{8,}$/')
+            ]
+        );
+
+        $token = $user->createToken('API Token')->accessToken;
+
+        // make a request to log out
+        $response = $this->post('/api/logout', [], ["Authorization" => "Bearer $token", "Accept" => "application/json"]);
+
+        // assert that the response has a successful status code
+        $response
+            ->assertStatus(200)
+            ->assertJson(['message' => 'Successfully logged out']);;
     }
 }
