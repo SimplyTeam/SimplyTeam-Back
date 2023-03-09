@@ -21,7 +21,7 @@ class AuthController extends Controller
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W])[a-zA-Z\d\W]{8,}$/'
             ],
         ]);
-        
+
         $messages = [
             'password.regex' => 'The password must contain at least one uppercase letter, one lowercase letter, one special character, and one digit.'
         ];
@@ -30,7 +30,7 @@ class AuthController extends Controller
 
         $user = User::create($validatedData);
 
-        $accessToken = $user->createToken('authToken')->accessToken;
+        $accessToken = $user->createToken('API Token')->accessToken;
 
         return response(['user' => $user, 'access_token' => $accessToken], 201);
     }
@@ -48,7 +48,7 @@ class AuthController extends Controller
             return response(['errors' => ['message' => 'Invalid credentials']], 422);
         }
 
-        $accessToken = $user->createToken('authToken')->accessToken;
+        $accessToken = $user->createToken('API Token')->accessToken;
 
         return response(['user' => $user, 'access_token' => $accessToken], 201);
     }
