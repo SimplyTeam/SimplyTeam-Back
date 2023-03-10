@@ -1,0 +1,33 @@
+name: Laravel Sail Test Workflow
+
+on:
+  push:
+    branches: [ feat/pipelineUnitTest ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Copy .env secrets
+      run: |
+        cp ${{ secrets.ENV_FILE }} .env
+
+    - name: Start Docker Compose
+      run: |
+        ./vendor/bin/sail up -d
+
+    - name: Run Laravel Migrations
+      run: |
+        ./vendor/bin/sail artisan migrate --env=.env
+
+    - name: Install Passport
+      run: |
+        ./vendor/bin/sail artisan passport:install --env=.env
+
+    - name: Run Tests
+      run: |
+        ./vendor/bin/sail test --env=.env
