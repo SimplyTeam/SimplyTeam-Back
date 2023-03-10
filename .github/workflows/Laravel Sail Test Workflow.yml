@@ -12,9 +12,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Copy .env secrets
+    - name: create .env secrets
       run: |
-        cp ${{ secrets.ENV_FILE }} .env
+        echo ${{ secrets.ENV_FILE }} > .env
 
     - name: Start Docker Compose
       run: |
