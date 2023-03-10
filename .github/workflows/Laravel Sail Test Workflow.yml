@@ -18,7 +18,7 @@ jobs:
 
     - name: Start Docker Compose
       run: |
-        ./vendor/bin/sail up -d
+        docker-compose up -d
 
     - name: Run Laravel Migrations
       run: |
