@@ -23,7 +23,7 @@ jobs:
             ca-certificates \
             curl \
             gnupg
-          sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx docker-compose
+          sudo apt install docker-ce docker-ce-cli containerd.io
 
       - name: Install PHP 8.1 and Composer
         uses: shivammathur/setup-php@v2
