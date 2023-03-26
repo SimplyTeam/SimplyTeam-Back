@@ -36,8 +36,11 @@ jobs:
 
       - name: create .env secrets
         run: |
-          sudo groupadd --force -g 1000 sail
-          WWWGROUP=1000
+          export APP_SERVICE=${APP_SERVICE:-"laravel.test"}
+          export DB_PORT=${DB_PORT:-3306}
+          export WWWUSER=${WWWUSER:-$UID}
+          export WWWGROUP=${WWWGROUP:-$(id -g)}
+
           echo ${{ secrets.ENV_FILE }} > .env
 
       - name: run Laravel sail
