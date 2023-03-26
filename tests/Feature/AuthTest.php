@@ -190,7 +190,7 @@ class AuthTest extends TestCase
         $token = $user->createToken('API Token')->accessToken;
 
         // make a request to log out
-        $response = $this->post('/api/me', [], ["Authorization" => "Bearer $token", "Accept" => "application/json"]);
+        $response = $this->get('/api/me', [], ["Authorization" => "Bearer $token", "Accept" => "application/json"]);
 
         // assert that the response has a successful status code
         $response
