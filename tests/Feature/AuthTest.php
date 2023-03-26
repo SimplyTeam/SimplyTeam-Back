@@ -170,4 +170,33 @@ class AuthTest extends TestCase
             ->assertStatus(200)
             ->assertJson(['message' => 'Successfully logged out']);;
     }
+
+    /**
+     * Test successful get me information.
+     *
+     * @return void
+     */
+    public function test_successful_get_me_info()
+    {
+        // create a user and authenticate using Passport
+        $user = User::create(
+            [
+                'name' => $this->faker->name(),
+                'email' => $this->faker->unique()->safeEmail(),
+                'password' => $this->faker->regexify('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W])[a-zA-Z\d\W]{8,}$/')
+            ]
+        );
+
+        $token = $user->createToken('API Token')->accessToken;
+
+        // make a request to me
+        $response = $this->get('/api/me', ["Authorization" => "Bearer $token", "Accept" => "application/json"]);
+
+        // assert that the response has a successful status code
+        $response
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                'user'
+            ]);
+    }
 }
