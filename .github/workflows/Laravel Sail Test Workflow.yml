@@ -36,7 +36,10 @@ jobs:
 
       - name: create .env secrets
         run: |
-          echo ${{ secrets.ENV_FILE }} > .env
+          groupadd --force -g 1000 sail
+          ENV WWWGROUP=1000
+          echo ${{ secrets.ENV_FILE }}
+          > .env
 
       - name: run Laravel sail
         run: docker compose up -d
