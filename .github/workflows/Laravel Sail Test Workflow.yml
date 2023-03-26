@@ -37,12 +37,12 @@ jobs:
       - name: create .env secrets
         run: |
           export APP_SERVICE=${APP_SERVICE:-"laravel.test"}
-          export WWWUSER=${WWWUSER:-$UID}
-          export WWWGROUP=${WWWGROUP:-$(id -g)}
+          export WWWUSER=1000
+          export WWWGROUP=1000
           echo ${{ secrets.ENV_FILE }} > .env
 
       - name: run Laravel sail
-        run: sudo docker compose up -d
+        run: sudo ./vendor/bin/sail up -d
 
       - name: Run Laravel Migrations
         run: |
