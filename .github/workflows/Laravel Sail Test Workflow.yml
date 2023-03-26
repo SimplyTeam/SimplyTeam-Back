@@ -23,6 +23,9 @@ jobs:
         run: |
           echo ${{ secrets.ENV_FILE }} > .env
 
+      - name: run Laravel sail
+        run: ./vendor/bin/sail up -d
+
       - name: Run Laravel Migrations
         run: |
           ./vendor/bin/sail artisan migrate --env=.env
