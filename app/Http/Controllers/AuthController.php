@@ -42,7 +42,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        return response(['user' => $user], 201);
+        return response(['user' => $user], 200);
     }
 
     public function logout(Request $request): \Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
