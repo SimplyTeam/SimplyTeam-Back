@@ -1,33 +1,39 @@
-name: Laravel Sail Test Workflow
+name: Laravel CI
 
 on:
   push:
-    branches: [ feat/pipelineUnitTest ]
+    branches:
+      - main
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: create .env secrets
-      run: |
-        echo ${{ secrets.ENV_FILE }} > .env
+      - name: Install PHP 8.1 and Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
 
-    - name: Start Docker Compose
-      run: |
-        ./vendor/laravel/sail/bin/sail up -d
+      - name: Install dependencies
+        run: composer install
 
-    - name: Run Laravel Migrations
-      run: |
-        ./vendor/bin/sail artisan migrate --env=.env
+      - name: create .env secrets
+        run: |
+          echo ${{ secrets.ENV_FILE }} > .env
 
-    - name: Install Passport
-      run: |
-        ./vendor/bin/sail artisan passport:install --env=.env
+      - name: Run Laravel Migrations
+        run: |
+          ./vendor/bin/sail artisan migrate --env=.env
 
-    - name: Run Tests
-      run: |
-        ./vendor/bin/sail test --env=.env
+      - name: Install Passport
+        run: |
+          ./vendor/bin/sail artisan passport:install --env=.env
+
+      - name: Run Tests
+        run: |
+          ./vendor/bin/sail test --env=.env
