@@ -37,10 +37,8 @@ jobs:
       - name: create .env secrets
         run: |
           export APP_SERVICE=${APP_SERVICE:-"laravel.test"}
-          export DB_PORT=${DB_PORT:-3306}
           export WWWUSER=${WWWUSER:-$UID}
           export WWWGROUP=${WWWGROUP:-$(id -g)}
-
           echo ${{ secrets.ENV_FILE }} > .env
 
       - name: run Laravel sail
@@ -48,7 +46,7 @@ jobs:
 
       - name: Run Laravel Migrations
         run: |
-          php artisan migrate
+          php artisan migrate --env=.env
 
       - name: Install Passport
         run: |
