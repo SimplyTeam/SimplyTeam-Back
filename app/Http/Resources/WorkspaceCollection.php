@@ -15,7 +15,9 @@ class WorkspaceCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            'workspaces' => $this->collection,
+            'data' => [
+                'workspaces' => $this->collection,
+            ]
         ];
     }
 }
