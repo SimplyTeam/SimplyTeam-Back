@@ -79,4 +79,23 @@ class WorkspaceApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
+
+    public function test_can_create_workspace()
+    {
+        $user = User::factory()->create();
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+        $data = [
+            'name' => $this->faker->name
+        ];
+
+        $response = $this->postJson('/api/workspaces', $data, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
+
+        $response->assertStatus(Response::HTTP_CREATED)
+            ->assertJson(
+                (new WorkspaceResource(
+                    Workspace::find($response->json('data')["id"]
+                    )
+                ))->response()->getData(true));
+    }
 }

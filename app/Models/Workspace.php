@@ -16,7 +16,7 @@ class Workspace extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'link_between_users_and_workspaces', 'id_workspace', 'id_user');
+        return $this->belongsToMany(User::class, 'link_between_users_and_workspaces', 'workspace_id', 'user_id');
     }
 
     protected static function boot()
