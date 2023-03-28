@@ -53,8 +53,14 @@ class WorkspaceApiController extends Controller
         return new WorkspaceResource($workspace);
     }
 
-    public function destroy(Workspace $workspace)
+    public function destroy(Request $request, Workspace $workspace)
     {
+        $user = $request->user();
+
+        if (!$workspace->users->contains($user)) {
+            return response()->json(['error' => "Vous n'avez pas accès à ce workspace ou celui-ci n'existe pas"], 403);
+        }
+
         $workspace->delete();
 
         return response()->json(null, 204);

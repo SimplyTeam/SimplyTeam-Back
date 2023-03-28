@@ -150,13 +150,42 @@ class WorkspaceApiTest extends TestCase
 
     public function test_cannot_update_workspace_for_non_attached_user()
     {
-        $user = User::factory()->create();
-        $accessToken = $user->createToken('API Token')->accessToken;
         $workspace = Workspace::factory()->create();
+
+        $user = User::factory()->create();
+
+        $accessToken = $user->createToken('API Token')->accessToken;
 
         $response = $this->actingAs($user)->putJson("/api/workspaces/$workspace->id", ["name" => "changement"], ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
 
         $response->assertStatus(Response::HTTP_FORBIDDEN)
             ->assertJson(['error' => 'Vous n\'avez pas accès à ce workspace ou celui-ci n\'existe pas']);
+    }
+
+    public function test_can_delete_workspace()
+    {
+        $workspace = Workspace::factory()->create();
+
+        $user = User::factory()->create();
+        $user->workspaces()->attach($workspace);
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+        $response = $this->deleteJson("/api/workspaces/$workspace->id", [], ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
+
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
+
+        $this->assertSoftDeleted($workspace);
+    }
+
+    public function test_cannot_delete_non_existing_workspace()
+    {
+        $user = User::factory()->create();
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+        $this->actingAs($user);
+
+        $response = $this->deleteJson('/api/workspaces/999', [], ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }

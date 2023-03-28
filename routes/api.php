@@ -29,5 +29,6 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/{workspace}', [WorkspaceApiController::class, 'show']);
         Route::post('/', [WorkspaceApiController::class, 'store']);
         Route::put('/{workspace}', [WorkspaceApiController::class, 'update']);
+        Route::delete('/{workspace}', [WorkspaceApiController::class, 'destroy']);
     });
 });
