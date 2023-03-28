@@ -129,7 +129,7 @@ class WorkspaceApiTest extends TestCase
             'name' => $this->faker->name
         ];
 
-        $response = $this->putJson("/api/workspaces/{$workspace->id}", $data, ["Authorization" => "Bearer $accessToken"]);
+        $response = $this->putJson("/api/workspaces/$workspace->id", $data, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJson((new WorkspaceResource($workspace->refresh()))->response()->getData(true));
@@ -138,22 +138,25 @@ class WorkspaceApiTest extends TestCase
     public function test_cannot_show_workspace_for_non_attached_user()
     {
         $user = User::factory()->create();
+        $accessToken = $user->createToken('API Token')->accessToken;
+
         $workspace = Workspace::factory()->create();
 
-        $response = $this->actingAs($user)->get("/api/workspaces/{$workspace->id}");
+        $response = $this->actingAs($user)->get("/api/workspaces/$workspace->id", ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
 
         $response->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJson(['error' => 'You don\'t have access to this workspace']);
+            ->assertJson(['error' => 'Vous n\'avez pas accès à ce workspace ou celui-ci n\'existe pas']);
     }
 
     public function test_cannot_update_workspace_for_non_attached_user()
     {
         $user = User::factory()->create();
+        $accessToken = $user->createToken('API Token')->accessToken;
         $workspace = Workspace::factory()->create();
 
-        $response = $this->actingAs($user)->putJson("/api/workspaces/{$workspace->id}", []);
+        $response = $this->actingAs($user)->putJson("/api/workspaces/$workspace->id", ["name" => "changement"], ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
 
         $response->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJson(['error' => 'You don\'t have access to this workspace']);
+            ->assertJson(['error' => 'Vous n\'avez pas accès à ce workspace ou celui-ci n\'existe pas']);
     }
 }

@@ -34,7 +34,7 @@ class WorkspaceApiController extends Controller
         $workspace = $request->user()->workspaces()->find($id);
 
         if (!$workspace) {
-            return response()->json(['error' => 'You don\'t have access to this workspace'], 403);
+            return response()->json(['error' => "Vous n'avez pas accès à ce workspace ou celui-ci n'existe pas"], 403);
         }
 
         return new WorkspaceResource($workspace);
@@ -42,9 +42,15 @@ class WorkspaceApiController extends Controller
 
     public function update(WorkspaceFormRequest $request, Workspace $workspace)
     {
+        $user = $request->user();
+
+        if (!$workspace->users->contains($user)) {
+            return response()->json(['error' => "Vous n'avez pas accès à ce workspace ou celui-ci n'existe pas"], 403);
+        }
+
         $workspace->update($request->validated());
 
-        return response()->json($workspace, 200);
+        return new WorkspaceResource($workspace);
     }
 
     public function destroy(Workspace $workspace)
