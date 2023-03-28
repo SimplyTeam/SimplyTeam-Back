@@ -38,4 +38,45 @@ class WorkspaceApiTest extends TestCase
         $response->assertStatus(Response::HTTP_OK)
             ->assertJson((new WorkspaceCollection($workspaces))->response()->getData(true));
     }
+
+    public function test_can_show_workspace()
+    {
+        $user = User::factory()->create();
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+        $workspace = Workspace::factory()->create();
+        $user->workspaces()->attach($workspace);
+        $this->actingAs($user);
+
+        $response = $this->get("/api/workspaces/$workspace->id", ["Authorization" => "Bearer $accessToken", "accept" => "application/json"]);
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJson((new WorkspaceResource($workspace))->response()->getData(true));
+    }
+
+    public function test_cannot_show_non_existing_workspace()
+    {
+        $user = User::factory()->create();
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+        $this->actingAs($user);
+
+        $response = $this->get('/api/workspaces/999', ["Authorization" => "Bearer $accessToken", "accept" => "application/json"]);
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+    }
+
+    public function test_cannot_show_unlinked_workspace()
+    {
+        $user = User::factory()->create();
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+
+        $workspace = Workspace::factory()->create();
+        $this->actingAs($user);
+
+        $response = $this->get("/api/workspaces/$workspace->id", ["Authorization" => "Bearer $accessToken", "accept" => "application/json"]);
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+    }
 }
