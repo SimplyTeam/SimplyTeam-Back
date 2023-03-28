@@ -38,6 +38,13 @@ class AuthController extends Controller
         return response(['user' => $user, 'access_token' => $accessToken], 201);
     }
 
+    public function me(Request $request): \Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    {
+        $user = $request->user();
+
+        return response(['user' => $user], 200);
+    }
+
     public function logout(Request $request): \Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         $request->user()->token()->revoke();

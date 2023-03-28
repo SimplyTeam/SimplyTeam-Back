@@ -55,3 +55,8 @@ php artisan cache:clear
     }
 
 ```
+
+## No application encryption key has been specified.
+```shell
+$> php artisan key:generate & php artisan config:cache
+```
