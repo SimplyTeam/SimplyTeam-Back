@@ -63,7 +63,7 @@ class WorkspaceApiTest extends TestCase
 
         $response = $this->get('/api/workspaces/999', ["Authorization" => "Bearer $accessToken", "accept" => "application/json"]);
 
-        $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     public function test_cannot_show_unlinked_workspace()
@@ -77,6 +77,6 @@ class WorkspaceApiTest extends TestCase
 
         $response = $this->get("/api/workspaces/$workspace->id", ["Authorization" => "Bearer $accessToken", "accept" => "application/json"]);
 
-        $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }

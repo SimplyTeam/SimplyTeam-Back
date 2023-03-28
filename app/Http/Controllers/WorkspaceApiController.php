@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\WorkspaceFormRequest;
 use App\Http\Resources\WorkspaceCollection;
+use App\Http\Resources\WorkspaceResource;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
 
@@ -24,9 +25,15 @@ class WorkspaceApiController extends Controller
         return response()->json($workspace, 201);
     }
 
-    public function show(Workspace $workspace)
+    public function show(Request $request, $id)
     {
-        return response()->json($workspace, 200);
+        $workspace = $request->user()->workspaces()->find($id);
+
+        if (!$workspace) {
+            return response()->json(['error' => 'You don\'t have access to this workspace'], 403);
+        }
+
+        return new WorkspaceResource($workspace);
     }
 
     public function update(WorkspaceFormRequest $request, Workspace $workspace)
