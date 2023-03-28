@@ -98,4 +98,21 @@ class WorkspaceApiTest extends TestCase
                     )
                 ))->response()->getData(true));
     }
+
+    public function test_name_should_not_exceed_128_characters()
+    {
+        $user = User::factory()->create();
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+        $this->actingAs($user);
+
+        $data = [
+            'name' => str_repeat('a', 129),
+        ];
+
+        $response = $this->postJson('/api/workspaces', $data, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors(['name']);
+    }
 }
