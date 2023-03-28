@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleAuthController extends Controller
@@ -24,23 +25,28 @@ class GoogleAuthController extends Controller
         if ($existingUser) {
             // Connectez l'utilisateur existant
             Auth::login($existingUser, true);
+
+            $user = $existingUser;
         } else {
 
             $newUser = User::create(
                 [
                     'name' => $user->name,
                     'email' => $user->email,
-                    'password' => bcrypt(str_random(16))
+                    'password' => bcrypt(Str::random(16))
                 ]
             );
 
-            // Créez un token d'accès pour le nouvel utilisateur en utilisant Laravel Passport
-            $token = $newUser->createToken('Token Name')->accessToken;
-
             // Connectez le nouvel utilisateur
             Auth::login($newUser, true);
+
+            $user = $newUser;
+
         }
 
-        return redirect()->route('home')->with(['access_token' => $token]); // Redirigez l'utilisateur vers la page d'accueil avec le token d'accès
+        // Créez un token d'accès pour le nouvel utilisateur en utilisant Laravel Passport
+        $token = $user->createToken('API Token')->accessToken;
+
+        return redirect(getenv('WEBAPP_REDIRECT_URI') . "?access_token=" . urlencode("$token"));
     }
 }
