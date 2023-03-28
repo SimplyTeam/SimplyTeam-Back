@@ -21,7 +21,10 @@ class WorkspaceApiController extends Controller
     public function store(WorkspaceFormRequest $request)
     {
         $workspace = new Workspace($request->validated());
-        $workspace->user()
+
+        $workspace->users()->attach($request->user());
+
+        $workspace->save();
 
         return response()->json($workspace, 201);
     }
