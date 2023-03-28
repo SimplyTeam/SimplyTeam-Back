@@ -115,4 +115,45 @@ class WorkspaceApiTest extends TestCase
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['name']);
     }
+
+    public function test_can_update_workspace()
+    {
+        $user = User::factory()->create();
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+        $workspace = Workspace::factory()->create();
+        $user->workspaces()->attach($workspace);
+        $this->actingAs($user);
+
+        $data = [
+            'name' => $this->faker->name
+        ];
+
+        $response = $this->putJson("/api/workspaces/{$workspace->id}", $data, ["Authorization" => "Bearer $accessToken"]);
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJson((new WorkspaceResource($workspace->refresh()))->response()->getData(true));
+    }
+
+    public function test_cannot_show_workspace_for_non_attached_user()
+    {
+        $user = User::factory()->create();
+        $workspace = Workspace::factory()->create();
+
+        $response = $this->actingAs($user)->get("/api/workspaces/{$workspace->id}");
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN)
+            ->assertJson(['error' => 'You don\'t have access to this workspace']);
+    }
+
+    public function test_cannot_update_workspace_for_non_attached_user()
+    {
+        $user = User::factory()->create();
+        $workspace = Workspace::factory()->create();
+
+        $response = $this->actingAs($user)->putJson("/api/workspaces/{$workspace->id}", []);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN)
+            ->assertJson(['error' => 'You don\'t have access to this workspace']);
+    }
 }
