@@ -2,17 +2,19 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Invitation to join {{ $workspace_name }}</title>
+    <title>Invitation à rejoindre {{ $workspace_name }}</title>
 </head>
 <body>
-<h1>Welcome to {{ $workspace_name }}</h1>
+<h1>Bienvenue sur {{ $workspace_name }}</h1>
 
-<p>Hello {{ $user_name }},</p>
+<p>Bonjour {{ $user_name }},</p>
 
-<p>{{ $current_user_name }} has invited you to join the {{ $workspace_name }} workspace on SimplyTeam. To accept the invitation, please click the following link:</p>
+<p>{{ $current_user_name }} vous a invité(e) à rejoindre l'espace de travail {{ $workspace_name }} sur SimplyTeam. Pour
+    accepter l'invitation, veuillez cliquer sur le lien suivant :</p>
 
-<p><a href="{{ $invitation_url }}">Join {{ $workspace_name }}</a></p>
+<p><a href="{{ $invitation_url }}">Rejoindre {{ $workspace_name }}</a></p>
 
-<p>Thank you!</p>
+<p>Merci !</p>
+
 </body>
 </html>
