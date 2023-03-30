@@ -15,6 +15,8 @@ class WorkspaceFormRequest extends FormRequest
     {
         return [
             'name' => 'required|max:128',
+            'invitations' => 'sometimes|array',
+            'invitations.*' => 'email'
         ];
     }
 
