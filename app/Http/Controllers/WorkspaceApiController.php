@@ -28,7 +28,7 @@ class WorkspaceApiController extends Controller
         $currentUserAuthenticated = $request->user();
         $workspace = Workspace::create([
             'name' => $validatedData['name'],
-            'description' => $validatedData['description'],
+            'description' => in_array('description', $validatedData) ? $validatedData['description'] : null,
             'created_by_id' => $currentUserAuthenticated->id
         ]);
 

@@ -89,7 +89,8 @@ class WorkspaceApiTest extends TestCase
         $accessToken = $user->createToken('API Token')->accessToken;
 
         $data = [
-            'name' => $this->faker->name
+            'name' => $this->faker->name,
+            'description' => $this->faker->realText()
         ];
 
         $response = $this->postJson('/api/workspaces', $data, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
