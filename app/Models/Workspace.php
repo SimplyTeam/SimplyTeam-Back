@@ -11,10 +11,8 @@ class Workspace extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = [
-        'name',
-        'description',
-        'created_by_id'
+    protected $guarded = [
+        "id"
     ];
 
     public function users()
