@@ -20,6 +20,11 @@ class Workspace extends Model
         return $this->belongsToMany(User::class, 'link_between_users_and_workspaces', 'workspace_id', 'user_id');
     }
 
+    public function invitations()
+    {
+        return $this->hasMany(Invitation::class);
+    }
+
     protected static function boot()
     {
         parent::boot();
