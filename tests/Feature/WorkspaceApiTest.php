@@ -4,11 +4,13 @@ namespace Tests\Feature;
 
 use App\Http\Resources\WorkspaceCollection;
 use App\Http\Resources\WorkspaceResource;
+use App\Mail\WorkspaceInvitationEmail;
 use App\Models\Workspace;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
@@ -97,6 +99,48 @@ class WorkspaceApiTest extends TestCase
                     Workspace::find($response->json('data')["id"]
                     )
                 ))->response()->getData(true));
+    }
+
+    public function test_can_create_workspace_with_email()
+    {
+        Mail::fake(); // initialisation de Mail Fake
+        $user = User::factory()->create();
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+        $dataSend = [
+            'name' => $this->faker->name,
+            'invitations' => [
+                'user1@example.com',
+                'user2@example.com'
+            ]
+        ];
+
+        $response = $this->postJson('/api/workspaces', $dataSend, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
+
+        $response->assertStatus(Response::HTTP_CREATED)
+            ->assertJson(
+                (new WorkspaceResource(
+                    Workspace::find($response->json('data')["id"]
+                    )
+                ))->response()->getData(true));
+
+        $data = $response->json()["data"];
+
+        // Vérification que les e-mails ont été correctement créés
+        Mail::assertSent(function (WorkspaceInvitationEmail $mail) use ($user, $data, $dataSend) {
+            $mailData = $mail->workspaceInvitation->attributesToArray();
+            return $mail->hasTo($dataSend['invitations'][0])
+                && $mailData['workspace_id'] === $data['id']
+                && starts_with($mail->invitationUrl, "https://example.com/invitation")
+                && $mailData['invited_by_id'] === $user->id;
+        });
+        Mail::assertSent(function (WorkspaceInvitationEmail $mail) use ($user, $data, $dataSend) {
+            $mailData = $mail->workspaceInvitation->attributesToArray();
+            return $mail->hasTo($dataSend['invitations'][1])
+                && $mailData['workspace_id'] === $data['id']
+                && starts_with($mail->invitationUrl, "https://example.com/invitation")
+                && $mailData['invited_by_id'] === $user->id;
+        });
     }
 
     public function test_name_should_not_exceed_128_characters()

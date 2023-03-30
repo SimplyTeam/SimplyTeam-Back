@@ -15,11 +15,17 @@ class WorkspaceInvitation extends Model
         'email',
         'workspace_id',
         'token',
-        'accepted_at'
+        'accepted_at',
+        'created_by_id'
     ];
 
     public function workspace()
     {
         return $this->belongsTo(Workspace::class);
+    }
+
+    public function invitedBy()
+    {
+        return $this->belongsTo(User::class, 'invited_by_id');
     }
 }

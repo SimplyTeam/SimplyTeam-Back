@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\WorkspaceFormRequest;
 use App\Http\Resources\WorkspaceCollection;
 use App\Http\Resources\WorkspaceResource;
+use App\Mail\WorkspaceInvitationEmail;
 use App\Models\Workspace;
+use App\Models\WorkspaceInvitation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class WorkspaceApiController extends Controller
 {
@@ -20,9 +24,38 @@ class WorkspaceApiController extends Controller
 
     public function store(WorkspaceFormRequest $request)
     {
-        $workspace = Workspace::create($request->validated());
+        $validatedData = $request->validated();
+        $currentUserAuthenticated = $request->user();
+        $workspace = Workspace::create([
+            'name' => $validatedData['name'],
+            'created_by_id' => $currentUserAuthenticated->id
+        ]);
 
-        $workspace->users()->attach($request->user());
+        $workspace->users()->attach($currentUserAuthenticated);
+
+        // Create invitations for each email in the list
+        if ($request->has('invitations')) {
+            foreach ($request->input('invitations') as $email) {
+                $token = Str::uuid()->toString();
+
+                $invitation = WorkspaceInvitation::create([
+                    'email' => $email,
+                    'workspace_id' => $workspace->id,
+                    'token' => $token
+                ]);
+
+                $invitation->invitedBy()->associate($currentUserAuthenticated);
+                $invitation->save();
+
+                // Send email to the invitation
+                Mail::to($email)->send(
+                    new WorkspaceInvitationEmail(
+                        $invitation,
+                        env("REDIRECTED_URL_MAIL") . "?token=" . urlencode($token)
+                    )
+                );
+            }
+        }
 
         $workspace->save();
 
