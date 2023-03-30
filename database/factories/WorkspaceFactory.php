@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Invitation;
+use App\Models\WorkspaceInvitation;
 use App\Models\Workspace;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -26,7 +26,7 @@ class WorkspaceFactory extends Factory
     public function configure()
     {
         return $this->afterCreating(function (Workspace $workspace) {
-            Invitation::factory()
+            WorkspaceInvitation::factory()
                 ->count(5)
                 ->create([
                     'workspace_id' => $workspace->id

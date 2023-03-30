@@ -2,16 +2,16 @@
 
 namespace Database\Factories;
 
-use App\Models\Invitation;
+use App\Models\WorkspaceInvitation;
 use App\Models\Workspace;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Invitation>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\WorkspaceInvitation>
  */
 class InvitationFactory extends Factory
 {
-    protected $model = Invitation::class;
+    protected $model = WorkspaceInvitation::class;
 
     public function definition()
     {
