@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,7 +22,7 @@ class WorkspaceResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'created_by' => new UserResource($this->createdBy),
-            'users' => UserResource::collection($this->users)
+            'users' => UserResource::collection(User::find($this->created_by_id)->first())
         ];
     }
 }

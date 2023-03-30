@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Resources\WorkspaceResource;
 use Database\Factories\WorkspaceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,13 @@ class Workspace extends Model
     protected $guarded = [
         "id"
     ];
+
+    public function show(Workspace $workspace)
+    {
+        $workspace->load('createdBy');
+
+        return new WorkspaceResource($workspace);
+    }
 
     public function users()
     {
