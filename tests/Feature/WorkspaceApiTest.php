@@ -6,6 +6,7 @@ use App\Http\Resources\WorkspaceCollection;
 use App\Http\Resources\WorkspaceResource;
 use App\Mail\WorkspaceInvitationEmail;
 use App\Models\Workspace;
+use App\Models\WorkspaceInvitation;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -232,4 +233,80 @@ class WorkspaceApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
+
+    public function test_can_accept_workspace_invitation()
+    {
+        $user = User::factory()->create();
+        $workspace = Workspace::factory()->create();
+
+        $invitation = WorkspaceInvitation::factory()->create([
+            'workspace_id' => $workspace->id,
+            'email' => $user->email,
+        ]);
+
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+        $response = $this->postJson('/api/workspaces/invitations/accept', [
+            'token' => $invitation->token,
+        ], [
+            'Authorization' => "Bearer $accessToken",
+            'Accept' => 'application/json',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'id' => $workspace->id,
+                    'name' => $workspace->name,
+                ],
+            ]);
+
+        $this->assertDatabaseHas('link_between_users_and_workspaces', [
+            'workspace_id' => $workspace->id,
+            'user_id' => $user->id,
+        ]);
+
+        $this->assertDatabaseMissing('workspaces_invitations', [
+            'id' => $invitation->id,
+        ]);
+    }
+
+    public function test_cannot_accept_workspace_invitation_with_invalid_token()
+    {
+        $user = User::factory()->create();
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+        $response = $this->postJson('/api/workspaces/invitations/accept', [
+            'token' => 'invalid-token',
+        ], [
+            'Authorization' => "Bearer $accessToken",
+            'Accept' => 'application/json',
+        ]);
+
+        $response->assertStatus(404);
+    }
+
+    public function test_cannot_accept_workspace_invitation_with_unauthorized_email()
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $workspace = Workspace::factory()->create();
+
+        $invitation = WorkspaceInvitation::factory()->create([
+            'workspace_id' => $workspace->id,
+            'email' => $otherUser->email,
+        ]);
+
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+        $response = $this->postJson('/api/workspaces/invitations/accept', [
+            'token' => $invitation->token,
+        ], [
+            'Authorization' => "Bearer $accessToken",
+            'Accept' => 'application/json',
+        ]);
+
+        $response->assertStatus(403);
+    }
+
 }
