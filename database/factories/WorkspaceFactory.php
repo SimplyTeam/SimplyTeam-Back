@@ -20,6 +20,7 @@ class WorkspaceFactory extends Factory
     {
         return [
             'name' => $this->faker->company,
+            'description' => $this->faker->realText
         ];
     }
 
