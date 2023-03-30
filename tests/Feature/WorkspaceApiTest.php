@@ -308,5 +308,4 @@ class WorkspaceApiTest extends TestCase
 
         $response->assertStatus(403);
     }
-
 }
