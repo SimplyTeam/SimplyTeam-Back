@@ -26,4 +26,9 @@ class Workspace extends Model
 
         self::factory(new WorkspaceFactory());
     }
+
+    public function created_by()
+    {
+        return $this->belongsTo(User::class, 'created_by_id');
+    }
 }
