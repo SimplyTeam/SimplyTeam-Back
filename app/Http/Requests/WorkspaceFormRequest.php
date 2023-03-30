@@ -26,6 +26,7 @@ class WorkspaceFormRequest extends FormRequest
         return parent::messages() + [
             "name.required" => "Le nom doit être renseigné !",
             "name.max" => "Le nom doit avoir une taille max de 128 caractères !",
+            "description.string" => "La description doit être un texte",
         ];
     }
 }

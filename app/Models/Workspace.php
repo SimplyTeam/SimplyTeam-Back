@@ -12,7 +12,9 @@ class Workspace extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name'
+        'name',
+        'description',
+        'created_by_id'
     ];
 
     public function users()
