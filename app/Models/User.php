@@ -46,4 +46,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Workspace::class, 'link_between_users_and_workspaces');
     }
+
+    public function created_workspaces()
+    {
+        return $this->hasMany(Workspace::class, 'created_by_id');
+    }
 }
