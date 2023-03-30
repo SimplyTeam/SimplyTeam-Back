@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\WorkspaceInvitation>
  */
-class InvitationFactory extends Factory
+class WorkspaceInvitationFactory extends Factory
 {
     protected $model = WorkspaceInvitation::class;
 
