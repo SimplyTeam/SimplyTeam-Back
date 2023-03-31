@@ -17,7 +17,7 @@ class WorkspaceApiController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $workspaces = $user->workspaces;
+        $workspaces = $user->workspaces()->orderBy('updated_at', 'desc')->get();
 
         return new WorkspaceCollection($workspaces);
     }

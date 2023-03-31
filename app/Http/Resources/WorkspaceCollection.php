@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class WorkspaceCollection extends ResourceCollection
 {
+    public static $wrap = null;
     /**
      * Transform the resource collection into an array.
      *
@@ -15,9 +16,7 @@ class WorkspaceCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            'data' => [
-                'workspaces' => $this->collection,
-            ]
+                'workspaces' => $this->collection
         ];
     }
 }
