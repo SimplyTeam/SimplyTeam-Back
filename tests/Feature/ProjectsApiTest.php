@@ -40,14 +40,18 @@ class ProjectsApiTest extends TestCase
         $user = User::factory()->create();
         $accessToken = $user->createToken('API Token')->accessToken;
 
-        $workspace = Workspace::factory()->create();
+        $workspace = Workspace::factory()->create([
+            "created_by_id" => $user->id
+        ]);
         $workspace->users()->attach($user);
+
+        $workspaceId = $workspace->id;
 
         $data = [
             'name' => $this->faker->name
         ];
 
-        $response = $this->postJson('/api/projects', $data, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
+        $response = $this->postJson("/api/workspaces/$workspaceId/projects", $data, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
 
         $response->assertStatus(Response::HTTP_CREATED)
             ->assertJson(
@@ -98,6 +102,6 @@ class ProjectsApiTest extends TestCase
         $response = $this->postJson("/api/workspaces/$workspaceId/projects", $data, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
 
         $response->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJson(['message' => 'User is not authorized to access this resource.']);
+            ->assertJson(["messages" => "L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"]);
     }
 }

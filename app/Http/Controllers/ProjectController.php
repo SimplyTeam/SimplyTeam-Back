@@ -7,6 +7,7 @@ use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProjectController extends Controller
 {
@@ -25,9 +26,17 @@ class ProjectController extends Controller
     {
         $validatedData = $request->validated();
 
-        $projet = Project::create($validatedData);
+        if($request->user()->id != $workspace->created_by_id){
+            return Response()->json([
+                "messages" => "L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"
+            ], Response::HTTP_FORBIDDEN);
+        }
 
-        $workspace->projets()->save($projet);
+        $projet = Project::create(
+            $validatedData + [
+                "workspace_id" => $workspace->id
+            ]
+        );
 
         return (new ProjectResource($projet))->response()->setStatusCode(201);
     }
