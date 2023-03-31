@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProjectFormRequest;
+use App\Http\Resources\ProjectResource;
+use App\Models\Project;
+use App\Models\Workspace;
 use Illuminate\Http\Request;
 
-class ProjetController extends Controller
+class ProjectController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +21,15 @@ class ProjetController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Workspace $workspace, ProjectFormRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+
+        $projet = Project::create($validatedData);
+
+        $workspace->projets()->save($projet);
+
+        return (new ProjectResource($projet))->response()->setStatusCode(201);
     }
 
     /**
