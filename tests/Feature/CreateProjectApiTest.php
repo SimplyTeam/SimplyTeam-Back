@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use App\Models\User;
 
-class ProjectsApiTest extends TestCase
+class CreateProjectsApiTest extends TestCase
 {
 
     protected function setUp(): void
