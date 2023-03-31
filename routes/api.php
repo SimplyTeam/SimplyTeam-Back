@@ -35,6 +35,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('/invitations/accept', [WorkspaceInvitationController::class, 'accept']);
         Route::prefix("/{workspace}/projects")->group(function () {
             Route::post('/', [ProjectController::class, 'store']);
+            Route::put('/', [ProjectController::class, 'update']);
         });
     });
 });

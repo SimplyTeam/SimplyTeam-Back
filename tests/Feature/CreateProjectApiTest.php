@@ -104,6 +104,4 @@ class CreateProjectApiTest extends TestCase
         $response->assertStatus(Response::HTTP_FORBIDDEN)
             ->assertJson(["messages" => "L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"]);
     }
-
-
 }

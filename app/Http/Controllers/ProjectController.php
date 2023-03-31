@@ -52,9 +52,23 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(ProjectFormRequest $request, Workspace $workspace, Project $project)
     {
-        //
+        // Check if user can update workspace
+        if($request->user()->id != $workspace->created_by_id){
+            return Response()->json([
+                "messages" => "L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        // Check that the project belongs to the workspace
+        if ($project->workspace_id !== $workspace->id) {
+            return Response()->json(["messages" => "Le projet ne fait pas parti du workspace renseigné !"]);
+        }
+
+        $project->update($request->validated());
+
+        return new ProjectResource($project);
     }
 
     /**
