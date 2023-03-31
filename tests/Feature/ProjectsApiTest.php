@@ -21,6 +21,13 @@ use App\Models\User;
 
 class ProjectsApiTest extends TestCase
 {
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->artisan('passport:install');
+    }
+
     use DatabaseTransactions, WithFaker;
 
     /**
