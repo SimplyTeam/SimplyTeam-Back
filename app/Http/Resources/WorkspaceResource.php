@@ -8,6 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class WorkspaceResource extends JsonResource
 {
+    public static $wrap = null;
     /**
      * Transform the resource into an array.
      *
@@ -21,7 +22,7 @@ class WorkspaceResource extends JsonResource
             'description' => $this->description,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'created_by' => new UserResource(User::find($this->created_by_id)->first() ?? null),
+            'created_by' => new UserResource(User::find($this->created_by_id) ?? null),
             'users' => UserResource::collection($this->users)
         ];
     }
