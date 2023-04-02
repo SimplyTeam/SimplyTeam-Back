@@ -32,6 +32,34 @@ Plus d'info : https://getcomposer.org/download/
 
 ---
 #### Docker
+##### Set le repository docker
+1. Mise à jour de l'index des paquets apt et des paquets d'installation pour permettre à apt d'utiliser un dépôt via HTTPS :
+```shell
+$ sudo apt-get update
+
+$ sudo apt-get install \
+    ca-certificates \
+    curl \
+    gnupg
+```
+
+2. Ajout des clé GPG officiel de docker :
+```shell
+$ sudo mkdir -m 0755 -p /etc/apt/keyrings
+
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+```
+
+3. Utilisez la commande suivante pour configurer le repo :
+```shell
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+
+##### Installer docker engine
+
 ```shell
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
