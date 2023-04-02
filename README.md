@@ -74,7 +74,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 Plus d'info : https://docs.docker.com/engine/install/
 
 ---
-#### Copie du .env.local en .env
+#### Copie du .env.example en .env
 ```shell
 cp .env.example .env
 ```
