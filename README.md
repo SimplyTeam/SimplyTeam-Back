@@ -31,7 +31,9 @@ php -r "unlink('composer-setup.php');"
 ```
 
 2. Le rendre accessible depuis n'importe quel directory :
+```shell
 sudo mv composer.phar /usr/local/bin/composer
+```
 
 Plus d'info : https://getcomposer.org/download/
 
@@ -72,7 +74,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 Plus d'info : https://docs.docker.com/engine/install/
 
 ---
-#### Copie du .env.local en .env
+#### Copie du .env.example en .env
 ```shell
 cp .env.example .env
 ```
@@ -113,7 +115,10 @@ GOOGLE_CLIENT_ID={GOOGLE_CLIENT_API}
 GOOGLE_CLIENT_SECRET={GOOGLE_CLIENT_SECRET}
 WEBAPP_REDIRECT_URI={WEBAPP_REDIRECT_URI}
 ```
-La variable d'environnement WEBAPP_REDIRECT_URI doit être set avec l'url du front : 'http://localhost:3000/'
+**La variable d'environnement WEBAPP_REDIRECT_URI doit être set de la façon suivante :**
+```python
+WEBAPP_REDIRECT_URI=http://localhost:3000/
+```
 
 #### Mettre à jour la variable REDIRECTED_URL_MAIL
 ```env
@@ -161,6 +166,11 @@ composer install
 sudo docker compose up -d
 ```
 
+### Lancement des migrations :
+```shell
+php artisan migrate
+```
+
 ### Générer une encryption key **!OBLIGATOIRE!**
 ```shell
 php artisan key:generate
@@ -171,15 +181,17 @@ php artisan key:generate
 php artisan passport:install
 ```
 
-### Lancement des migrations :
-```shell
-php artisan migrate
-```
-
 ### Lancement des tests :
 ```shell
 php artisan test --env=.env
 ```
+**!ATTENTION A BIEN RELANCER LA COMMANDE PASSPORT:INSTALL APRES LE LANCEMENT DES TESTS!**
+
+**POUR INFORMATION, LES TESTS ECRASENT LA BASE DE DONNEE SI CELLE-CI EST IDENTIQUE**
+
+**Nous recommandons donc de créer un nouveau conteneur postgres de test dans docker-composer de façon à s'en servir pour tester les requêtes.**
+
+**A cette version, il y a 3 erreurs qui peuvent apparaitre lors de l'exécution des tests, cela est dû à un merge d'une branche qui n'a pas mis à jour les tests. En aucun cas c'est une méthode qui ne marche pas. Les modifications devraient arrivé d'ici vendredi prochain**
 
 ### En cas d'erreur :
 Se fier au fichier commandUseToFix.md
