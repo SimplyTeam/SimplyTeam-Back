@@ -191,7 +191,7 @@ php artisan test --env=.env
 
 **Nous recommandons donc de créer un nouveau conteneur postgres de test dans docker-composer de façon à s'en servir pour tester les requêtes.**
 
-**A cette version, il y a 3 erreurs qui peuvent apparaitre lors du lancement, cela est dû à un merge d'une branche qui n'a pas mis à jour les tests, les modifications devraient arrivé d'ici vendredi prochain**
+**A cette version, il y a 3 erreurs qui peuvent apparaitre lors de l'exécution des tests, cela est dû à un merge d'une branche qui n'a pas mis à jour les tests. En aucun cas c'est une méthode qui ne marche pas. Les modifications devraient arrivé d'ici vendredi prochain**
 
 ### En cas d'erreur :
 Se fier au fichier commandUseToFix.md
