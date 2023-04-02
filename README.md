@@ -185,6 +185,13 @@ php artisan passport:install
 ```shell
 php artisan test --env=.env
 ```
+**!ATTENTION A BIEN RELANCER LA COMMANDE PASSPORT:INSTALL APRES LE LANCEMENT DES TESTS!**
+
+**POUR INFORMATION, LES TESTS ECRASENT LA BASE DE DONNEE SI CELLE-CI EST IDENTIQUE**
+
+**Nous recommandons donc de créer un nouveau conteneur postgres de test dans docker-composer de façon à s'en servir pour tester les requêtes.**
+
+**A cette version, il y a 3 erreurs qui peuvent apparaitre lors du lancement, cela est dû à un merge d'une branche qui n'a pas mis à jour les tests, les modifications devraient arrivé d'ici vendredi prochain**
 
 ### En cas d'erreur :
 Se fier au fichier commandUseToFix.md
