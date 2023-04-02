@@ -3,14 +3,19 @@
 ### Prérequies
 Avant de lancer le back, il est nécessaire d'installer les dépendances suivantes :
 #### PHP 8
-1. update packages
+1. Mettre à jour les packages
 ```shell
 sudo apt update && sudo apt upgrade
 ```
 
-2. install php8.1
+2. installer php8.1
 ```shell
 sudo apt install php8.1
+```
+
+3. installer les extensions mbstring, curl et postgresql
+```shell
+sudo apt install php8.1-mbstring php8.1-curl php8.1-pgsql php8.1-pdo-pgsql
 ```
 
 Plus d'info : https://www.php.net/downloads
