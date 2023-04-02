@@ -69,7 +69,7 @@ Plus d'info : https://docs.docker.com/engine/install/
 ---
 #### Copie du .env.local en .env
 ```shell
-cp .env.local .env
+cp .env.example .env
 ```
 ---
 #### Un compte mail (outlook ou autre) permettant de servir de service smtp
