@@ -102,12 +102,18 @@ MAIL_FROM_NAME="Votre nom"
 12. Utilisez l'URI de redirection pour votre application web (WEBAPP_REDIRECT_URI) pour remplir la variable d'environnement WEBAPP_REDIRECT_URI dans le fichier .env de votre application Laravel.
 
 Les variables d'environnements à modifiés sont donc celles-ci :
-```envGOOGLE_CLIENT_ID={GOOGLE_CLIENT_API}
+```env
+GOOGLE_CLIENT_ID={GOOGLE_CLIENT_API}
 GOOGLE_CLIENT_ID={GOOGLE_CLIENT_API}
 GOOGLE_CLIENT_SECRET={GOOGLE_CLIENT_SECRET}
 WEBAPP_REDIRECT_URI={WEBAPP_REDIRECT_URI}
 ```
-Le WEBAPP_REDIRECT_URI doit être l'url d'authentification du front.
+Le WEBAPP_REDIRECT_URI doit être set avec l'url du front : 'http://localhost:3000/'
+
+#### Mettre à jour la variable REDIRECTED_URL_MAIL
+```env
+REDIRECTED_URL_MAIL=http://localhost:3000/workspaces
+```
 
 ### Installation des dépendances
 Afin d'installer toutes les dépendances nécessaire, il suffit simplement de lancer la commande :
