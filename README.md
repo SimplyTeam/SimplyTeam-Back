@@ -108,7 +108,7 @@ GOOGLE_CLIENT_ID={GOOGLE_CLIENT_API}
 GOOGLE_CLIENT_SECRET={GOOGLE_CLIENT_SECRET}
 WEBAPP_REDIRECT_URI={WEBAPP_REDIRECT_URI}
 ```
-Le WEBAPP_REDIRECT_URI doit être set avec l'url du front : 'http://localhost:3000/'
+La variable d'environnement WEBAPP_REDIRECT_URI doit être set avec l'url du front : 'http://localhost:3000/'
 
 #### Mettre à jour la variable REDIRECTED_URL_MAIL
 ```env
