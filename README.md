@@ -120,6 +120,36 @@ La variable d'environnement WEBAPP_REDIRECT_URI doit être set avec l'url du fro
 REDIRECTED_URL_MAIL=http://localhost:3000/workspaces
 ```
 
+#### Mettre à jour les informations DB_ du .env :
+```env
+DB_CONNECTION=postgresql
+DB_HOST=172.21.73.3
+DB_PORT=5432
+DB_DATABASE=simplyteam
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+```
+**! EN CAS D'ERREUR **
+```txt
+    169▕         // If the configuration doesn't exist, we'll throw an exception and bail.
+    170▕         $connections = $this->app['config']['database.connections'];
+    171▕ 
+    172▕         if (is_null($config = Arr::get($connections, $name))) {
+  ➜ 173▕             throw new InvalidArgumentException("Database connection [{$name}] not configured.");
+    174▕         }
+    175▕ 
+    176▕         return (new ConfigurationUrlParser)
+    177▕                     ->parseConfiguration($config);
+```
+
+Remplacez : 
+```env
+DB_CONNECTION=postgresql
+```
+par
+```env
+DB_CONNECTION=pgsql
+```
 ### Installation des dépendances
 Afin d'installer toutes les dépendances nécessaire, il suffit simplement de lancer la commande :
 ```shell
@@ -128,7 +158,7 @@ composer install
 
 ### Lancement du serveur
 ```shell
-docker-compose up -d
+sudo docker compose up -d
 ```
 
 ### Lancement des migrations :
