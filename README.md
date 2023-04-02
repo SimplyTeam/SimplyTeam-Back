@@ -2,10 +2,17 @@
 ## Lancement de l'app
 ### Prérequies
 Avant de lancer le back, il est nécessaire d'installer les dépendances suivantes :
-#### PHP 8.2
+#### PHP 8
+1. update packages
 ```shell
-sudo apt install php8.2
+sudo apt update && sudo apt upgrade
 ```
+
+2. install php8.1
+```shell
+sudo apt install php8.1
+```
+
 Plus d'info : https://www.php.net/downloads
 
 ---
