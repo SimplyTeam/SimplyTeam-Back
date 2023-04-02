@@ -161,7 +161,25 @@ composer install
 sudo docker compose up -d
 ```
 
+### Générer une encryption key **!OBLIGATOIRE!**
+```shell
+php artisan key:generate
+```
+
+### Créations des clés oauth :
+```shell
+php artisan passport:install
+```
+
 ### Lancement des migrations :
 ```shell
 php artisan migrate
 ```
+
+### Lancement des tests :
+```shell
+php artisan test --env=.env
+```
+
+### En cas d'erreur :
+Se fier au fichier commandUseToFix.md
