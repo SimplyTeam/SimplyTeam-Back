@@ -31,7 +31,9 @@ php -r "unlink('composer-setup.php');"
 ```
 
 2. Le rendre accessible depuis n'importe quel directory :
+```shell
 sudo mv composer.phar /usr/local/bin/composer
+```
 
 Plus d'info : https://getcomposer.org/download/
 
