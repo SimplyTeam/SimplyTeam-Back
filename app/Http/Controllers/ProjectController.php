@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProjectFormRequest;
+use App\Http\Resources\ProjectCollection;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\Workspace;
@@ -11,12 +12,28 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProjectController extends Controller
 {
+
     /**
-     * Display a listing of the resource.
+     * Display a listing of the projects for a user in the given workspace.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Workspace  $workspace
+     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request, Workspace $workspace)
     {
-        //
+        $user = $request->user();
+
+        // Check that the workspace belongs to the user
+        if (!$user->workspaces->contains($workspace)) {
+            return response()->json(['message' => 'Workspace not found.'], 404);
+        }
+
+        // Get the projects associated with the workspace
+        $projects = $workspace->projects;
+
+        // Return the projects as a resource collection
+        return new ProjectCollection($projects);
     }
 
     /**
@@ -55,7 +72,7 @@ class ProjectController extends Controller
     public function update(ProjectFormRequest $request, Workspace $workspace, Project $project)
     {
         // Check if user can update workspace
-        if($request->user()->id != $workspace->created_by_id){
+        if($request->user()->id != $workspace->created_by_id || !$workspace->projects->contains($project)){
             return Response()->json([
                 "messages" => "L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"
             ], Response::HTTP_FORBIDDEN);

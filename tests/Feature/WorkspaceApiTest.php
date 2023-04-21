@@ -105,7 +105,7 @@ class WorkspaceApiTest extends TestCase
         $response->assertStatus(Response::HTTP_CREATED)
             ->assertJson(
                 (new WorkspaceResource(
-                    Workspace::find($response->json('data')["id"]
+                    Workspace::find($response->json('id')
                     )
                 ))->response()->getData(true));
     }
@@ -129,11 +129,11 @@ class WorkspaceApiTest extends TestCase
         $response->assertStatus(Response::HTTP_CREATED)
             ->assertJson(
                 (new WorkspaceResource(
-                    Workspace::find($response->json('data')["id"]
+                    Workspace::find($response->json('id')
                     )
                 ))->response()->getData(true));
 
-        $data = $response->json()["data"];
+        $data = $response->json();
 
         // Vérification que les e-mails ont été correctement créés
         Mail::assertSent(function (WorkspaceInvitationEmail $mail) use ($user, $data, $dataSend) {
@@ -271,13 +271,10 @@ class WorkspaceApiTest extends TestCase
             'Accept' => 'application/json',
         ]);
 
+        $createdWorkspace = Workspace::firstWhere('name', $workspace->name);
+
         $response->assertStatus(200)
-            ->assertJson([
-                'data' => [
-                    'id' => $workspace->id,
-                    'name' => $workspace->name,
-                ],
-            ]);
+            ->assertJson((new WorkspaceResource($workspace->refresh()))->response()->getData(true));
 
         $this->assertDatabaseHas('link_between_users_and_workspaces', [
             'workspace_id' => $workspace->id,

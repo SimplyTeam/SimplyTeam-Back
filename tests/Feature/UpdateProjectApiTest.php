@@ -39,22 +39,21 @@ class UpdateProjectApiTest extends TestCase
 
         // Set up updated project data
         $updatedProjectData = [
-            'name' => $this->faker->word(),
-            'description' => $this->faker->sentence()
+            'name' => $this->faker->word()
         ];
 
         $workspaceId = $workspace->id;
         $projectId = $project->id;
 
         // Make API request to update project
-        $response = $this->putJson("/api/workspaces/$workspaceId/project/$projectId", $updatedProjectData, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
+        $response = $this->putJson("/api/workspaces/$workspaceId/projects/$projectId", $updatedProjectData, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
 
         // Assert successful response and correct project data
         $response->assertStatus(Response::HTTP_OK);
+        $data = $response->json("data");
         $response->assertJson([
             'data' => [
                 'name' => $updatedProjectData['name'],
-                'description' => $updatedProjectData['description'],
                 'workspace_id' => $workspace->id
             ]
         ]);
@@ -79,11 +78,10 @@ class UpdateProjectApiTest extends TestCase
         // Set up updated project data
         $updatedProjectData = [
             'name' => $this->faker->word(),
-            'description' => $this->faker->sentence()
         ];
 
         // Make API request to update project without authentication
-        $response = $this->putJson("/api/workspaces/$workspaceId/project/$projectId", $updatedProjectData, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
+        $response = $this->putJson("/api/workspaces/$workspaceId/projects/$projectId", $updatedProjectData, ["Accept" => "application/json"]);
 
         // Assert unauthorized response
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
@@ -111,11 +109,10 @@ class UpdateProjectApiTest extends TestCase
         // Set up updated project data
         $updatedProjectData = [
             'name' => $this->faker->word(),
-            'description' => $this->faker->sentence()
         ];
 
         // Make API request to update project for workspace user is not a member of
-        $response = $this->putJson("/api/workspaces/$workspaceId/project/$projectId", $updatedProjectData, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
+        $response = $this->putJson("/api/workspaces/$workspaceId/projects/$projectId", $updatedProjectData, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
 
         // Assert forbidden response
         $response->assertStatus(Response::HTTP_FORBIDDEN);
@@ -144,11 +141,10 @@ class UpdateProjectApiTest extends TestCase
         // Set up project data
         $newProjectData = [
             'name' => $this->faker->word(),
-            'description' => $this->faker->sentence()
         ];
 
         // Make API request to update project
-        $response = $this->putJson("/api/workspaces/$workspaceId/project/$projectId", $newProjectData, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
+        $response = $this->putJson("/api/workspaces/$workspaceId/projects/$projectId", $newProjectData, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
 
         // Assert forbidden response
         $response->assertStatus(Response::HTTP_FORBIDDEN);
@@ -176,18 +172,16 @@ class UpdateProjectApiTest extends TestCase
         // Set up updated project data
         $updatedProjectData = [
             'name' => $this->faker->word(),
-            'description' => $this->faker->sentence()
         ];
 
         // Make API request to update project
-        $response = $this->putJson("/api/workspaces/$workspaceId/project/$projectId", $updatedProjectData, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
+        $response = $this->putJson("/api/workspaces/$workspaceId/projects/$projectId", $updatedProjectData, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
 
         // Assert successful response and correct project data
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJson([
             'data' => [
                 'name' => $updatedProjectData['name'],
-                'description' => $updatedProjectData['description'],
                 'workspace_id' => $workspace->id
             ]
         ]);

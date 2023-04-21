@@ -34,8 +34,9 @@ Route::middleware(['auth:api'])->group(function () {
         Route::delete('/{workspace}', [WorkspaceApiController::class, 'destroy']);
         Route::post('/invitations/accept', [WorkspaceInvitationController::class, 'accept']);
         Route::prefix("/{workspace}/projects")->group(function () {
+            Route::get('/', [ProjectController::class, 'index']);
             Route::post('/', [ProjectController::class, 'store']);
-            Route::put('/', [ProjectController::class, 'update']);
+            Route::put('/{project}', [ProjectController::class, 'update']);
         });
     });
 });
