@@ -39,6 +39,7 @@ Route::middleware(['auth:api'])->group(function () {
             Route::post('/', [ProjectController::class, 'store']);
             Route::prefix('/{project}/sprints')->group(function () {
                 Route::get('/', [SprintController::class, 'index']);
+                Route::post('/', [SprintController::class, 'store']);
             });
             Route::put('/{project}', [ProjectController::class, 'update']);
         });
