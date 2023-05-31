@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\WorkspaceApiController;
 use App\Http\Controllers\WorkspaceInvitationController;
 use Illuminate\Http\Request;
@@ -32,5 +33,10 @@ Route::middleware(['auth:api'])->group(function () {
         Route::put('/{workspace}', [WorkspaceApiController::class, 'update']);
         Route::delete('/{workspace}', [WorkspaceApiController::class, 'destroy']);
         Route::post('/invitations/accept', [WorkspaceInvitationController::class, 'accept']);
+        Route::prefix("/{workspace}/projects")->group(function () {
+            Route::get('/', [ProjectController::class, 'index']);
+            Route::post('/', [ProjectController::class, 'store']);
+            Route::put('/{project}', [ProjectController::class, 'update']);
+        });
     });
 });

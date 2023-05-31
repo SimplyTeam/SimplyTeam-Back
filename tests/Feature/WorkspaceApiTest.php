@@ -32,7 +32,10 @@ class WorkspaceApiTest extends TestCase
         $user = User::factory()->create();
         $accessToken = $user->createToken('API Token')->accessToken;
 
-        $workspaces = Workspace::factory()->count(3)->create();
+        $workspaces = Workspace::factory()->count(3)->create([
+            "created_by_id" => $user->id
+        ]);
+
         $user->workspaces()->attach($workspaces);
         $this->actingAs($user);
 
@@ -47,7 +50,9 @@ class WorkspaceApiTest extends TestCase
         $user = User::factory()->create();
         $accessToken = $user->createToken('API Token')->accessToken;
 
-        $workspace = Workspace::factory()->create();
+        $workspace = Workspace::factory()->create([
+            "created_by_id" => $user->id
+        ]);
         $user->workspaces()->attach($workspace);
         $this->actingAs($user);
 
@@ -75,7 +80,9 @@ class WorkspaceApiTest extends TestCase
         $accessToken = $user->createToken('API Token')->accessToken;
 
 
-        $workspace = Workspace::factory()->create();
+        $workspace = Workspace::factory()->create([
+            "created_by_id" => $user->id
+        ]);
         $this->actingAs($user);
 
         $response = $this->get("/api/workspaces/$workspace->id", ["Authorization" => "Bearer $accessToken", "accept" => "application/json"]);
@@ -98,7 +105,7 @@ class WorkspaceApiTest extends TestCase
         $response->assertStatus(Response::HTTP_CREATED)
             ->assertJson(
                 (new WorkspaceResource(
-                    Workspace::find($response->json('data')["id"]
+                    Workspace::find($response->json('id')
                     )
                 ))->response()->getData(true));
     }
@@ -122,11 +129,11 @@ class WorkspaceApiTest extends TestCase
         $response->assertStatus(Response::HTTP_CREATED)
             ->assertJson(
                 (new WorkspaceResource(
-                    Workspace::find($response->json('data')["id"]
+                    Workspace::find($response->json('id')
                     )
                 ))->response()->getData(true));
 
-        $data = $response->json()["data"];
+        $data = $response->json();
 
         // Vérification que les e-mails ont été correctement créés
         Mail::assertSent(function (WorkspaceInvitationEmail $mail) use ($user, $data, $dataSend) {
@@ -167,7 +174,9 @@ class WorkspaceApiTest extends TestCase
         $user = User::factory()->create();
         $accessToken = $user->createToken('API Token')->accessToken;
 
-        $workspace = Workspace::factory()->create();
+        $workspace = Workspace::factory()->create([
+            "created_by_id" => $user->id
+        ]);
         $user->workspaces()->attach($workspace);
         $this->actingAs($user);
 
@@ -186,7 +195,9 @@ class WorkspaceApiTest extends TestCase
         $user = User::factory()->create();
         $accessToken = $user->createToken('API Token')->accessToken;
 
-        $workspace = Workspace::factory()->create();
+        $workspace = Workspace::factory()->create([
+            "created_by_id" => $user->id
+        ]);
 
         $response = $this->actingAs($user)->get("/api/workspaces/$workspace->id", ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
 
@@ -196,9 +207,11 @@ class WorkspaceApiTest extends TestCase
 
     public function test_cannot_update_workspace_for_non_attached_user()
     {
-        $workspace = Workspace::factory()->create();
-
         $user = User::factory()->create();
+
+        $workspace = Workspace::factory()->create([
+            "created_by_id" => $user->id
+        ]);
 
         $accessToken = $user->createToken('API Token')->accessToken;
 
@@ -210,9 +223,11 @@ class WorkspaceApiTest extends TestCase
 
     public function test_can_delete_workspace()
     {
-        $workspace = Workspace::factory()->create();
-
         $user = User::factory()->create();
+        $workspace = Workspace::factory()->create([
+            "created_by_id" => $user->id
+        ]);
+
         $user->workspaces()->attach($workspace);
         $accessToken = $user->createToken('API Token')->accessToken;
 
@@ -238,7 +253,9 @@ class WorkspaceApiTest extends TestCase
     public function test_can_accept_workspace_invitation()
     {
         $user = User::factory()->create();
-        $workspace = Workspace::factory()->create();
+        $workspace = Workspace::factory()->create([
+            "created_by_id" => $user->id
+        ]);
 
         $invitation = WorkspaceInvitation::factory()->create([
             'workspace_id' => $workspace->id,
@@ -254,13 +271,10 @@ class WorkspaceApiTest extends TestCase
             'Accept' => 'application/json',
         ]);
 
+        $createdWorkspace = Workspace::firstWhere('name', $workspace->name);
+
         $response->assertStatus(200)
-            ->assertJson([
-                'data' => [
-                    'id' => $workspace->id,
-                    'name' => $workspace->name,
-                ],
-            ]);
+            ->assertJson((new WorkspaceResource($workspace->refresh()))->response()->getData(true));
 
         $this->assertDatabaseHas('link_between_users_and_workspaces', [
             'workspace_id' => $workspace->id,
@@ -291,7 +305,9 @@ class WorkspaceApiTest extends TestCase
     {
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
-        $workspace = Workspace::factory()->create();
+        $workspace = Workspace::factory()->create([
+            "created_by_id" => $user->id
+        ]);
 
         $invitation = WorkspaceInvitation::factory()->create([
             'workspace_id' => $workspace->id,
