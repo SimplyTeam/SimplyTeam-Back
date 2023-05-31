@@ -20,7 +20,7 @@ class SprintController extends Controller
             $user = $request->user();
 
             if (!$project || !$workspace->users->contains($user) || !$workspace->projects->contains($project)) {
-                return response()->json('Unauthorized', 403);
+                return response()->json('Unauthorized', 401);
             }
 
             return $next($request);

@@ -28,6 +28,9 @@ class GetSprintControllerTest extends TestCase
         $this->workspace->users()->attach($this->user->id);
         $this->project = Project::factory()->for($this->workspace)->create();
 
+        $this->unlink_workspace = Workspace::factory()->create();
+        $this->unlink_project = Project::factory()->for($this->unlink_workspace)->create();
+
         $this->actingAs($this->user, 'api');
         $this->accessToken = $this->user->createToken('API Token')->accessToken;
     }
@@ -40,5 +43,29 @@ class GetSprintControllerTest extends TestCase
 
         $response->assertOk();
         $response->assertJsonFragment($sprint->toArray());
+    }
+
+    public function test_get_fail_with_unlink_project()
+    {
+        $sprint = Sprint::factory()->for($this->project)->create();
+
+        $response = $this->getJson(
+            "/api/workspaces/{$this->workspace->id}/projects/{$this->unlink_project->id}/sprints",
+            ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]
+        );
+
+        $response->assertUnauthorized();
+    }
+
+    public function test_get_fail_with_unlink_workspace()
+    {
+        $sprint = Sprint::factory()->for($this->project)->create();
+
+        $response = $this->getJson(
+            "/api/workspaces/{$this->unlink_workspace->id}/projects/{$this->project->id}/sprints",
+            ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]
+        );
+
+        $response->assertUnauthorized();
     }
 }
