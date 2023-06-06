@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSprintRequest;
+use App\Http\Requests\UpdateSprintRequest;
 use App\Models\Workspace;
 use App\Models\Project;
 use App\Models\Sprint;
@@ -62,6 +63,17 @@ class SprintController extends Controller
         $project->sprints()->save($sprint);
 
         return response()->json($sprint, 201);
+    }
+
+    public function update(UpdateSprintRequest $request, Workspace $workspace, Project $project, Sprint $sprint)
+    {
+        // Validate and get validated data
+        $data = $request->validated();
+
+        // Update the sprint
+        $sprint->update($data);
+
+        return response()->json($sprint, 200);
     }
 }
 

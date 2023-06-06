@@ -12,7 +12,8 @@ class Sprint extends Model
     protected $fillable = [
         'name',
         'begin_date',
-        'end_date'
+        'end_date',
+        'closing_date'
     ];
 
     public function project()
