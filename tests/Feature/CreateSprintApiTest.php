@@ -74,7 +74,7 @@ class CreateSprintApiTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function test_create_sprint_for_non_member_project_not_working()
+    public function test_create_sprint_for_non_member_of_workspace_fail()
     {
         $endDate = $this->faker->date;
         $beginDate = $this->faker->date('Y-m-d', $endDate);
