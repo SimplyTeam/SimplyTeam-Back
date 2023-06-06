@@ -54,7 +54,7 @@ class CreateSprintApiTest extends TestCase
     }
 
 
-    public function test_get_fail_with_unlink_project()
+    public function test_create_fail_with_unlink_project()
     {
         $endDate = $this->faker->date;
         $beginDate = $this->faker->date('Y-m-d', $endDate);
@@ -65,10 +65,9 @@ class CreateSprintApiTest extends TestCase
             'end_date' => $endDate,
         ];
 
-        $sprint = Sprint::factory()->for($this->project)->create();
-
         $response = $this->postJson(
             "/api/workspaces/{$this->workspace->id}/projects/{$this->unlink_project->id}/sprints",
+            $sprintData,
             $this->header
         );
 
@@ -85,8 +84,6 @@ class CreateSprintApiTest extends TestCase
             'begin_date' => $beginDate,
             'end_date' => $endDate,
         ];
-
-        $sprint = Sprint::factory()->for($this->project)->create();
 
         $response = $this->postJson(
             "/api/workspaces/{$this->workspace->id}/projects/{$this->unlink_project->id}/sprints",
