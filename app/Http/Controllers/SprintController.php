@@ -44,15 +44,15 @@ class SprintController extends Controller
 
     public function store(StoreSprintRequest $request, Workspace $workspace, Project $project)
     {
-        $validated_data = $request->validated();
+        $validatedata = $request->validated();
 
-        $begin_date = Carbon::parse($validated_data['begin_date']);
-        $end_date = Carbon::parse($validated_data['end_date']);
+        $beginDate = Carbon::parse($validatedata['begin_date']);
+        $endDate = Carbon::parse($validatedata['end_date']);
 
         // Ensure that there are no overlapping sprints
         $overlappingSprint = $project->sprints()
-            ->whereBetween('begin_date', [$begin_date, $end_date])
-            ->orWhereBetween('end_date', [$begin_date, $end_date])
+            ->whereBetween('begin_date', [$beginDate, $endDate])
+            ->orWhereBetween('end_date', [$beginDate, $endDate])
             ->exists();
 
         if ($overlappingSprint) {
