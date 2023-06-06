@@ -34,16 +34,16 @@ class UpdateSprintApiTest extends TestCase
 
     public function testUpdateSprint()
     {
-        $end_date = $this->faker->date;
-        $begin_date = $this->faker->date('Y-m-d', $end_date);
-        $middle_timestamp = (strtotime($begin_date) + strtotime($end_date)) / 2;
-        $middle_date = date('Y-m-d', $middle_timestamp);
+        $endDate = $this->faker->date;
+        $beginDate = $this->faker->date('Y-m-d', $endDate);
+        $middleTimestamp = (strtotime($beginDate) + strtotime($endDate)) / 2;
+        $middleDate = date('Y-m-d', $middleTimestamp);
 
         $newData = [
             'name' => $this->faker->sentence(3),
-            'begin_date' => $begin_date,
-            'end_date' => $end_date,
-            'closing_date' => $middle_date
+            'begin_date' => $beginDate,
+            'end_date' => $endDate,
+            'closing_date' => $middleDate
         ];
 
         $response = $this->putJson(
@@ -66,13 +66,13 @@ class UpdateSprintApiTest extends TestCase
         $project = Project::factory()->for($workspace)->create();
         $sprint = Sprint::factory()->for($project)->create();
 
-        $end_date = $this->faker->date;
-        $begin_date = $this->faker->date('Y-m-d', $end_date);
+        $endDate = $this->faker->date;
+        $beginDate = $this->faker->date('Y-m-d', $endDate);
 
         $newData = [
             'name' => $this->faker->sentence(3),
-            'begin_date' => $begin_date,
-            'end_date' => $end_date,
+            'begin_date' => $beginDate,
+            'end_date' => $endDate,
             'closing_date' => $this->faker->date(),
         ];
 
@@ -117,13 +117,13 @@ class UpdateSprintApiTest extends TestCase
         $project = Project::factory()->for($workspace)->create();
         $sprint = Sprint::factory()->for($project)->create();
 
-        $end_date = $this->faker->date;
-        $begin_date = $this->faker->date('Y-m-d', $end_date);
+        $endDate = $this->faker->date;
+        $beginDate = $this->faker->date('Y-m-d', $endDate);
 
         $newData = [
             'name' => $this->faker->sentence(3),
-            'begin_date' => $begin_date,
-            'end_date' => $end_date,
+            'begin_date' => $beginDate,
+            'end_date' => $endDate,
             'closing_date' => $this->faker->date(),
         ];
 

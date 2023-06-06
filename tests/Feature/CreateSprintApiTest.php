@@ -33,13 +33,13 @@ class CreateSprintApiTest extends TestCase
 
     public function testStore()
     {
-        $end_date = $this->faker->date;
-        $begin_date = $this->faker->date('Y-m-d', $end_date);
+        $endDate = $this->faker->date;
+        $beginDate = $this->faker->date('Y-m-d', $endDate);
 
         $sprintData = [
             'name' => $this->faker->name,
-            'begin_date' => $begin_date,
-            'end_date' => $end_date,
+            'begin_date' => $beginDate,
+            'end_date' => $endDate,
         ];
 
         $response = $this->postJson(
@@ -55,13 +55,13 @@ class CreateSprintApiTest extends TestCase
 
     public function test_get_fail_with_unlink_project()
     {
-        $end_date = $this->faker->date;
-        $begin_date = $this->faker->date('Y-m-d', $end_date);
+        $endDate = $this->faker->date;
+        $beginDate = $this->faker->date('Y-m-d', $endDate);
 
         $sprintData = [
             'name' => $this->faker->name,
-            'begin_date' => $begin_date,
-            'end_date' => $end_date,
+            'begin_date' => $beginDate,
+            'end_date' => $endDate,
         ];
 
         $sprint = Sprint::factory()->for($this->project)->create();
@@ -76,13 +76,13 @@ class CreateSprintApiTest extends TestCase
 
     public function test_create_sprint_for_non_member_project_not_working()
     {
-        $end_date = $this->faker->date;
-        $begin_date = $this->faker->date('Y-m-d', $end_date);
+        $endDate = $this->faker->date;
+        $beginDate = $this->faker->date('Y-m-d', $endDate);
 
         $sprintData = [
             'name' => $this->faker->name,
-            'begin_date' => $begin_date,
-            'end_date' => $end_date,
+            'begin_date' => $beginDate,
+            'end_date' => $endDate,
         ];
 
         $sprint = Sprint::factory()->for($this->project)->create();
@@ -103,13 +103,13 @@ class CreateSprintApiTest extends TestCase
      */
     public function test_create_projects_for_non_member_workspace()
     {
-        $end_date = $this->faker->date;
-        $begin_date = $this->faker->date('Y-m-d', $end_date);
+        $endDate = $this->faker->date;
+        $beginDate = $this->faker->date('Y-m-d', $endDate);
 
         $sprintData = [
             'name' => $this->faker->name,
-            'begin_date' => $begin_date,
-            'end_date' => $end_date,
+            'begin_date' => $beginDate,
+            'end_date' => $endDate,
         ];
 
         $response = $this->postJson(
@@ -128,13 +128,13 @@ class CreateSprintApiTest extends TestCase
      */
     public function test_create_projects_without_authentication()
     {
-        $end_date = $this->faker->date;
-        $begin_date = $this->faker->date('Y-m-d', $end_date);
+        $endDate = $this->faker->date;
+        $beginDate = $this->faker->date('Y-m-d', $endDate);
 
         $sprintData = [
             'name' => $this->faker->name,
-            'begin_date' => $begin_date,
-            'end_date' => $end_date,
+            'begin_date' => $beginDate,
+            'end_date' => $endDate,
         ];
 
         // Make API request to get projects without authentication
