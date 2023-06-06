@@ -19,7 +19,8 @@ class Project extends Model
         return $this->belongsTo(Workspace::class);
     }
 
-    public function sprints() {
+    public function sprints()
+    {
         return $this->hasMany(Sprint::class);
     }
 }
