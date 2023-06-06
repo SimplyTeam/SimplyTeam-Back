@@ -89,11 +89,6 @@ class UpdateSprintApiTest extends TestCase
 
     public function testUpdateSprintWithInvalidData()
     {
-        $user = User::factory()->create();
-        $workspace = Workspace::factory()->create();
-        $project = Project::factory()->for($workspace)->create();
-        $sprint = Sprint::factory()->for($project)->create();
-
         $invalidData = [
             'name' => '',
             'begin_date' => 'invalid_date',
@@ -113,7 +108,6 @@ class UpdateSprintApiTest extends TestCase
 
     public function testUpdateSprintWithNonexistentWorkspace()
     {
-        $user = User::factory()->create();
         $workspace = Workspace::factory()->create();
         $project = Project::factory()->for($workspace)->create();
         $sprint = Sprint::factory()->for($project)->create();
@@ -161,10 +155,8 @@ class UpdateSprintApiTest extends TestCase
 
     public function testUpdateSprintWithNonexistentSprint()
     {
-        $user = User::factory()->create();
         $workspace = Workspace::factory()->create();
         $project = Project::factory()->for($workspace)->create();
-        $sprint = Sprint::factory()->for($project)->create();
 
         $newData = [
             'name' => $this->faker->sentence(3),
