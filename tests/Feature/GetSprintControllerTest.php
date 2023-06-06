@@ -33,13 +33,17 @@ class GetSprintControllerTest extends TestCase
 
         $this->actingAs($this->user, 'api');
         $this->accessToken = $this->user->createToken('API Token')->accessToken;
+        $this->header = ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"];
     }
 
     public function test_get_sprint()
     {
         $sprint = Sprint::factory()->for($this->project)->create();
 
-        $response = $this->getJson("/api/workspaces/{$this->workspace->id}/projects/{$this->project->id}/sprints", ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]);
+        $response = $this->getJson(
+            "/api/workspaces/{$this->workspace->id}/projects/{$this->project->id}/sprints",
+            $this->header
+        );
 
         $response->assertOk();
         $response->assertJsonFragment($sprint->toArray());
@@ -51,7 +55,7 @@ class GetSprintControllerTest extends TestCase
 
         $response = $this->getJson(
             "/api/workspaces/{$this->workspace->id}/projects/{$this->unlink_project->id}/sprints",
-            ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]
+            $this->header
         );
 
         $response->assertUnauthorized();
@@ -63,7 +67,7 @@ class GetSprintControllerTest extends TestCase
 
         $response = $this->getJson(
             "/api/workspaces/{$this->unlink_workspace->id}/projects/{$this->project->id}/sprints",
-            ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]
+            $this->header
         );
 
         $response->assertUnauthorized();

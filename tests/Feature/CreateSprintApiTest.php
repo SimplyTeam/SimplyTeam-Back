@@ -29,6 +29,7 @@ class CreateSprintApiTest extends TestCase
         $this->unlink_project = Project::factory()->for($this->unlink_workspace)->create();
 
         $this->accessToken = $this->user->createToken('API Token')->accessToken;
+        $this->header = ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"];
     }
 
     public function testStore()
@@ -45,7 +46,7 @@ class CreateSprintApiTest extends TestCase
         $response = $this->postJson(
             "/api/workspaces/{$this->workspace->id}/projects/{$this->project->id}/sprints",
             $sprintData,
-            ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]
+            $this->header
         );
 
         $response->assertCreated();
@@ -68,7 +69,7 @@ class CreateSprintApiTest extends TestCase
 
         $response = $this->postJson(
             "/api/workspaces/{$this->workspace->id}/projects/{$this->unlink_project->id}/sprints",
-            ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]
+            $this->header
         );
 
         $response->assertUnauthorized();
@@ -90,7 +91,7 @@ class CreateSprintApiTest extends TestCase
         $response = $this->postJson(
             "/api/workspaces/{$this->workspace->id}/projects/{$this->unlink_project->id}/sprints",
             $sprintData,
-            ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]
+            $this->header
         );
 
         $response->assertUnauthorized();
@@ -115,7 +116,7 @@ class CreateSprintApiTest extends TestCase
         $response = $this->postJson(
             "/api/workspaces/{$this->unlink_workspace->id}/projects/{$this->project->id}/sprints",
             $sprintData,
-            ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]
+            $this->header
         );
         // Assert forbidden response
         $response->assertUnauthorized();

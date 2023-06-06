@@ -30,6 +30,7 @@ class UpdateSprintApiTest extends TestCase
 
         $this->accessToken = $this->user->createToken('API Token')->accessToken;
         $this->sprint = Sprint::factory()->for($this->project)->create();
+        $this->header = ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"];
     }
 
     public function testUpdateSprint()
@@ -49,7 +50,7 @@ class UpdateSprintApiTest extends TestCase
         $response = $this->putJson(
             "/api/workspaces/{$this->workspace->id}/projects/{$this->project->id}/sprints/{$this->sprint->id}",
             $newData,
-            ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]
+            $this->header
         );
 
         $response->assertStatus(200);
@@ -79,7 +80,7 @@ class UpdateSprintApiTest extends TestCase
         $response = $this->putJson(
             "/api/workspaces/{$workspace->id}/projects/{$project->id}/sprints/{$sprint->id}",
             $newData,
-            ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]
+            $this->header
         );
 
         $response->assertStatus(401);
@@ -103,7 +104,7 @@ class UpdateSprintApiTest extends TestCase
         $response = $this->putJson(
             "/api/workspaces/{$this->workspace->id}/projects/{$this->project->id}/sprints/{$this->sprint->id}",
             $invalidData,
-            ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]
+            $this->header
         );
 
         $response->assertStatus(422);
@@ -130,7 +131,7 @@ class UpdateSprintApiTest extends TestCase
         $response = $this->putJson(
             "/api/workspaces/999999/projects/{$project->id}/sprints/{$sprint->id}",
             $newData,
-            ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]
+            $this->header
         );
 
         $response->assertStatus(404);
@@ -152,7 +153,7 @@ class UpdateSprintApiTest extends TestCase
         $response = $this->putJson(
             "/api/workspaces/{$workspace->id}/projects/999999/sprints/{$sprint->id}",
             $newData,
-            ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]
+            $this->header
         );
 
         $response->assertStatus(404);
@@ -175,7 +176,7 @@ class UpdateSprintApiTest extends TestCase
         $response = $this->putJson(
             "/api/workspaces/{$workspace->id}/projects/{$project->id}/sprints/999999",
             $newData,
-            ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"]
+            $this->header
         );
 
         $response->assertStatus(404);
