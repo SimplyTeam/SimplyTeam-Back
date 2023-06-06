@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class GetSprintControllerTest extends TestCase
+class GetSprintApiTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -51,8 +51,6 @@ class GetSprintControllerTest extends TestCase
 
     public function test_get_fail_with_unlink_project()
     {
-        $sprint = Sprint::factory()->for($this->project)->create();
-
         $response = $this->getJson(
             "/api/workspaces/{$this->workspace->id}/projects/{$this->unlink_project->id}/sprints",
             $this->header
@@ -63,8 +61,6 @@ class GetSprintControllerTest extends TestCase
 
     public function test_get_fail_with_unlink_workspace()
     {
-        $sprint = Sprint::factory()->for($this->project)->create();
-
         $response = $this->getJson(
             "/api/workspaces/{$this->unlink_workspace->id}/projects/{$this->project->id}/sprints",
             $this->header
