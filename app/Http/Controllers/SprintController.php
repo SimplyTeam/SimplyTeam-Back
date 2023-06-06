@@ -33,7 +33,7 @@ class SprintController extends Controller
     {
         // Get the list of sprints, filter by 'is_closed' if required
         $sprints = $project->sprints()
-            ->when($request->closing_date, function ($query) use ($request) {
+            ->when($request->closing_date, function ($query) {
                 return $query->whereDate('closing_date', '!=', null);
             })
             ->orderBy('begin_date', 'desc')
