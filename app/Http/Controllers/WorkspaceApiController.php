@@ -35,28 +35,7 @@ class WorkspaceApiController extends Controller
         $workspace->users()->attach($currentUserAuthenticated);
 
         // Create invitations for each email in the list
-        if ($request->has('invitations')) {
-            foreach ($request->input('invitations') as $email) {
-                $token = Str::uuid()->toString();
-
-                $invitation = WorkspaceInvitation::create([
-                    'email' => $email,
-                    'workspace_id' => $workspace->id,
-                    'token' => $token
-                ]);
-
-                $invitation->invitedBy()->associate($currentUserAuthenticated);
-                $invitation->save();
-
-                // Send email to the invitation
-                Mail::to($email)->send(
-                    new WorkspaceInvitationEmail(
-                        $invitation,
-                        env("REDIRECTED_URL_MAIL") . "?token=" . urlencode($token)
-                    )
-                );
-            }
-        }
+       $this->sendEmail($request, $workspace, $currentUserAuthenticated);
 
         $workspace->save();
 
@@ -81,6 +60,7 @@ class WorkspaceApiController extends Controller
         if (!$workspace->users->contains($user)) {
             return response()->json(['error' => "Vous n'avez pas accès à ce workspace ou celui-ci n'existe pas"], 403);
         }
+        $this->sendEmail($request, $workspace, $user);
 
         $workspace->update($request->validated());
 
@@ -99,4 +79,44 @@ class WorkspaceApiController extends Controller
 
         return response()->json(null, 204);
     }
+
+    public function removeUser(Request $request, Workspace $workspace, $userId)
+    {
+        $user = $request->user();
+        if (!$workspace->users->contains($user)) {
+            return response()->json(['error' => "Vous n'avez pas accès à ce workspace ou celui-ci n'existe pas"], 403);
+        }
+        if ($user->id === (int)$userId) {
+            return response()->json(['error' => "Vous ne pouvez pas vous retirer vous-même du workspace"], 403);
+        }
+
+        $workspace->users()->detach($userId);
+
+        return response()->json(null, 204);
+    }
+    
+    public function sendEmail($request, $workspace, $user) {
+        if ($request->has('invitations')) {
+           foreach ($request->input('invitations') as $email) {
+               $token = Str::uuid()->toString();
+
+               $invitation = WorkspaceInvitation::create([
+                   'email' => $email,
+                   'workspace_id' => $workspace->id,
+                   'token' => $token
+               ]);
+
+               $invitation->invitedBy()->associate($user);
+               $invitation->save();
+
+               // Send email to the invitation
+               Mail::to($email)->send(
+                   new WorkspaceInvitationEmail(
+                       $invitation,
+                       env("REDIRECTED_URL_MAIL") . "?token=" . urlencode($token)
+                   )
+               );
+           }
+       }
+   }
 }
