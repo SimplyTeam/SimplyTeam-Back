@@ -23,7 +23,8 @@ class WorkspaceResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'created_by' => new UserResource(User::find($this->created_by_id) ?? null),
-            'users' => UserResource::collection($this->users)
+            'users' => UserResource::collection($this->users),
+            'projects' => ProjectResource::collection($this->projects)
         ];
     }
 }
