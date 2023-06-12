@@ -67,6 +67,10 @@ class SprintController extends Controller
 
     public function update(UpdateSprintRequest $request, Workspace $workspace, Project $project, Sprint $sprint)
     {
+        if(!$project->sprints->contains($sprint)) {
+            return response()->json('Unauthorized', 401);
+        }
+
         // Validate and get validated data
         $data = $request->validated();
 

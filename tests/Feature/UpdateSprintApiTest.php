@@ -33,19 +33,24 @@ class UpdateSprintApiTest extends TestCase
         $this->header = ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"];
     }
 
-    public function testUpdateSprint()
+    private function generateData()
     {
         $endDate = $this->faker->date;
         $beginDate = $this->faker->date('Y-m-d', $endDate);
         $middleTimestamp = (strtotime($beginDate) + strtotime($endDate)) / 2;
         $middleDate = date('Y-m-d', $middleTimestamp);
 
-        $newData = [
+        return [
             'name' => $this->faker->sentence(3),
             'begin_date' => $beginDate,
             'end_date' => $endDate,
             'closing_date' => $middleDate
         ];
+    }
+
+    public function testUpdateSprint()
+    {
+        $newData = $this->generateData();
 
         $response = $this->putJson(
             "/api/workspaces/{$this->workspace->id}/projects/{$this->project->id}/sprints/{$this->sprint->id}",
@@ -67,18 +72,10 @@ class UpdateSprintApiTest extends TestCase
         $project = Project::factory()->for($workspace)->create();
         $sprint = Sprint::factory()->for($project)->create();
 
-        $endDate = $this->faker->date;
-        $beginDate = $this->faker->date('Y-m-d', $endDate);
-
-        $newData = [
-            'name' => $this->faker->sentence(3),
-            'begin_date' => $beginDate,
-            'end_date' => $endDate,
-            'closing_date' => $this->faker->date(),
-        ];
+        $newData = $this->generateData();
 
         $response = $this->putJson(
-            "/api/workspaces/{$workspace->id}/projects/{$project->id}/sprints/{$sprint->id}",
+            "/api/workspaces/{$this->workspace->id}/projects/{$this->project->id}/sprints/{$sprint->id}",
             $newData,
             $this->header
         );
@@ -108,22 +105,10 @@ class UpdateSprintApiTest extends TestCase
 
     public function testUpdateSprintWithNonexistentWorkspace()
     {
-        $workspace = Workspace::factory()->create();
-        $project = Project::factory()->for($workspace)->create();
-        $sprint = Sprint::factory()->for($project)->create();
-
-        $endDate = $this->faker->date;
-        $beginDate = $this->faker->date('Y-m-d', $endDate);
-
-        $newData = [
-            'name' => $this->faker->sentence(3),
-            'begin_date' => $beginDate,
-            'end_date' => $endDate,
-            'closing_date' => $this->faker->date(),
-        ];
+        $newData = $this->generateData();
 
         $response = $this->putJson(
-            "/api/workspaces/999999/projects/{$project->id}/sprints/{$sprint->id}",
+            "/api/workspaces/999999/projects/{$this->project->id}/sprints/{$this->sprint->id}",
             $newData,
             $this->header
         );
@@ -133,19 +118,10 @@ class UpdateSprintApiTest extends TestCase
 
     public function testUpdateSprintWithNonexistentProject()
     {
-        $workspace = Workspace::factory()->create();
-        $project = Project::factory()->for($workspace)->create();
-        $sprint = Sprint::factory()->for($project)->create();
-
-        $newData = [
-            'name' => $this->faker->sentence(3),
-            'begin_date' => $this->faker->date(),
-            'end_date' => $this->faker->date(),
-            'closing_date' => $this->faker->date(),
-        ];
+        $newData = $this->generateData();
 
         $response = $this->putJson(
-            "/api/workspaces/{$workspace->id}/projects/999999/sprints/{$sprint->id}",
+            "/api/workspaces/{$this->workspace->id}/projects/999999/sprints/{$this->sprint->id}",
             $newData,
             $this->header
         );
@@ -155,18 +131,10 @@ class UpdateSprintApiTest extends TestCase
 
     public function testUpdateSprintWithNonexistentSprint()
     {
-        $workspace = Workspace::factory()->create();
-        $project = Project::factory()->for($workspace)->create();
-
-        $newData = [
-            'name' => $this->faker->sentence(3),
-            'begin_date' => $this->faker->date(),
-            'end_date' => $this->faker->date(),
-            'closing_date' => $this->faker->date(),
-        ];
+        $newData = $this->generateData();
 
         $response = $this->putJson(
-            "/api/workspaces/{$workspace->id}/projects/{$project->id}/sprints/999999",
+            "/api/workspaces/{$this->workspace->id}/projects/{$this->project->id}/sprints/999999",
             $newData,
             $this->header
         );
