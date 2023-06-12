@@ -36,12 +36,17 @@ class GetSprintApiTest extends TestCase
         $this->header = ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"];
     }
 
+    private function generateUrl($workspaceId, $projectId)
+    {
+        return "/api/workspaces/{$workspaceId}/projects/{$projectId}/sprints";
+    }
+
     public function test_get_sprint()
     {
         $sprint = Sprint::factory()->for($this->project)->create();
 
         $response = $this->getJson(
-            "/api/workspaces/{$this->workspace->id}/projects/{$this->project->id}/sprints",
+            $this->generateUrl($this->workspace->id, $this->project->id),
             $this->header
         );
 
@@ -52,7 +57,7 @@ class GetSprintApiTest extends TestCase
     public function test_get_fail_with_unlink_project()
     {
         $response = $this->getJson(
-            "/api/workspaces/{$this->workspace->id}/projects/{$this->unlink_project->id}/sprints",
+            $this->generateUrl($this->workspace->id, $this->unlink_project->id),
             $this->header
         );
 
@@ -62,7 +67,7 @@ class GetSprintApiTest extends TestCase
     public function test_get_fail_with_unlink_workspace()
     {
         $response = $this->getJson(
-            "/api/workspaces/{$this->unlink_workspace->id}/projects/{$this->project->id}/sprints",
+            $this->generateUrl($this->unlink_workspace->id, $this->project->id),
             $this->header
         );
 
