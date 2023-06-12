@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Tests\TestCase;
 
 class GetProjectsApiTest extends TestCase
@@ -42,7 +42,7 @@ class GetProjectsApiTest extends TestCase
         $response = $this->getJson("/api/workspaces/$workspaceId/projects/", ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
 
         // Assert successful response and correct projects data
-        $response->assertStatus(Response::HTTP_OK)
+        $response->assertStatus(ResponseAlias::HTTP_OK)
             ->assertJson((new ProjectCollection([$project1, $project2]))->response()->getData(true));
     }
 
@@ -57,9 +57,6 @@ class GetProjectsApiTest extends TestCase
         $user = User::factory()->create();
         $accessToken = $user->createToken('API Token')->accessToken;
         $workspace = Workspace::factory()->create();
-        $workspaceId = $workspace->id;
-        $project1 = Project::factory()->create(['workspace_id' => $workspace->id]);
-        $project2 = Project::factory()->create(['workspace_id' => $workspace->id]);
 
         // Authenticate the user
         $this->actingAs($user);
@@ -68,7 +65,7 @@ class GetProjectsApiTest extends TestCase
         $response = $this->getJson("/api/workspaces/{$workspace->id}/projects/", ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
 
         // Assert forbidden response
-        $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $response->assertStatus(ResponseAlias::HTTP_NOT_FOUND);
     }
 
     /**
@@ -88,6 +85,6 @@ class GetProjectsApiTest extends TestCase
         $response = $this->getJson("/api/workspaces/$workspaceId/projects/");
 
         // Assert unauthorized response
-        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertStatus(ResponseAlias::HTTP_UNAUTHORIZED);
     }
 }
