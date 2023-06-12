@@ -32,19 +32,33 @@ class CreateSprintApiTest extends TestCase
         $this->header = ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"];
     }
 
-    public function testStore()
+    private function generateUrl($workspaceId, $projectId)
+    {
+        return "/api/workspaces/{$workspaceId}/projects/{$projectId}/sprints";
+    }
+
+    private function generateSprintData()
     {
         $endDate = $this->faker->date;
         $beginDate = $this->faker->date('Y-m-d', $endDate);
 
-        $sprintData = [
+        return [
             'name' => $this->faker->name,
             'begin_date' => $beginDate,
             'end_date' => $endDate,
         ];
+    }
+
+    /**
+     * Test if we can store sprint
+     * @return void
+     */
+    public function testStore()
+    {
+        $sprintData = $this->generateSprintData();
 
         $response = $this->postJson(
-            "/api/workspaces/{$this->workspace->id}/projects/{$this->project->id}/sprints",
+            $this->generateUrl($this->workspace->id, $this->project->id),
             $sprintData,
             $this->header
         );
@@ -53,40 +67,16 @@ class CreateSprintApiTest extends TestCase
         $response->assertJsonFragment($sprintData);
     }
 
-
-    public function test_create_fail_with_unlink_project()
-    {
-        $endDate = $this->faker->date;
-        $beginDate = $this->faker->date('Y-m-d', $endDate);
-
-        $sprintData = [
-            'name' => $this->faker->name,
-            'begin_date' => $beginDate,
-            'end_date' => $endDate,
-        ];
-
-        $response = $this->postJson(
-            "/api/workspaces/{$this->workspace->id}/projects/{$this->unlink_project->id}/sprints",
-            $sprintData,
-            $this->header
-        );
-
-        $response->assertUnauthorized();
-    }
-
+    /**
+     * Test if we can create sprint for project unlink
+     * @return void
+     */
     public function test_create_sprint_for_project_unlink_with_workspace_fail()
     {
-        $endDate = $this->faker->date;
-        $beginDate = $this->faker->date('Y-m-d', $endDate);
-
-        $sprintData = [
-            'name' => $this->faker->name,
-            'begin_date' => $beginDate,
-            'end_date' => $endDate,
-        ];
+        $sprintData = $this->generateSprintData();
 
         $response = $this->postJson(
-            "/api/workspaces/{$this->workspace->id}/projects/{$this->unlink_project->id}/sprints",
+            $this->generateUrl($this->workspace->id, $this->unlink_project->id),
             $sprintData,
             $this->header
         );
@@ -101,21 +91,14 @@ class CreateSprintApiTest extends TestCase
      */
     public function test_create_projects_for_non_member_workspace()
     {
-        $endDate = $this->faker->date;
-        $beginDate = $this->faker->date('Y-m-d', $endDate);
-
-        $sprintData = [
-            'name' => $this->faker->name,
-            'begin_date' => $beginDate,
-            'end_date' => $endDate,
-        ];
+        $sprintData = $this->generateSprintData();
 
         $response = $this->postJson(
-            "/api/workspaces/{$this->unlink_workspace->id}/projects/{$this->project->id}/sprints",
+            $this->generateUrl($this->unlink_workspace->id, $this->project->id),
             $sprintData,
             $this->header
         );
-        // Assert forbidden response
+
         $response->assertUnauthorized();
     }
 
@@ -126,22 +109,13 @@ class CreateSprintApiTest extends TestCase
      */
     public function test_create_projects_without_authentication()
     {
-        $endDate = $this->faker->date;
-        $beginDate = $this->faker->date('Y-m-d', $endDate);
+        $sprintData = $this->generateSprintData();
 
-        $sprintData = [
-            'name' => $this->faker->name,
-            'begin_date' => $beginDate,
-            'end_date' => $endDate,
-        ];
-
-        // Make API request to get projects without authentication
         $response = $this->postJson(
-            "/api/workspaces/{$this->workspace->id}/projects/{$this->project->id}/sprints",
+            $this->generateUrl($this->workspace->id, $this->project->id),
             $sprintData
         );
 
-        // Assert unauthorized response
         $response->assertUnauthorized();
     }
 }
