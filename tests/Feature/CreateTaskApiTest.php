@@ -177,7 +177,7 @@ class CreateTaskApiTest extends TestCase
     public function test_store_task_with_unlinked_sprint()
     {
         $response = $this->postJson(
-            $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id),
+            $this->generateUrl($this->workspace->id, $this->project->id, $this->unlink_sprint->id),
             $this->getGeneratedData(),
             $this->header
         );
