@@ -47,6 +47,26 @@ class CreateTaskApiTest extends TestCase
     }
 
     /**
+     * Allows to get generated data of body
+     * @throws Exception
+     */
+    private function getGeneratedData() {
+        $beginDate = new DateTime($this->sprint->begin_date);
+        $endDate = new DateTime($this->sprint->end_date);
+
+        return [
+            'label' => $this->faker->text,
+            'description' => $this->faker->text,
+            'estimated_timestamp' => $this->faker->randomDigitNotNull,
+            'realized_timestamp' => $this->faker->randomDigitNotNull,
+            'deadline' => $this->faker->dateTimeBetween($beginDate, $endDate)->format('Y-m-d H:i:s'),
+            'is_finish' => false,
+            'priority_id' => random_int(1, 3),
+            'status_id' => random_int(1, 3)
+        ];
+    }
+
+    /**
      * Test successful task creation
      *
      * @return void
@@ -54,21 +74,10 @@ class CreateTaskApiTest extends TestCase
      */
     public function testSuccessfulTaskCreation()
     {
-        $beginDate = new DateTime($this->sprint->begin_date);
-        $endDate = new DateTime($this->sprint->end_date);
 
         $response = $this->postJson(
             $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id),
-            [
-                'label' => $this->faker->text,
-                'description' => $this->faker->text,
-                'estimated_timestamp' => $this->faker->randomDigitNotNull,
-                'realized_timestamp' => $this->faker->randomDigitNotNull,
-                'deadline' => $this->faker->dateTimeBetween($beginDate, $endDate)->format('Y-m-d H:i:s'),
-                'is_finish' => false,
-                'priority_id' => random_int(1, 3),
-                'status_id' => random_int(1, 3)
-            ],
+            $this->getGeneratedData(),
             $this->header
         );
 
@@ -115,5 +124,20 @@ class CreateTaskApiTest extends TestCase
                 )
             );
         }
+    }
+
+    /**
+     * Test task creation with unauthorized user
+     *
+     * @return void
+     */
+    public function testTaskCreationWithUnauthorizedUser()
+    {
+        $response = $this->postJson(
+            $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id),
+            $this->getGeneratedData()
+        );
+
+        $response->assertStatus(401); // Unauthorized
     }
 }
