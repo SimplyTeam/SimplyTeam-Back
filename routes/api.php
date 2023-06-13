@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SprintController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\WorkspaceApiController;
 use App\Http\Controllers\WorkspaceInvitationController;
 use Illuminate\Http\Request;
@@ -40,7 +41,12 @@ Route::middleware(['auth:api'])->group(function () {
             Route::prefix('/{project}/sprints')->group(function () {
                 Route::get('/', [SprintController::class, 'index']);
                 Route::post('/', [SprintController::class, 'store']);
-                Route::put('/{sprint}', [SprintController::class, 'update']);
+                Route::prefix('/{sprint}')->group(function () {
+                    Route::put('/', [SprintController::class, 'update']);
+                    Route::prefix('/tasks')->group(function () {
+                        Route::post('/', [TaskController::class, 'store']);
+                    });
+                });
             });
             Route::put('/{project}', [ProjectController::class, 'update']);
         });
