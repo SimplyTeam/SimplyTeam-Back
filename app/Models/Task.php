@@ -11,6 +11,7 @@ class Task extends Model
 
     protected $fillable = [
         'label',
+        'description',
         'estimated_timestamp',
         'realized_timestamp',
         'deadline',
