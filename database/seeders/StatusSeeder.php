@@ -15,9 +15,9 @@ class StatusSeeder extends Seeder
     public function run()
     {
         DB::table('status')->insert([
-            ['label' => 'New'],
-            ['label' => 'In Progress'],
-            ['label' => 'Done'],
+            ['id' => 1, 'label' => 'New'],
+            ['id' => 2, 'label' => 'In Progress'],
+            ['id' => 3, 'label' => 'Done'],
         ]);
     }
 }
