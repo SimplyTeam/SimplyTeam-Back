@@ -77,4 +77,43 @@ class CreateTaskApiTest extends TestCase
                 'message' => 'Task created successfully!'
             ]);
     }
+
+    /**
+     * Test task creation with missing required data
+     *
+     * @return void
+     */
+    public function testTaskCreationWithMissingData()
+    {
+        $response = $this->postJson(
+            $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id),
+            [
+            ],
+            $this->header
+        );
+
+        $response->assertStatus(422);  // Unprocessable Entity
+        $response->assertJsonStructure([
+            "message",
+            "errors"
+        ]);
+
+        foreach ($response->json("errors") as $key => $value) {
+            $this->assertTrue(
+                in_array(
+                    $key,
+                    [
+                        "label",
+                        "description",
+                        "estimated_timestamp",
+                        "realized_timestamp",
+                        "deadline",
+                        "is_finish",
+                        "priority_id",
+                        "status_id"
+                    ]
+                )
+            );
+        }
+    }
 }
