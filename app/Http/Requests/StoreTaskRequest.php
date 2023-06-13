@@ -28,11 +28,8 @@ class StoreTaskRequest extends FormRequest
             'realized_timestamp' => 'required|integer',
             'deadline' => 'required|date',
             'is_finish' => 'required|boolean',
-            'workspace_id' => 'required|integer',
-            'project_id' => 'required|integer',
-            'sprint_id' => 'required|integer',
-            'priority_id' => 'required|integer',
-            'status_id' => 'required|integer'
+            'priority_id' => 'required|integer|exists:priority,id',
+            'status_id' => 'required|integer|exists:status,id'
         ];
     }
 }
