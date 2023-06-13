@@ -36,6 +36,7 @@ class CreateTaskApiTest extends TestCase
 
         $this->unlink_workspace = Workspace::factory()->create();
         $this->unlink_project = Project::factory()->for($this->unlink_workspace)->create();
+        $this->unlink_sprint = Sprint::factory()->for($this->unlink_project)->create(); // Make a sprint but don't save it to database
 
         $this->accessToken = $this->user->createToken('API Token')->accessToken;
         $this->header = ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"];
@@ -159,5 +160,29 @@ class CreateTaskApiTest extends TestCase
         );
 
         $response->assertStatus(404);
+    }
+
+    public function test_store_task_with_unlinked_project()
+    {
+        $response = $this->postJson(
+            $this->generateUrl($this->workspace->id, $this->unlink_project->id, $this->sprint->id),
+            $this->getGeneratedData(),
+            $this->header
+        );
+
+        $response->assertStatus(403);
+        $this->assertEquals($response->json("message"), "This project does not belong to the specified workspace.");
+    }
+
+    public function test_store_task_with_unlinked_sprint()
+    {
+        $response = $this->postJson(
+            $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id),
+            $this->getGeneratedData(),
+            $this->header
+        );
+
+        $response->assertStatus(403);
+        $this->assertEquals($response->json("message"), "This sprint does not belong to the specified project.");
     }
 }
