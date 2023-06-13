@@ -130,6 +130,7 @@ class CreateTaskApiTest extends TestCase
      * Test task creation with unauthorized user
      *
      * @return void
+     * @throws Exception
      */
     public function testTaskCreationWithUnauthorizedUser()
     {
@@ -139,5 +140,24 @@ class CreateTaskApiTest extends TestCase
         );
 
         $response->assertStatus(401); // Unauthorized
+    }
+
+    /**
+     * Test store task with missing workspace
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function test_store_task_with_missing_workspace()
+    {
+        $this->workspace = Workspace::factory()->make();
+
+        $response = $this->postJson(
+            $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id),
+            $this->getGeneratedData(),
+            $this->header
+        );
+
+        $response->assertStatus(404);
     }
 }
