@@ -13,7 +13,8 @@ class Sprint extends Model
         'name',
         'begin_date',
         'end_date',
-        'closing_date'
+        'closing_date',
+        'project_id'
     ];
 
     /**
