@@ -46,6 +46,38 @@ class TaskController extends Controller
         return true;
     }
 
+    public function index(Request $request, $workspace, $project, $sprint)
+    {
+        $this->checkUserWorkspaceProjectSprint($workspace->id, $project->id, $sprint->id);
+
+        $tasks = Task::query()
+            ->join('sprints', 'tasks.id_sprint', '=', 'sprints.id')
+            ->where('sprints.id', $sprint->id);
+
+        // Apply filters
+        $filters = $request->only(['status', 'priority', 'assigned_to']);
+        if (!empty($filters['status'])) {
+            $tasks->where('tasks.status', $filters['status']);
+        }
+        if (!empty($filters['priority'])) {
+            $tasks->where('tasks.priority', $filters['priority']);
+        }
+        if (!empty($filters['assigned_to'])) {
+            $tasks->where('tasks.assigned_to', $filters['assigned_to']);
+        }
+
+        // Apply sorting
+        $sortField = $request->input('sort_field');
+        $sortOrder = $request->input('sort_order');
+        if (!empty($sortField) && !empty($sortOrder)) {
+            $tasks->orderBy($sortField, $sortOrder);
+        }
+
+        $tasks = $tasks->get();
+
+        return response()->json($tasks);
+    }
+
     public function store(StoreTaskRequest $request, Workspace $workspace, Project $project, Sprint $sprint)
     {
         $check = $this->checkUserWorkspaceProjectSprint($workspace->id, $project->id, $sprint->id);
