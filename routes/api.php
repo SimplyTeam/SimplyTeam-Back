@@ -44,6 +44,7 @@ Route::middleware(['auth:api'])->group(function () {
                 Route::prefix('/{sprint}')->group(function () {
                     Route::put('/', [SprintController::class, 'update']);
                     Route::prefix('/tasks')->group(function () {
+                        Route::get('/', [TaskController::class, 'index']);
                         Route::post('/', [TaskController::class, 'store']);
                     });
                 });
