@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Project;
 use App\Models\Sprint;
+use App\Models\Task;
 use App\Models\User;
 use App\Models\Workspace;
 use Exception;
@@ -37,6 +38,9 @@ class GetTaskApiTest extends TestCase
             "end_date" => $endDate
         ])->for($this->project)->create();
 
+        // Create 5 tasks using the factory
+        $this->tasks = Task::factory()->for($this->sprint)->times(5)->create();
+
         $this->unlink_workspace = Workspace::factory()->create();
         $this->unlink_project = Project::factory()->for($this->unlink_workspace)->create();
         $this->unlink_sprint = Sprint::factory()->for($this->unlink_project)->create(); // Make a sprint but don't save it to database
@@ -50,9 +54,45 @@ class GetTaskApiTest extends TestCase
         return "/api/workspaces/{$workspaceId}/projects/{$projectId}/sprints/{$sprintId}/tasks";
     }
 
+    public function testListTasks()
+    {
+        // Test without any filters or sorting
+        $response = $this->get(
+            $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id),
+            $this->header
+        );
+        $response->assertStatus(200);
+        $response->assertJsonFragment($this->tasks[0]->toArray());
+    }
+
+    public function testListTasksWithFilters()
+    {
+        // Test with filters
+        $filters = [
+            'status' => 'in_progress',
+            'priority' => 'high',
+            'assigned_to' => 'john@example.com'
+        ];
+        $response = $this->get('/tasks', $filters);
+        $response->assertStatus(200);
+        // TODO: Add assertions to verify the response data
+    }
+
+    public function testListTasksWithSorting()
+    {
+        // Test with sorting
+        $sorting = [
+            'field' => 'deadline',
+            'order' => 'asc'
+        ];
+        $response = $this->get('/tasks', $sorting);
+        $response->assertStatus(200);
+        // TODO: Add assertions to verify the response data
+    }
+
     public function test_get_task()
     {
-        $sprint = Sprint::factory()->for($this->project)->create();
+        $sprint = Sprint::factory()->for($this->sprint)->create();
 
         $response = $this->getJson(
             $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id),
