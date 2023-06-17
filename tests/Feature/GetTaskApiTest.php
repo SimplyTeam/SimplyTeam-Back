@@ -79,25 +79,47 @@ class GetTaskApiTest extends TestCase
     {
         // Test with filters
         $filters = [
-            'status' => 'in_progress',
-            'priority' => 'high',
-            'assigned_to' => 'john@example.com'
+            'status=in_progress',
+            'priority=high'
         ];
-        $response = $this->get($this->generateUrl($this->workspace->id, $this->unlink_project->id, $this->sprint->id), $filters);
+        $response = $this->get($this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id) . '?' . join('&', $filters), $this->header);
+
+        dd($response);
+
         $response->assertStatus(200);
-        // TODO: Add assertions to verify the response data
+
+        $responseData = $response->json();
+
+        // Assert that all tasks have the expected status
+        $this->assertTrue(collect($responseData)->pluck('status_id')->every(function ($statusId) {
+            return $statusId === 2; // Replace with the expected status ID
+        }));
+
+        // Assert that all tasks have the expected priority
+        $this->assertTrue(collect($responseData)->pluck('priority_id')->every(function ($priorityId) {
+            return $priorityId === 1; // Replace with the expected priority ID
+        }));
+
+        // Assert that all tasks are assigned to the expected user
+        $this->assertTrue(collect($responseData)->pluck('assigned_to')->every(function ($assignedTo) {
+            return $assignedTo === 'john@example.com'; // Replace with the expected user email
+        }));
     }
 
     public function testListTasksWithSorting()
     {
         // Test with sorting
         $sorting = [
-            'field' => 'deadline',
-            'order' => 'asc'
+            'sort_field=deadline',
+            'sort_order=asc'
         ];
-        $response = $this->get($this->generateUrl($this->workspace->id, $this->unlink_project->id, $this->sprint->id), $sorting);
+        $response = $this->get($this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id) . '?' . join('&', $sorting), $this->header);
         $response->assertStatus(200);
-        // TODO: Add assertions to verify the response data
+        $responseData = $response->json();
+        $sortedDeadlines = collect($responseData)->pluck('deadline')->sort();
+
+        $this->assertEquals($sortedDeadlines->values()->all(), collect($responseData)->pluck('deadline')->all());
+
     }
 
     public function test_get_task()

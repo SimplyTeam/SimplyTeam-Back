@@ -61,10 +61,10 @@ class TaskController extends Controller
         // Apply filters
         $filters = $request->only(['status', 'priority', 'assigned_to']);
         if (!empty($filters['status'])) {
-            $tasks->where('tasks.status', $filters['status']);
+            $tasks->where('tasks.status_id', $filters['status']);
         }
         if (!empty($filters['priority'])) {
-            $tasks->where('tasks.priority', $filters['priority']);
+            $tasks->where('tasks.priority_id', $filters['priority']);
         }
         if (!empty($filters['assigned_to'])) {
             $tasks->where('tasks.assigned_to', $filters['assigned_to']);

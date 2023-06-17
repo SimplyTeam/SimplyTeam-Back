@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Task extends Model
 {
@@ -18,8 +19,14 @@ class Task extends Model
         'is_finish',
         'sprint_id',
         'priority_id',
-        'status_id'
+        'status_id',
+        'assigned_to'
     ];
+
+    public function assignedTo(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
 
     public function sprint()
     {
