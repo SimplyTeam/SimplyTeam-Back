@@ -79,12 +79,10 @@ class GetTaskApiTest extends TestCase
     {
         // Test with filters
         $filters = [
-            'status=in_progress',
-            'priority=high'
+            'status=1',
+            'priority=3'
         ];
         $response = $this->get($this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id) . '?' . join('&', $filters), $this->header);
-
-        dd($response);
 
         $response->assertStatus(200);
 
