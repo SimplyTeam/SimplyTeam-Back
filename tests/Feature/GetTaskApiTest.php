@@ -55,7 +55,7 @@ class GetTaskApiTest extends TestCase
 
     private function generateUrl($workspaceId, $projectId, $sprintId)
     {
-        return "/api/workspaces/{$workspaceId}/projects/{$projectId}/sprints/{$sprintId}/tasks";
+        return "/api/workspaces/$workspaceId/projects/$projectId/sprints/$sprintId/tasks";
     }
 
     public function testListTasks()

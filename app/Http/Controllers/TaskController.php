@@ -22,22 +22,22 @@ class TaskController extends Controller
         $this->middleware('auth:api');
     }
 
-    private function checkUserWorkspaceProjectSprint($workspaceId, $projectId, $sprintId)
+    private function checkUserWorkspaceProjectSprint(Workspace $workspace, Project $project, Sprint $sprint)
     {
         $this->user = Auth::user();
-        $this->workspace = $this->user->workspaces()->where('id', $workspaceId)->first();
+        $this->workspace = $this->user->workspaces()->where('id', $workspace->id)->first();
 
         if (!$this->workspace) {
             return response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
         }
 
-        $this->project = $this->workspace->projects()->where('id', $projectId)->first();
+        $this->project = $this->workspace->projects()->where('id', $project->id)->first();
 
         if (!$this->project) {
             return response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
         }
 
-        $this->sprint = $this->project->sprints()->where('id', $sprintId)->first();
+        $this->sprint = $this->project->sprints()->where('id', $sprint->id)->first();
 
         if (!$this->sprint) {
             return response()->json(['message' => 'This sprint does not belong to the specified project.'], 403);
@@ -48,7 +48,11 @@ class TaskController extends Controller
 
     public function index(Request $request, Workspace $workspace, Project $project, Sprint $sprint)
     {
-        $this->checkUserWorkspaceProjectSprint($workspace->id, $project->id, $sprint->id);
+        $check = $this->checkUserWorkspaceProjectSprint($workspace, $project, $sprint);
+
+        if ($check !== true) {
+            return $check; // It will return a response if the check fails.
+        }
 
         $tasks = Task::query()
             ->join('sprints', 'tasks.sprint_id', '=', 'sprints.id')
@@ -80,7 +84,7 @@ class TaskController extends Controller
 
     public function store(StoreTaskRequest $request, Workspace $workspace, Project $project, Sprint $sprint)
     {
-        $check = $this->checkUserWorkspaceProjectSprint($workspace->id, $project->id, $sprint->id);
+        $check = $this->checkUserWorkspaceProjectSprint($workspace, $project, $sprint);
 
         if ($check !== true) {
             return $check; // It will return a response if the check fails.
