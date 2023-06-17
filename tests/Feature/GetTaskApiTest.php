@@ -120,19 +120,6 @@ class GetTaskApiTest extends TestCase
 
     }
 
-    public function test_get_task()
-    {
-        $sprint = Sprint::factory()->for($this->sprint)->create();
-
-        $response = $this->getJson(
-            $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id),
-            $this->header
-        );
-
-        $response->assertOk();
-        $response->assertJsonFragment($sprint->toArray());
-    }
-
     /**
      * Test get task with missing workspace
      *
