@@ -33,13 +33,17 @@ class GetTaskApiTest extends TestCase
         $this->workspace = Workspace::factory()->create();
         $this->workspace->users()->attach($this->user->id);
         $this->project = Project::factory()->for($this->workspace)->create();
-        $this->sprint = Sprint::factory([
-            "begin_date" => $beginDate,
-            "end_date" => $endDate
-        ])->for($this->project)->create();
+        $this->sprint = Sprint::factory()
+            ->for($this->project)
+            ->create([
+                "begin_date" => $beginDate,
+                "end_date" => $endDate
+            ]);
 
-        // Create 5 tasks using the factory
-        $this->tasks = Task::factory()->for($this->sprint)->times(5)->create();
+        $this->tasks = Task::factory()
+            ->times(5)
+            ->for($this->sprint)
+            ->create();
 
         $this->unlink_workspace = Workspace::factory()->create();
         $this->unlink_project = Project::factory()->for($this->unlink_workspace)->create();
@@ -73,7 +77,7 @@ class GetTaskApiTest extends TestCase
             'priority' => 'high',
             'assigned_to' => 'john@example.com'
         ];
-        $response = $this->get('/tasks', $filters);
+        $response = $this->get($this->generateUrl($this->workspace->id, $this->unlink_project->id, $this->sprint->id), $filters);
         $response->assertStatus(200);
         // TODO: Add assertions to verify the response data
     }
@@ -85,7 +89,7 @@ class GetTaskApiTest extends TestCase
             'field' => 'deadline',
             'order' => 'asc'
         ];
-        $response = $this->get('/tasks', $sorting);
+        $response = $this->get($this->generateUrl($this->workspace->id, $this->unlink_project->id, $this->sprint->id), $sorting);
         $response->assertStatus(200);
         // TODO: Add assertions to verify the response data
     }

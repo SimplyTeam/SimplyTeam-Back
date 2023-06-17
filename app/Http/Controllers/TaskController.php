@@ -46,12 +46,12 @@ class TaskController extends Controller
         return true;
     }
 
-    public function index(Request $request, $workspace, $project, $sprint)
+    public function index(Request $request, Workspace $workspace, Project $project, Sprint $sprint)
     {
         $this->checkUserWorkspaceProjectSprint($workspace->id, $project->id, $sprint->id);
 
         $tasks = Task::query()
-            ->join('sprints', 'tasks.id_sprint', '=', 'sprints.id')
+            ->join('sprints', 'tasks.sprint_id', '=', 'sprints.id')
             ->where('sprints.id', $sprint->id);
 
         // Apply filters
