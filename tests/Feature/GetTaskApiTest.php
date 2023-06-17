@@ -66,7 +66,13 @@ class GetTaskApiTest extends TestCase
             $this->header
         );
         $response->assertStatus(200);
-        $response->assertJsonFragment($this->tasks[0]->toArray());
+
+        $expectedResponse = collect($this->tasks->toArray())->map(function ($task) {
+            return array_merge($task, ['id' => 15]);
+        })->each(function (&$task) {
+            unset($task['id']);
+        })->toArray();
+        $response->assertJson($expectedResponse);
     }
 
     public function testListTasksWithFilters()

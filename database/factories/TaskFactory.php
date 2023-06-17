@@ -22,7 +22,7 @@ class TaskFactory extends Factory
             'description' => $this->faker->paragraph,
             'estimated_timestamp' => $this->faker->numberBetween(1, 10),
             'realized_timestamp' => $this->faker->numberBetween(1, 10),
-            'deadline' => $this->faker->dateTimeBetween('now', '+1 week'),
+            'deadline' => $this->faker->dateTimeBetween('now', '+1 week')->format('Y-m-d H:m:s'),
             'is_finish' => $this->faker->boolean,
             'priority_id' => $this->faker->numberBetween(1, 3),
             'status_id' => $this->faker->numberBetween(1, 3),
