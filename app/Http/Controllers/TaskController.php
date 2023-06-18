@@ -105,4 +105,9 @@ class TaskController extends Controller
 
         return response()->json(['message' => 'Task created successfully!', 'task' => $task], 201);
     }
+
+    public function update(StoreTaskRequest $request, Workspace $workspace, Project $project, Sprint $sprint, Task $task)
+    {
+        return response()->json(['message' => 'Task created successfully!']);
+    }
 }
