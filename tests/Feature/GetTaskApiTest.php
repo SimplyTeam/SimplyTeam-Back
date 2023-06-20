@@ -42,6 +42,7 @@ class GetTaskApiTest extends TestCase
 
         $this->tasks = Task::factory()
             ->times(5)
+            ->for($this->project)
             ->for($this->sprint)
             ->create();
 

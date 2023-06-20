@@ -20,7 +20,8 @@ class Task extends Model
         'sprint_id',
         'priority_id',
         'status_id',
-        'assigned_to'
+        'project_id',
+        'assigned_to',
     ];
 
     public function assignedTo(): BelongsTo

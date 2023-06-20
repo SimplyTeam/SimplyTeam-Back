@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Project;
 use App\Models\Sprint;
 use App\Models\Task;
@@ -22,37 +23,18 @@ class TaskController extends Controller
         $this->middleware('auth:api');
     }
 
-    private function checkUserWorkspaceProjectSprint(Workspace $workspace, Project $project, Sprint $sprint)
-    {
-        $this->user = Auth::user();
-        $this->workspace = $this->user->workspaces()->where('id', $workspace->id)->first();
-
-        if (!$this->workspace) {
-            return response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
-        }
-
-        $this->project = $this->workspace->projects()->where('id', $project->id)->first();
-
-        if (!$this->project) {
-            return response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
-        }
-
-        $this->sprint = $this->project->sprints()->where('id', $sprint->id)->first();
-
-        if (!$this->sprint) {
-            return response()->json(['message' => 'This sprint does not belong to the specified project.'], 403);
-        }
-
-        return true;
-    }
-
     public function index(Request $request, Workspace $workspace, Project $project, Sprint $sprint)
     {
-        $check = $this->checkUserWorkspaceProjectSprint($workspace, $project, $sprint);
+        $user = $request->user();
 
-        if ($check !== true) {
-            return $check; // It will return a response if the check fails.
-        }
+        if(!$user->hasWorkspace($workspace))
+            return response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
+
+        if(!$workspace->hasProject($project))
+            return response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
+
+        if(!$project->hasSprint($sprint))
+            return response()->json(['message' => 'This sprint does not belong to the specified project.'], 403);
 
         $tasks = Task::query()
             ->join('sprints', 'tasks.sprint_id', '=', 'sprints.id')
@@ -82,15 +64,20 @@ class TaskController extends Controller
         return response()->json($tasks);
     }
 
-    public function store(StoreTaskRequest $request, Workspace $workspace, Project $project, Sprint $sprint)
+    public function store(StoreTaskRequest $request, Workspace $workspace, Project $project)
     {
-        $check = $this->checkUserWorkspaceProjectSprint($workspace, $project, $sprint);
+        $user = $request->user();
 
-        if ($check !== true) {
-            return $check; // It will return a response if the check fails.
-        }
+        if(!$user->hasWorkspace($workspace))
+            return response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
+
+        if(!$workspace->hasProject($project))
+            return response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
 
         $validatedata = $request->validated();
+
+        if(in_array('sprint_id', $validatedata) && !$project->hasSprintWithId($validatedata['sprint_id']))
+            return response()->json(['message' => 'sprint does not belong to the specified project.'], 404);
 
         $task = new Task();
         $task->label = $validatedata["label"];
@@ -101,13 +88,28 @@ class TaskController extends Controller
         $task->is_finish = $validatedata["is_finish"];
         $task->priority_id = $validatedata["priority_id"];
         $task->status_id = $validatedata["status_id"];
-        $sprint->tasks()->save($task);
+        $task->sprint_id = $validatedata["sprint_id"];
+        $task->project_id = $project->id;
+        $task->save();
 
         return response()->json(['message' => 'Task created successfully!', 'task' => $task], 201);
     }
 
-    public function update(StoreTaskRequest $request, Workspace $workspace, Project $project, Sprint $sprint, Task $task)
+    public function update(UpdateTaskRequest $request, Workspace $workspace, Project $project, Task $task)
     {
-        return response()->json(['message' => 'Task created successfully!']);
+        $user = $request->user();
+
+        if(!$user->hasWorkspace($workspace))
+            return response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
+
+        if(!$workspace->hasProject($project))
+            return response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
+
+        if(!$project->hasTask($task))
+            return response()->json(['message' => 'This task does not belong to the specified project.'], 403);
+
+        // Update the task
+        $task->update($request->validated());
+        return response()->json(['message' => 'Task updated successfully!']);
     }
 }

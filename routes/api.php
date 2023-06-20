@@ -38,6 +38,12 @@ Route::middleware(['auth:api'])->group(function () {
         Route::prefix("/{workspace}/projects")->group(function () {
             Route::get('/', [ProjectController::class, 'index']);
             Route::post('/', [ProjectController::class, 'store']);
+            Route::prefix('/{project}')->group(function () {
+                Route::prefix('/tasks/')->group(function () {
+                    Route::post('/', [TaskController::class, 'store']);
+                    Route::put('/{task}', [TaskController::class, 'update']);
+                });
+            });
             Route::prefix('/{project}/sprints')->group(function () {
                 Route::get('/', [SprintController::class, 'index']);
                 Route::post('/', [SprintController::class, 'store']);
@@ -45,10 +51,6 @@ Route::middleware(['auth:api'])->group(function () {
                     Route::put('/', [SprintController::class, 'update']);
                     Route::prefix('/tasks')->group(function () {
                         Route::get('/', [TaskController::class, 'index']);
-                        Route::post('/', [TaskController::class, 'store']);
-                        Route::prefix('/{task}')->group(function () {
-                            Route::put('/', [TaskController::class, 'update']);
-                        });
                     });
                 });
             });

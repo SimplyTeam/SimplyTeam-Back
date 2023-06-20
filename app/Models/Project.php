@@ -23,4 +23,24 @@ class Project extends Model
     {
         return $this->hasMany(Sprint::class);
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
+    public function hasTask(Task $task)
+    {
+        return $this->tasks()->where('id', $task->id)->exists();
+    }
+
+    public function hasSprint(Sprint $sprint)
+    {
+        return $this->sprints()->where('id', $sprint->id)->exists();
+    }
+
+    public function hasSprintWithId(string $sprint_id)
+    {
+        return $this->sprints()->findOrFail($sprint_id)->exists();
+    }
 }
