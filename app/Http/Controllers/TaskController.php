@@ -119,4 +119,25 @@ class TaskController extends Controller
         $task->update($request->validated());
         return response()->json(['message' => 'Task updated successfully.']);
     }
+
+    public function remove(Request $request, Workspace $workspace, Project $project, Task $task) {
+        $user = $request->user();
+
+        if(!$user->hasWorkspace($workspace))
+            return response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
+
+        if(!$workspace->hasProject($project))
+            return response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
+
+        if(!$project->hasTask($task))
+            return response()->json(['message' => 'This task does not belong to the specified project.'], 403);
+
+        // Ensure the user is authorized to delete this task
+        $this->authorize('delete', $task);
+
+        // Delete the task
+        $task->delete();
+
+        return response()->json(['message' => 'Task deleted successfully.'], 200);
+    }
 }
