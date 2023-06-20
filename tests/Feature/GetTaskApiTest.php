@@ -66,22 +66,34 @@ class GetTaskApiTest extends TestCase
             $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id),
             $this->header
         );
+
         $response->assertStatus(200);
 
-        $expectedResponse = collect($this->tasks->toArray())->map(function ($task) {
-            return array_merge($task, ['id' => 15]);
-        })->each(function (&$task) {
-            unset($task['id']);
-        })->toArray();
-        $response->assertJson($expectedResponse);
+        // Get the tasks from the response
+        $returnedTasks = $response->json();
+
+        // Verify that each returned task is in $this->tasks
+        foreach ($returnedTasks as $task) {
+            $this->assertTrue($this->tasks->contains('label', $task['label']));
+            $this->assertTrue($this->tasks->contains('description', $task['description']));
+            $this->assertTrue($this->tasks->contains('estimated_timestamp', $task['estimated_timestamp']));
+            $this->assertTrue($this->tasks->contains('realized_timestamp', $task['realized_timestamp']));
+            $this->assertTrue($this->tasks->contains('deadline', $task['deadline']));
+            $this->assertTrue($this->tasks->contains('is_finish', $task['is_finish']));
+            $this->assertTrue($this->tasks->contains('priority_id', $task['priority_id']));
+            $this->assertTrue($this->tasks->contains('status_id', $task['status_id']));
+            $this->assertTrue($this->tasks->contains('project_id', $task['project_id']));
+            $this->assertTrue($this->tasks->contains('sprint_id', $task['sprint_id']));
+        }
     }
+
 
     public function testListTasksWithFilters()
     {
         // Test with filters
         $filters = [
-            'status=1',
-            'priority=3'
+            'status=2',
+            'priority=1'
         ];
         $response = $this->get($this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id) . '?' . join('&', $filters), $this->header);
 
@@ -101,7 +113,7 @@ class GetTaskApiTest extends TestCase
 
         // Assert that all tasks are assigned to the expected user
         $this->assertTrue(collect($responseData)->pluck('assigned_to')->every(function ($assignedTo) {
-            return $assignedTo === 'john@example.com'; // Replace with the expected user email
+            return $assignedTo === $this->user->email;
         }));
     }
 

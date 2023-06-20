@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::table('tasks', function (Blueprint $table) {
             $table->unsignedBigInteger('sprint_id')->nullable()->change();
-            $table->foreignId('project_id')->constrained();
+            $table->unsignedBigInteger('project_id');
+            $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
         });
     }
 
@@ -23,9 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('tasks', function (Blueprint $table) {
+            $table->unsignedBigInteger('sprint_id')->nullable(false)->change();
             $table->dropForeign(['project_id']);
             $table->dropColumn('project_id');
-            $table->unsignedBigInteger('sprint_id')->change();
         });
     }
 };

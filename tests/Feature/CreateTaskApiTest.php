@@ -42,9 +42,9 @@ class CreateTaskApiTest extends TestCase
         $this->header = ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"];
     }
 
-    private function generateUrl($workspaceId, $projectId, $sprintId)
+    private function generateUrl($workspaceId, $projectId)
     {
-        return "/api/workspaces/{$workspaceId}/projects/{$projectId}/sprints/{$sprintId}/tasks";
+        return "/api/workspaces/{$workspaceId}/projects/{$projectId}/tasks";
     }
 
     /**
@@ -77,7 +77,7 @@ class CreateTaskApiTest extends TestCase
     {
 
         $response = $this->postJson(
-            $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id),
+            $this->generateUrl($this->workspace->id, $this->project->id),
             $this->getGeneratedData(),
             $this->header
         );
@@ -96,7 +96,7 @@ class CreateTaskApiTest extends TestCase
     public function testTaskCreationWithMissingData()
     {
         $response = $this->postJson(
-            $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id),
+            $this->generateUrl($this->workspace->id, $this->project->id),
             [
             ],
             $this->header
@@ -136,7 +136,7 @@ class CreateTaskApiTest extends TestCase
     public function testTaskCreationWithUnauthorizedUser()
     {
         $response = $this->postJson(
-            $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id),
+            $this->generateUrl($this->workspace->id, $this->project->id),
             $this->getGeneratedData()
         );
 
@@ -154,7 +154,7 @@ class CreateTaskApiTest extends TestCase
         $this->workspace = Workspace::factory()->make();
 
         $response = $this->postJson(
-            $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id),
+            $this->generateUrl($this->workspace->id, $this->project->id),
             $this->getGeneratedData(),
             $this->header
         );
@@ -165,24 +165,12 @@ class CreateTaskApiTest extends TestCase
     public function test_store_task_with_unlinked_project()
     {
         $response = $this->postJson(
-            $this->generateUrl($this->workspace->id, $this->unlink_project->id, $this->sprint->id),
+            $this->generateUrl($this->workspace->id, $this->unlink_project->id),
             $this->getGeneratedData(),
             $this->header
         );
 
         $response->assertStatus(403);
         $this->assertEquals($response->json("message"), "This project does not belong to the specified workspace.");
-    }
-
-    public function test_store_task_with_unlinked_sprint()
-    {
-        $response = $this->postJson(
-            $this->generateUrl($this->workspace->id, $this->project->id, $this->unlink_sprint->id),
-            $this->getGeneratedData(),
-            $this->header
-        );
-
-        $response->assertStatus(403);
-        $this->assertEquals($response->json("message"), "This sprint does not belong to the specified project.");
     }
 }

@@ -38,8 +38,8 @@ class UpdateTaskApiTest extends TestCase
         ])->for($this->project)->create();
 
         $this->task = Task::factory()
-            ->for($this->project)
             ->for($this->sprint)
+            ->for($this->project)
             ->create();
 
         $this->unlink_workspace = Workspace::factory()->create();
@@ -86,7 +86,10 @@ class UpdateTaskApiTest extends TestCase
      */
     public function testSuccessfulTaskUpdate()
     {
-        $task = Task::factory()->for($this->sprint)->create();
+        $task = Task::factory()
+            ->for($this->sprint)
+            ->for($this->project)
+            ->create();
 
         $newData = $this->getGeneratedData();
 

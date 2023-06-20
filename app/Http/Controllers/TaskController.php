@@ -49,7 +49,10 @@ class TaskController extends Controller
             $tasks->where('tasks.priority_id', $filters['priority']);
         }
         if (!empty($filters['assigned_to'])) {
-            $tasks->where('tasks.assigned_to', $filters['assigned_to']);
+            $email = $filters['assigned_to'];
+            $tasks = Task::whereHas('user', function ($query) use ($email) {
+                $query->where('email', $email);
+            });
         }
 
         // Apply sorting
@@ -76,10 +79,15 @@ class TaskController extends Controller
 
         $validatedata = $request->validated();
 
-        if(in_array('sprint_id', $validatedata) && !$project->hasSprintWithId($validatedata['sprint_id']))
-            return response()->json(['message' => 'sprint does not belong to the specified project.'], 404);
-
         $task = new Task();
+
+        if(in_array('sprint_id', $validatedata)) {
+            if(!$project->hasSprintWithId($validatedata['sprint_id']))
+                return response()->json(['message' => 'sprint does not belong to the specified project.'], 404);
+            else
+                $task->sprint_id = $validatedata["sprint_id"];
+        }
+
         $task->label = $validatedata["label"];
         $task->description = $validatedata["description"];
         $task->estimated_timestamp = $validatedata["estimated_timestamp"];
@@ -88,7 +96,6 @@ class TaskController extends Controller
         $task->is_finish = $validatedata["is_finish"];
         $task->priority_id = $validatedata["priority_id"];
         $task->status_id = $validatedata["status_id"];
-        $task->sprint_id = $validatedata["sprint_id"];
         $task->project_id = $project->id;
         $task->save();
 
@@ -110,6 +117,6 @@ class TaskController extends Controller
 
         // Update the task
         $task->update($request->validated());
-        return response()->json(['message' => 'Task updated successfully!']);
+        return response()->json(['message' => 'Task updated successfully.']);
     }
 }
