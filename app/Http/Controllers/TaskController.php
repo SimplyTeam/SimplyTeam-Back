@@ -13,11 +13,6 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-    private $user;
-    private $workspace;
-    private $project;
-    private $sprint;
-
     public function __construct()
     {
         $this->middleware('auth:api');
