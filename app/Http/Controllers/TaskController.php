@@ -132,9 +132,6 @@ class TaskController extends Controller
         if(!$project->hasTask($task))
             return response()->json(['message' => 'This task does not belong to the specified project.'], 403);
 
-        // Ensure the user is authorized to delete this task
-        $this->authorize('delete', $task);
-
         // Delete the task
         $task->delete();
 

@@ -91,6 +91,23 @@ class DeleteTaskApiTest extends TestCase
             $this->header
         );
 
+        $response->assertStatus(404);
+    }
+
+    /**
+     * Test delete task with unlink workspace
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function test_delete_task_with_unlink_workspace()
+    {
+        $response = $this->deleteJson(
+            $this->generateUrl($this->unlink_workspace->id, $this->project->id, $this->task->id),
+            [],
+            $this->header
+        );
+
         $response->assertStatus(403);
     }
 

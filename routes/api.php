@@ -39,7 +39,7 @@ Route::middleware(['auth:api'])->group(function () {
             Route::get('/', [ProjectController::class, 'index']);
             Route::post('/', [ProjectController::class, 'store']);
             Route::prefix('/{project}')->group(function () {
-                Route::prefix('/tasks/')->group(function () {
+                Route::prefix('/tasks')->group(function () {
                     Route::post('/', [TaskController::class, 'store']);
                     Route::put('/{task}', [TaskController::class, 'update']);
                     Route::delete('/{task}', [TaskController::class, 'remove']);
