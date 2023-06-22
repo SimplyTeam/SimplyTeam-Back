@@ -1,8 +1,9 @@
 {
     "version": 2,
-    "functions": {
-        "api/index.php": { "runtime": "vercel-php@0.3.1" }
-    },
+    "builds": [
+        { "src": "composer.json", "use": "@vercel/php", "config": { "maxDuration": 120 } },
+        { "src": "docker-compose.yml", "use": "@vercel/docker" }
+    ],
     "routes": [
         {
             "src": "/(.*)",
