@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\WorkspaceNotOwnedException;
 use App\Http\Requests\WorkspaceFormRequest;
 use App\Http\Resources\WorkspaceCollection;
 use App\Http\Resources\WorkspaceResource;
@@ -12,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
-class WorkspaceApiController extends Controller
+class WorkspaceController extends Controller
 {
     public function index(Request $request)
     {
@@ -47,7 +48,7 @@ class WorkspaceApiController extends Controller
         $workspace = $request->user()->workspaces()->find($id);
 
         if (!$workspace) {
-            return response()->json(['error' => "Vous n'avez pas accès à ce workspace ou celui-ci n'existe pas"], 403);
+            throw new WorkspaceNotOwnedException();
         }
 
         return new WorkspaceResource($workspace);
@@ -94,7 +95,7 @@ class WorkspaceApiController extends Controller
 
         return response()->json(null, 204);
     }
-    
+
     public function sendEmail($request, $workspace, $user) {
         if ($request->has('invitations')) {
            foreach ($request->input('invitations') as $email) {

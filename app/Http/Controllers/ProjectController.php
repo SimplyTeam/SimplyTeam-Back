@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\WorkspaceNotOwnedException;
 use App\Http\Requests\ProjectFormRequest;
 use App\Http\Resources\ProjectCollection;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\Workspace;
+use App\Services\ProjectService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProjectController extends Controller
 {
+
+    public function __construct(ProjectService $projectService)
+    {
+        $this->projectService = $projectService;
+    }
 
     /**
      * Display a listing of the projects for a user in the given workspace.
@@ -26,14 +33,14 @@ class ProjectController extends Controller
 
         // Check that the workspace belongs to the user
         if (!$user->workspaces->contains($workspace)) {
-            return response()->json(['message' => 'Workspace not found.'], 404);
+            throw new WorkspaceNotOwnedException();
         }
 
         // Get the projects associated with the workspace
-        $projects = $workspace->projects;
+        $projects = $this->projectService->getProjectsByWorkspaceId($workspace->id);
 
         // Return the projects as a resource collection
-        return new ProjectCollection($projects);
+        return (new ProjectCollection($projects))->response();
     }
 
     /**
@@ -43,7 +50,7 @@ class ProjectController extends Controller
     {
         $validatedData = $request->validated();
 
-        if($request->user()->id != $workspace->created_by_id){
+        if($request->user()->id != $workspace->created_by_id) {
             return Response()->json([
                 "messages" => "L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"
             ], Response::HTTP_FORBIDDEN);
