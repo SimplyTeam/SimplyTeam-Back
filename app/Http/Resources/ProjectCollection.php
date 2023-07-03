@@ -17,7 +17,7 @@ class ProjectCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            'workspaces' => $this->collection
+            'projects' => $this->collection
         ];
     }
 }
