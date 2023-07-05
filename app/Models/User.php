@@ -51,4 +51,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Workspace::class, 'created_by_id');
     }
+
+    public function rewards()
+    {
+        return $this->hasMany(Reward::class);
+    }
+
+    public function level()
+    {
+        return $this->belongsTo(Level::class);
+    }
 }
