@@ -13,9 +13,7 @@ class LevelResource extends JsonResource
             'id' => $this->id,
             'max_point' => $this->max_point,
             'min_point' => $this->min_point,
-            'is_current_level' => $this->is_current_level,
-            'is_passed_level' => $this->is_passed_level,
-            'is_next_level' => $this->is_next_level
+            'status' => $this->status_current_authenticated_user
         ];
     }
 }
