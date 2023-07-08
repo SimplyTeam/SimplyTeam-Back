@@ -23,9 +23,9 @@ jobs:
         uses: php-actions/composer@v6
         with:
           php_version: "8.2"
-          command: |
-            composer install
-            composer
+
+      - name: "Composer install"
+        run: composer install
 
       - name: "create .env secrets"
         run: |
