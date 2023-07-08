@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\StatusLevelOfAuthenticatedEnum;
+use App\Enums\UserLevelOfAuthenticatedEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,12 +30,12 @@ class Level extends Model
 
         $userLevel = $user->level;
 
-        if($userLevel === $this) {
-            return StatusLevelOfAuthenticatedEnum::CURRENT();
-        }else if($userLevel < $this) {
-            return StatusLevelOfAuthenticatedEnum::PASSED();
+        if($userLevel->id === $this->id) {
+            return UserLevelOfAuthenticatedEnum::CURRENT->value;
+        }else if($userLevel->id < $this->id) {
+            return UserLevelOfAuthenticatedEnum::FUTURE->value;
         }else{
-            return StatusLevelOfAuthenticatedEnum::CURRENT();
+            return UserLevelOfAuthenticatedEnum::PASSED->value;
         }
     }
 }
