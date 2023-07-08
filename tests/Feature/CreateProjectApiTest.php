@@ -3,30 +3,16 @@
 namespace Tests\Feature;
 
 use App\Http\Resources\ProjectResource;
-use App\Http\Resources\WorkspaceCollection;
-use App\Http\Resources\WorkspaceResource;
-use App\Mail\WorkspaceInvitationEmail;
 use App\Models\Project;
 use App\Models\Workspace;
-use App\Models\WorkspaceInvitation;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
-use Tests\TestCase;
+use Tests\Feature\base\BaseTestCase;
 use App\Models\User;
 
-class CreateProjectApiTest extends TestCase
+class CreateProjectApiTest extends BaseTestCase
 {
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->artisan('passport:install');
-    }
 
     use DatabaseTransactions, WithFaker;
 

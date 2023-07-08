@@ -8,9 +8,9 @@ use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
+use Tests\Feature\base\BaseTestCase;
 
-class UpdateSprintApiTest extends TestCase
+class UpdateSprintApiTest extends BaseTestCase
 {
 
     use DatabaseTransactions, WithFaker;
@@ -18,7 +18,6 @@ class UpdateSprintApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->artisan('passport:install');
 
         $this->user = User::factory()->create();
         $this->workspace = Workspace::factory()->create();
