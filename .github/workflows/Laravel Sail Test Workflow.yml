@@ -25,7 +25,7 @@ jobs:
           php_version: "8.2"
 
       - name: "Update composer right"
-        run: sudo chown -R "$(id -un)" "$(composer config --global home)"
+        run: sudo chmod -R 775 ./
 
       - name: "Composer install"
         run: composer install
