@@ -23,7 +23,9 @@ jobs:
         uses: php-actions/composer@v6
         with:
           php_version: "8.2"
-          command: 'chown -R "$(id -un)" "$(composer config --global home)'
+
+      - name: "Update composer right"
+        run: sudo chown -R "$(id -un)" "$(composer config --global home)
 
       - name: "Composer install"
         run: composer install
