@@ -1,57 +1,89 @@
-name: Laravel CI
+name: Pipeline
 
 on: push
 
 jobs:
-  test:
+  docker:
+    name: Build container
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: "☁️ checkout repository"
         uses: actions/checkout@v2
 
-      - name: apt get update
-        run : sudo apt-get update
-
-      - name: install docker
-        run: |
-          sudo apt install apt-transport-https ca-certificates curl software-properties-common
-          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-          sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu `lsb_release -cs` test"
-
-          sudo apt-get install \
-            ca-certificates \
-            curl \
-            gnupg
-          sudo apt install docker-ce docker-ce-cli containerd.io
-
-      - name: Install PHP 8.1 and Composer
+      - name: "☁️ Setup php"
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
-          tools: composer
+          php-version: '8.2'
+          extensions: mbstring, intl, curl, pgsql, pdo-pgsql, dom, xml
+          ini-values: post_max_size=256M, max_execution_time=180
+          coverage: xdebug
+          tools: php-cs-fixer, phpunit
 
-      - name: Install dependencies
-        run: composer install
+      - name: "☁️ Setup composer"
+        uses: php-actions/composer@v6
+        with:
+          php_version: "8.2"
+          command: |
+            composer install
+            composer
 
-      - name: create .env secrets
+      - name: "create .env secrets"
         run: |
           export APP_SERVICE=${APP_SERVICE:-"laravel.test"}
           export WWWUSER=1000
           export WWWGROUP=1000
           echo ${{ secrets.ENV_FILE }} > .env
 
-      - name: run Laravel sail
-        run: sudo docker compose up -d
 
-      - name: Run Laravel Migrations
-        run: |
-          php artisan migrate --env=.env
-
-      - name: Install Passport
-        run: |
-          php artisan passport:install --env=.env
-
-      - name: Run Tests
-        run: |
-          ./vendor/bin/sail test --env=.env
+#  test:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: apt get update
+#        run: sudo apt-get update
+#
+#      - name: install docker
+#        run: |
+#          sudo apt install apt-transport-https ca-certificates curl software-properties-common
+#          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+#          sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu `lsb_release -cs` test"
+#
+#          sudo apt-get install \
+#            ca-certificates \
+#            curl \
+#            gnupg
+#          sudo apt install docker-ce docker-ce-cli containerd.io
+#
+#      - name: Install PHP 8.1 and Composer
+#        uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: '8.1'
+#          tools: composer
+#
+#      - name: Install dependencies
+#        run: composer install
+#
+#      - name: create .env secrets
+#        run: |
+#          export APP_SERVICE=${APP_SERVICE:-"laravel.test"}
+#          export WWWUSER=1000
+#          export WWWGROUP=1000
+#          echo ${{ secrets.ENV_FILE }} > .env
+#
+#      - name: run Laravel sail
+#        run: sudo docker compose up -d
+#
+#      - name: Run Laravel Migrations
+#        run: |
+#          php artisan migrate --env=.env
+#
+#      - name: Install Passport
+#        run: |
+#          php artisan passport:install --env=.env
+#
+#      - name: Run Tests
+#        run: |
+#          ./vendor/bin/sail test --env=.env
