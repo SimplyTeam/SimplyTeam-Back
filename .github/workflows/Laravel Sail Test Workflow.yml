@@ -40,7 +40,10 @@ jobs:
     needs: docker
     steps:
       - name: "Exec ls"
-        run: "ls -la"
+        run: "ls"
+
+      - name: "Exec ls .."
+        run: "ls .."
 
       - name: "Exec test"
         run: "sudo php artisan test --env=.env"
