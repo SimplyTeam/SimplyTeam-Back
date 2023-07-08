@@ -39,6 +39,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: docker
     steps:
+      - name: "Exec ls"
+        run: "ls -la"
+
       - name: "Exec test"
         run: "sudo php artisan test --env=.env"
 
