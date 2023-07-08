@@ -34,6 +34,12 @@ jobs:
           export WWWGROUP=1000
           echo ${{ secrets.ENV_FILE }} > .env
 
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Exec test"
+        run: "sudo php artisan test --env=.env"
 
 #  test:
 #    runs-on: ubuntu-latest
