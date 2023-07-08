@@ -24,11 +24,8 @@ jobs:
         with:
           php_version: "8.2"
 
-      - name: "Update composer right"
-        run: sudo chmod -R 775 ./
-
       - name: "Composer install"
-        run: composer install
+        run: sudo composer install
 
       - name: "create .env secrets"
         run: |
