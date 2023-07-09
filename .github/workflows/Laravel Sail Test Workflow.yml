@@ -43,8 +43,8 @@ jobs:
         run: |
           export APP_SERVICE=${APP_SERVICE:-"laravel.test"}
           export WWWUSER=1000
-          sudo groupadd --force -g $WWWGROUP sail
           export WWWGROUP=1000
+          sudo groupadd --force -g $WWWGROUP sail
           echo ${{ secrets.ENV_FILE }} > .env
 
       - name: "Launch Application"
