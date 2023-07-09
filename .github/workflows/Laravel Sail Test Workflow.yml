@@ -106,25 +106,12 @@ jobs:
       - name: "echo only"
         run: "echo $(ifconfig -a | grep -B1 'inet 172.21.0.1' | head -n 1 | awk '{print $1}')"
 
-      - name: "get interface variable"
+      - name: "set route for docker ip request"
         run: |
           dockerComposeInterface=$(echo $(ifconfig -a | grep -B1 'inet 172.21.0.1' | head -n 1 | awk '{print $1}'))
+          dockerComposeInterface=$(echo $dockerComposeInterface | sed 's/.$//')
           echo $dockerComposeInterface
-
-      - name: "echo dockerComposeInterface"
-        run: "echo $dockerComposeInterface"
-
-      - name: "remove : of interface variable"
-        run: "dockerComposeInterface=$(echo $dockerComposeInterface | sed 's/.$//')"
-
-      - name: "echo dockerComposeInterface"
-        run: "echo $dockerComposeInterface"
-
-      - name: "echo $dockerComposeInterface"
-        run: "sudo echo $dockerComposeInterface"
-
-      - name: "Add route to docker"
-        run: "sudo ip route replace 172.21.0.0/16 dev $dockerComposeInterface"
+          sudo ip route replace 172.21.0.0/16 dev $dockerComposeInterface
 
       - name: "ping"
         run: ping -c 4 $DB_HOST
