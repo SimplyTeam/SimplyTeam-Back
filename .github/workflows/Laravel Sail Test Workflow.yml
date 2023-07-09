@@ -57,12 +57,14 @@ jobs:
           php artisan clear-compiled
           composer dump-autoload
           php artisan optimize
+          php artisan cache:clear
+          php artisan config:cache
 
       - name: "Launch Application"
         run: sudo docker compose up -d postgresql
 
       - name: "Run Migrations"
-        run: php artisan migrate --force --env=.env
+        run: php artisan migrate --env=.env
 
       - name: "Run Passport:install"
         run: php artisan passport:install --force --env=.env
