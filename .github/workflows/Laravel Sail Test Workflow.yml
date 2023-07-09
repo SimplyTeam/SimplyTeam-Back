@@ -100,17 +100,17 @@ jobs:
       - name: "Launch Database"
         run: sudo docker compose up -d postgresql
 
+      - name: "ifconfig"
+        run: ifconfig -a
+
       - name: "get interface variable"
-        run: "export dockerComposeInterface=$(ip addr | grep -B2 'inet 172.21.0.1' | awk '/^[0-9]: / {print $2}')"
+        run: "dockerComposeInterface=$(ip addr | grep -B2 'inet 172.21.0.1' | awk '/^[0-9]: / {print $2}')"
 
       - name: "remove : of interface variable"
-        run: "export dockerComposeInterface=$(echo $dockerComposeInterface | sed 's/.$//')"
+        run: "dockerComposeInterface=$(echo $dockerComposeInterface | sed 's/.$//')"
 
       - name: "Add route to docker"
         run: "sudo ip route replace 172.21.0.0/16 dev $dockerComposeInterface"
-
-      - name: "ifconfig"
-        run: ifconfig -a
 
       - name: "ping"
         run: ping -c 4 $DB_HOST
