@@ -101,7 +101,7 @@ jobs:
         run: sudo docker compose up -d postgresql
 
       - name: "Add route to docker"
-        run: sudo ip route add 172.21.0.0/16 dev docker0
+        run: sudo ip route replace 172.21.0.0/16 dev docker0
 
       - name: "ifconfig"
         run: ifconfig -a
