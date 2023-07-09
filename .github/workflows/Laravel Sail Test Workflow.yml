@@ -107,7 +107,7 @@ jobs:
         run: "export dockerComposeInterface=$(echo $dockerComposeInterface | sed 's/.$//')"
 
       - name: "Add route to docker"
-        run: sudo ip route replace 172.21.0.0/16 dev $dockerComposeInterface
+        run: "sudo ip route replace 172.21.0.0/16 dev $dockerComposeInterface"
 
       - name: "ifconfig"
         run: ifconfig -a
