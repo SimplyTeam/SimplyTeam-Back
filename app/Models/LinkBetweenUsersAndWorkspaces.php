@@ -5,13 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Status extends Model
+class LinkBetweenUsersAndWorkspaces extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id';
-  
-    protected $fillable = [
-        'label'
-    ];
+    protected $table = 'link_between_users_and_workspaces';
+    public $timestamps = false;
 }
