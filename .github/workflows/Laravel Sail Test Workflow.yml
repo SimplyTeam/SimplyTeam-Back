@@ -46,7 +46,6 @@ jobs:
           export WWWGROUP=1000
           if [ -z "$WWWGROUP" ] || ! [[ $WWWGROUP =~ ^[0-9]+$ ]] ; then echo "Invalid WWWGROUP value: $WWWGROUP. It should be a numeric value." && exit 1; fi
           sudo groupadd --force -g $WWWGROUP sail
-          sudo groupadd --force -g $WWWGROUP sail
           echo ${{ secrets.ENV_FILE }} > .env
 
       - name: "Launch Application"
