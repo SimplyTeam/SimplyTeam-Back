@@ -97,6 +97,12 @@ jobs:
           php artisan cache:clear
           php artisan config:cache
 
+      - name: "Launch Database"
+        run: sudo docker compose up -d postgresql
+
+      - name: "Add route to docker"
+        run: sudo ip route add 172.21.0.0/16 dev docker0
+
       - name: "ifconfig"
         run: ifconfig -a
 
@@ -105,9 +111,6 @@ jobs:
 
       - name: "telnet"
         run: telnet $DB_HOST $DB_PORT
-
-      - name: "Launch Database"
-        run: sudo docker compose up -d postgresql
 
       - name: "Run Migrations"
         run: php artisan migrate
