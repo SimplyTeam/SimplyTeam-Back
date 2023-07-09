@@ -97,6 +97,15 @@ jobs:
           php artisan cache:clear
           php artisan config:cache
 
+      - name: "ifconfig"
+        run: ifconfig -a
+
+      - name: "ping"
+        run: ping -c 4 $DB_HOST
+
+      - name: "telnet"
+        run: telnet $DB_HOST $DB_PORT
+
       - name: "Launch Database"
         run: sudo docker compose up -d postgresql
 
