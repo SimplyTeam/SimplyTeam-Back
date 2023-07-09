@@ -116,9 +116,6 @@ jobs:
       - name: "ping"
         run: ping -c 4 $DB_HOST
 
-      - name: "telnet"
-        run: telnet $DB_HOST $DB_PORT
-
       - name: "Run Migrations"
         run: php artisan migrate
 
