@@ -107,7 +107,7 @@ jobs:
         run: "echo $(ifconfig -a | grep -B1 'inet 172.21.0.1' | head -n 1 | awk '{print $1}')"
 
       - name: "get interface variable"
-        run: "dockerComposeInterface=$(sudo ifconfig | grep -B1 'inet 172.21.0.1' | head -n 1 | awk '{print $1}')"
+        run: "dockerComposeInterface=$(echo $(ifconfig -a | grep -B1 'inet 172.21.0.1' | head -n 1 | awk '{print $1}'))"
 
       - name: "remove : of interface variable"
         run: "dockerComposeInterface=$(echo $dockerComposeInterface | sed 's/.$//')"
