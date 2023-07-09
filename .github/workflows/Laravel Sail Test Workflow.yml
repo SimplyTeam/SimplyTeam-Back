@@ -63,6 +63,9 @@ jobs:
       - name: "Launch Application"
         run: sudo docker compose up -d postgresql
 
+      - name: "cat .env"
+        run: cat .env
+
       - name: "Run Migrations"
         run: php artisan migrate --env=.env
 
