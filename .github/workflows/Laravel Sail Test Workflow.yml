@@ -62,13 +62,13 @@ jobs:
         run: sudo docker compose up -d postgresql
 
       - name: "Run Migrations"
-        run: sudo php artisan migrate --force --env=.env
+        run: php artisan migrate --force --env=.env
 
       - name: "Run Passport:install"
-        run: sudo php artisan passport:install --force --env=.env
+        run: php artisan passport:install --force --env=.env
 
       - name: "Run Tests"
-        run: sudo php artisan test --force --env=.env
+        run: php artisan test --force --env=.env
 
   tests:
     name: Tests
