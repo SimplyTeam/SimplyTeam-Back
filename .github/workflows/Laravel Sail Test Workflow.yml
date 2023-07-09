@@ -60,11 +60,11 @@ jobs:
           php artisan cache:clear
           php artisan config:cache
 
-      - name: "Launch Application"
+      - name: "Launch Database"
         run: sudo docker compose up -d postgresql
 
-      - name: "ls ./"
-        run: ls ./
+      - name: "ls -la ./"
+        run: ls -la ./
 
       - name: "Run Migrations"
         run: php artisan migrate --env=./.env
