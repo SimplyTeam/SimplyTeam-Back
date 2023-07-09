@@ -15,7 +15,7 @@ jobs:
       LOG_CHANNEL: ${{ secrets.LOG_CHANNEL }}
       LOG_DEPRECATIONS_CHANNEL: ${{ secrets.LOG_DEPRECATIONS_CHANNEL }}
       LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
-      DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
+      DB_CONNECTION: postgresql
       DB_HOST: 172.21.73.3
       DB_PORT: 5432
       DB_DATABASE: ${{ secrets.DB_DATABASE }}
