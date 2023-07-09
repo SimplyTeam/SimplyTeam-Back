@@ -4,8 +4,58 @@ on: push
 
 jobs:
   docker:
-    name: Build container
+    name: Build and test app
     runs-on: ubuntu-20.04
+    env:
+      APP_NAME: ${{ secrets.APP_NAME }}
+      APP_ENV: ${{ secrets.APP_ENV }}
+      APP_KEY: ${{ secrets.APP_KEY }}
+      APP_DEBUG: ${{ secrets.APP_DEBUG }}
+      APP_URL: ${{ secrets.APP_URL }}
+      LOG_CHANNEL: ${{ secrets.LOG_CHANNEL }}
+      LOG_DEPRECATIONS_CHANNEL: ${{ secrets.LOG_DEPRECATIONS_CHANNEL }}
+      LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
+      DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_DATABASE: ${{ secrets.DB_DATABASE }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_REDIRECT_URI }}
+      WEBAPP_REDIRECT_URI: ${{ secrets.WEBAPP_REDIRECT_URI }}
+      REDIRECTED_URL_MAIL: ${{ secrets.REDIRECTED_URL_MAIL }}
+      MAIL_MAILER: ${{ secrets.MAIL_MAILER }}
+      MAIL_HOST: ${{ secrets.MAIL_HOST }}
+      MAIL_PORT: ${{ secrets.MAIL_PORT }}
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+      MAIL_ENCRYPTION: ${{ secrets.MAIL_ENCRYPTION }}
+      MAIL_FROM_ADDRESS: ${{ secrets.MAIL_FROM_ADDRESS }}
+      MAIL_FROM_NAME: ${{ secrets.MAIL_FROM_NAME }}
+#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+#      AWS_BUCKET: ${{ secrets.AWS_BUCKET }}
+#      AWS_USE_PATH_STYLE_ENDPOINT: ${{ secrets.AWS_USE_PATH_STYLE_ENDPOINT }}
+#      PUSHER_APP_ID: ${{ secrets.PUSHER_APP_ID }}
+#      PUSHER_APP_KEY: ${{ secrets.PUSHER_APP_KEY }}
+#      PUSHER_APP_SECRET: ${{ secrets.PUSHER_APP_SECRET }}
+#      PUSHER_HOST: ${{ secrets.PUSHER_HOST }}
+#      PUSHER_PORT: ${{ secrets.PUSHER_PORT }}
+#      PUSHER_SCHEME: ${{ secrets.PUSHER_SCHEME }}
+#      PUSHER_APP_CLUSTER: ${{ secrets.PUSHER_APP_CLUSTER }}
+#      VITE_PUSHER_APP_KEY: ${{ secrets.VITE_PUSHER_APP_KEY }}
+#      VITE_PUSHER_HOST: ${{ secrets.VITE_PUSHER_HOST }}
+#      VITE_PUSHER_PORT: ${{ secrets.VITE_PUSHER_PORT }}
+#      VITE_PUSHER_SCHEME: ${{ secrets.VITE_PUSHER_SCHEME }}
+#      VITE_PUSHER_APP_CLUSTER: ${{ secrets.VITE_PUSHER_APP_CLUSTER }}
+      SCOUT_DRIVER: ${{ secrets.SCOUT_DRIVER }}
+      MEILISEARCH_HOST: ${{ secrets.MEILISEARCH_HOST }}
+      WWWGROUP: ${{ secrets.WWWGROUP }}
+      WWWUSER: ${{ secrets.WWWUSER }}
+
     steps:
       - name: "☁️ checkout repository"
         uses: actions/checkout@v2
@@ -39,19 +89,6 @@ jobs:
       - name: "Composer install"
         run: sudo composer install
 
-      - name: "create .env secrets"
-        run: |
-          export APP_SERVICE=${APP_SERVICE:-"laravel.test"}
-          export WWWUSER=1000
-          export WWWGROUP=1000
-          export APP_ENV=development
-          if [ -z "$WWWGROUP" ] || ! [[ $WWWGROUP =~ ^[0-9]+$ ]] ; then echo "Invalid WWWGROUP value: $WWWGROUP. It should be a numeric value." && exit 1; fi
-          sudo groupadd --force -g $WWWGROUP sail
-          echo ${{ secrets.ENV_FILE }} >> ./.env
-
-      - name: "Try export all .env"
-        run: set -o allexport; source .env; set +o allexport
-
       - name: "Test fix"
         run: |
           php artisan clear-compiled
@@ -63,75 +100,11 @@ jobs:
       - name: "Launch Database"
         run: sudo docker compose up -d postgresql
 
-      - name: "ls -la ./"
-        run: ls -la ./
-
       - name: "Run Migrations"
-        run: php artisan migrate --env=./.env
+        run: php artisan migrate
 
       - name: "Run Passport:install"
-        run: php artisan passport:install --force --env=./.env
+        run: php artisan passport:install
 
       - name: "Run Tests"
-        run: php artisan test --force --env=./.env
-
-  tests:
-    name: Tests
-    runs-on: ubuntu-latest
-    needs: docker
-    steps:
-      - name: "Exec test"
-        run: "sudo php artisan test --env=.env"
-
-#  test:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: apt get update
-#        run: sudo apt-get update
-#
-#      - name: install docker
-#        run: |
-#          sudo apt install apt-transport-https ca-certificates curl software-properties-common
-#          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-#          sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu `lsb_release -cs` test"
-#
-#          sudo apt-get install \
-#            ca-certificates \
-#            curl \
-#            gnupg
-#          sudo apt install docker-ce docker-ce-cli containerd.io
-#
-#      - name: Install PHP 8.1 and Composer
-#        uses: shivammathur/setup-php@v2
-#        with:
-#          php-version: '8.1'
-#          tools: composer
-#
-#      - name: Install dependencies
-#        run: composer install
-#
-#      - name: create .env secrets
-#        run: |
-#          export APP_SERVICE=${APP_SERVICE:-"laravel.test"}
-#          export WWWUSER=1000
-#          export WWWGROUP=1000
-#          echo ${{ secrets.ENV_FILE }} > .env
-#
-#      - name: run Laravel sail
-#        run: sudo docker compose up -d
-#
-#      - name: Run Laravel Migrations
-#        run: |
-#          php artisan migrate --env=.env
-#
-#      - name: Install Passport
-#        run: |
-#          php artisan passport:install --env=.env
-#
-#      - name: Run Tests
-#        run: |
-#          ./vendor/bin/sail test --env=.env
+        run: php artisan test --env=development
