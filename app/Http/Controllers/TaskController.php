@@ -39,17 +39,17 @@ class TaskController extends Controller
 
         $response_error = null;
 
-        if (!$user->hasWorkspace($workspace))
+        if (!$user->hasWorkspace($workspace)) {
             $response_error = $this->missingWorkspaceInUserError;
-
-        elseif (!$workspace->hasProject($project))
+        } elseif (!$workspace->hasProject($project)) {
             $response_error = $this->missingProjectInWorkspaceError;
-
-        elseif (!$project->hasSprint($sprint))
+        } elseif (!$project->hasSprint($sprint)) {
             $response_error = $this->sprintMissingInProjectError;
+        }
 
-        if ($response_error)
+        if ($response_error) {
             return $response_error;
+        }
 
         $tasks = Task::query()
             ->join('sprints', 'tasks.sprint_id', '=', 'sprints.id')
@@ -128,17 +128,17 @@ class TaskController extends Controller
 
         $response_error = null;
 
-        if (!$user->hasWorkspace($workspace))
+        if (!$user->hasWorkspace($workspace)) {
             $response_error = $this->missingWorkspaceInUserError;
-
-        elseif (!$workspace->hasProject($project))
+        } elseif (!$workspace->hasProject($project)) {
             $response_error = $this->missingProjectInWorkspaceError;
-
-        elseif (!$project->hasTask($task))
+        } elseif (!$project->hasTask($task)) {
             $response_error = $this->missingTaskInProjectError;
+        }
 
-        if ($response_error)
+        if ($response_error) {
             return $response_error;
+        }
 
         $validatedData = $request->validated();
         if (in_array('is_finish', $validatedData)) {
@@ -156,17 +156,17 @@ class TaskController extends Controller
 
         $errorMessage = null;
 
-        if (!$user->hasWorkspace($workspace))
+        if (!$user->hasWorkspace($workspace)) {
             $errorMessage = $this->missingWorkspaceInUserError;
-
-        elseif (!$workspace->hasProject($project))
+        } elseif (!$workspace->hasProject($project)) {
             $errorMessage = $this->missingProjectInWorkspaceError;
-
-        elseif (!$project->hasTask($task))
+        } elseif (!$project->hasTask($task)) {
             $errorMessage = $this->missingTaskInProjectError;
+        }
 
-        if ($errorMessage)
+        if ($errorMessage) {
             return $errorMessage;
+        }
 
         // Delete the task
         $task->delete();
