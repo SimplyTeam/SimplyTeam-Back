@@ -17,14 +17,20 @@ class TaskController extends Controller
 
     private JsonResponse $missingWorkspaceInUserError;
     private JsonResponse $missingProjectInWorkspaceError;
+    private JsonResponse $sprintMissingInProjectError;
     private JsonResponse $missingTaskInProjectError;
 
     public function __construct()
     {
         $this->middleware('auth:api');
-        $this->missingWorkspaceInUserError = response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
-        $this->missingProjectInWorkspaceError = response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
-        $this->missingTaskInProjectError = response()->json(['message' => 'This task does not belong to the specified project.'], 403);
+        $this->missingWorkspaceInUserError = response()
+            ->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
+        $this->missingProjectInWorkspaceError = response()
+            ->json(['message' => 'This project does not belong to the specified workspace.'], 403);
+        $this->sprintMissingInProjectError = response()
+            ->json(['message' => 'This sprint does not belong to the specified project.'], 403);
+        $this->missingTaskInProjectError = response()
+            ->json(['message' => 'This task does not belong to the specified project.'], 403);
     }
 
     public function index(Request $request, Workspace $workspace, Project $project, Sprint $sprint)
@@ -40,7 +46,7 @@ class TaskController extends Controller
             $response_error = $this->missingProjectInWorkspaceError;
 
         elseif (!$project->hasSprint($sprint))
-            $response_error = response()->json(['message' => 'This sprint does not belong to the specified project.'], 403);
+            $response_error = $this->sprintMissingInProjectError;
 
         if ($response_error)
             return $response_error;
