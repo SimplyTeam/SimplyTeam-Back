@@ -154,19 +154,19 @@ class TaskController extends Controller
     {
         $user = $request->user();
 
-        $error_message = null;
+        $errorMessage = null;
 
         if (!$user->hasWorkspace($workspace))
-            $error_message = $this->missingWorkspaceInUserError;
+            $errorMessage = $this->missingWorkspaceInUserError;
 
         elseif (!$workspace->hasProject($project))
-            $error_message = $this->missingProjectInWorkspaceError;
+            $errorMessage = $this->missingProjectInWorkspaceError;
 
         elseif (!$project->hasTask($task))
-            $error_message = $this->missingTaskInProjectError;
+            $errorMessage = $this->missingTaskInProjectError;
 
-        if ($error_message)
-            return $error_message;
+        if ($errorMessage)
+            return $errorMessage;
 
         // Delete the task
         $task->delete();
