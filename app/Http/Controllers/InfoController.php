@@ -17,8 +17,25 @@ class InfoController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $levels = Level::where('id', '>=', $user->level->id - 3)
-            ->where('id', '<=', $user->level->id + 3)
+
+        $numberOfNextLevel = Level::where('id', '>', $user->level->id)
+            ->count();
+        $numberOfPreviousLevel = Level::where('id', '<', $user->level->id)
+            ->count();
+        $numberOfLevelsToReturn = 8;
+        $numberOfNextLevelToReturn = 4;
+        $numberOfPreviousLevelToReturn = 3;
+
+        if($numberOfNextLevel > $numberOfNextLevelToReturn && $numberOfPreviousLevel < $numberOfPreviousLevelToReturn) {
+            $numberOfPreviousLevelToReturn += $numberOfPreviousLevel-$numberOfPreviousLevelToReturn;
+            $numberOfNextLevelToReturn = $numberOfLevelsToReturn - 1 - $numberOfPreviousLevelToReturn;
+        }elseif($numberOfNextLevel < $numberOfNextLevelToReturn && $numberOfPreviousLevel > $numberOfPreviousLevelToReturn) {
+            $numberOfPreviousLevelToReturn = $numberOfLevelsToReturn - 1;
+            $numberOfNextLevelToReturn=0;
+        }
+
+        $levels = Level::where('id', '>=', $user->level->id - $numberOfPreviousLevelToReturn)
+            ->where('id', '<=', $user->level->id + $numberOfNextLevelToReturn)
             ->orderBy('id')
             ->get();
 
