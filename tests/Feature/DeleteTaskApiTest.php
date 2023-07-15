@@ -47,7 +47,8 @@ class DeleteTaskApiTest extends TestCase
 
         $this->unlink_workspace = Workspace::factory()->create();
         $this->unlink_project = Project::factory()->for($this->unlink_workspace)->create();
-        $this->unlink_sprint = Sprint::factory()->for($this->unlink_project)->create(); // Make a sprint but don't save it to database
+        // Make a sprint but don't save it to database
+        $this->unlink_sprint = Sprint::factory()->for($this->unlink_project)->create();
         $this->unlink_task = Task::factory()
             ->for($this->unlink_project)
             ->for($this->unlink_sprint)
@@ -120,7 +121,10 @@ class DeleteTaskApiTest extends TestCase
         );
 
         $response->assertStatus(403);
-        $this->assertEquals($response->json("message"), "This project does not belong to the specified workspace.");
+        $this->assertEquals(
+            $response->json("message"),
+            "This project does not belong to the specified workspace."
+        );
     }
 
     public function test_delete_task_with_unlinked_task()
@@ -132,6 +136,9 @@ class DeleteTaskApiTest extends TestCase
         );
 
         $response->assertStatus(403);
-        $this->assertEquals($response->json("message"), "This task does not belong to the specified project.");
+        $this->assertEquals(
+            $response->json("message"),
+            "This task does not belong to the specified project."
+        );
     }
 }
