@@ -24,16 +24,16 @@ class TaskController extends Controller
 
         $response_error_message = null;
 
-        if(!$user->hasWorkspace($workspace))
+        if (!$user->hasWorkspace($workspace))
             $response_error_message = response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
 
-        elseif(!$workspace->hasProject($project))
+        elseif (!$workspace->hasProject($project))
             $response_error_message = response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
 
-        elseif(!$project->hasSprint($sprint))
+        elseif (!$project->hasSprint($sprint))
             $response_error_message = response()->json(['message' => 'This sprint does not belong to the specified project.'], 403);
 
-        if($response_error_message)
+        if ($response_error_message)
             return $response_error_message;
 
         $tasks = Task::query()
@@ -71,18 +71,18 @@ class TaskController extends Controller
     {
         $user = $request->user();
 
-        if(!$user->hasWorkspace($workspace))
+        if (!$user->hasWorkspace($workspace))
             return response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
 
-        if(!$workspace->hasProject($project))
+        if (!$workspace->hasProject($project))
             return response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
 
         $validatedata = $request->validated();
 
         $task = new Task();
 
-        if(in_array('sprint_id', $validatedata)) {
-            if(!$project->hasSprintWithId($validatedata['sprint_id']))
+        if (in_array('sprint_id', $validatedata)) {
+            if (!$project->hasSprintWithId($validatedata['sprint_id']))
                 return response()->json(['message' => 'sprint does not belong to the specified project.'], 404);
             else
                 $task->sprint_id = $validatedata["sprint_id"];
@@ -106,17 +106,17 @@ class TaskController extends Controller
     {
         $user = $request->user();
 
-        if(!$user->hasWorkspace($workspace))
+        if (!$user->hasWorkspace($workspace))
             return response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
 
-        if(!$workspace->hasProject($project))
+        if (!$workspace->hasProject($project))
             return response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
 
-        if(!$project->hasTask($task))
+        if (!$project->hasTask($task))
             return response()->json(['message' => 'This task does not belong to the specified project.'], 403);
 
         $validatedData = $request->validated();
-        if(in_array('is_finish', $validatedData)) {
+        if (in_array('is_finish', $validatedData)) {
             $validatedData['finished_at'] = $validatedData['is_finish'] ? date('Y-m-d H:i:s') : null;
         }
 
@@ -125,16 +125,17 @@ class TaskController extends Controller
         return response()->json(['message' => 'Task updated successfully.']);
     }
 
-    public function remove(Request $request, Workspace $workspace, Project $project, Task $task) {
+    public function remove(Request $request, Workspace $workspace, Project $project, Task $task)
+    {
         $user = $request->user();
 
-        if(!$user->hasWorkspace($workspace))
+        if (!$user->hasWorkspace($workspace))
             return response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
 
-        if(!$workspace->hasProject($project))
+        if (!$workspace->hasProject($project))
             return response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
 
-        if(!$project->hasTask($task))
+        if (!$project->hasTask($task))
             return response()->json(['message' => 'This task does not belong to the specified project.'], 403);
 
         // Delete the task
