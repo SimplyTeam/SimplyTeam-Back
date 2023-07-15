@@ -150,10 +150,10 @@ class GetTaskApiTest extends TestCase
      */
     public function test_get_task_with_missing_workspace()
     {
-        $missing_workspace = Workspace::factory()->make();
+        $missingWorkspace = Workspace::factory()->make();
 
         $response = $this->getJson(
-            $this->generateUrl($missing_workspace->id, $this->project->id, $this->sprint->id),
+            $this->generateUrl(missingWorkspace->id, $this->project->id, $this->sprint->id),
             $this->header
         );
 
