@@ -39,8 +39,8 @@ class Project extends Model
         return $this->sprints()->where('id', $sprint->id)->exists();
     }
 
-    public function hasSprintWithId(string $sprint_id)
+    public function hasSprintWithId(string $sprintId)
     {
-        return $this->sprints()->findOrFail($sprint_id)->exists();
+        return $this->sprints()->findOrFail($sprintId)->exists();
     }
 }
