@@ -84,10 +84,10 @@ class DeleteTaskApiTest extends TestCase
      */
     public function test_delete_task_with_missing_workspace()
     {
-        $missing_workspace = Workspace::factory()->make();
+        $missingWorkspace = Workspace::factory()->make();
 
         $response = $this->deleteJson(
-            $this->generateUrl($missing_workspace->id, $this->project->id, $this->task->id),
+            $this->generateUrl($missingWorkspace->id, $this->project->id, $this->task->id),
             [],
             $this->header
         );
