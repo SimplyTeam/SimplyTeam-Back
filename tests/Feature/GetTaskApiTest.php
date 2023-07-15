@@ -153,7 +153,7 @@ class GetTaskApiTest extends TestCase
         $missingWorkspace = Workspace::factory()->make();
 
         $response = $this->getJson(
-            $this->generateUrl(missingWorkspace->id, $this->project->id, $this->sprint->id),
+            $this->generateUrl($missingWorkspace->id, $this->project->id, $this->sprint->id),
             $this->header
         );
 
