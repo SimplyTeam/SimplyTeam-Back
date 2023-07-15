@@ -8,33 +8,42 @@ use App\Models\Project;
 use App\Models\Sprint;
 use App\Models\Task;
 use App\Models\Workspace;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
+
+    private JsonResponse $missingWorkspaceInUserError;
+    private JsonResponse $missingProjectInWorkspaceError;
+    private JsonResponse $missingTaskInProjectError;
+
     public function __construct()
     {
         $this->middleware('auth:api');
+        $this->missingWorkspaceInUserError = response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
+        $this->missingProjectInWorkspaceError = response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
+        $this->missingTaskInProjectError = response()->json(['message' => 'This task does not belong to the specified project.'], 403);
     }
 
     public function index(Request $request, Workspace $workspace, Project $project, Sprint $sprint)
     {
         $user = $request->user();
 
-        $response_error_message = null;
+        $response_error = null;
 
         if (!$user->hasWorkspace($workspace))
-            $response_error_message = response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
+            $response_error = $this->missingWorkspaceInUserError;
 
         elseif (!$workspace->hasProject($project))
-            $response_error_message = response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
+            $response_error = $this->missingProjectInWorkspaceError;
 
         elseif (!$project->hasSprint($sprint))
-            $response_error_message = response()->json(['message' => 'This sprint does not belong to the specified project.'], 403);
+            $response_error = response()->json(['message' => 'This sprint does not belong to the specified project.'], 403);
 
-        if ($response_error_message)
-            return $response_error_message;
+        if ($response_error)
+            return $response_error;
 
         $tasks = Task::query()
             ->join('sprints', 'tasks.sprint_id', '=', 'sprints.id')
@@ -71,31 +80,36 @@ class TaskController extends Controller
     {
         $user = $request->user();
 
+        $response_error = null;
+
         if (!$user->hasWorkspace($workspace))
-            return response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
+            $response_error = $this->missingWorkspaceInUserError;
 
-        if (!$workspace->hasProject($project))
-            return response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
+        elseif (!$workspace->hasProject($project))
+            $response_error = $this->missingProjectInWorkspaceError;
 
-        $validatedata = $request->validated();
+        if ($response_error)
+            return $response_error;
+
+        $validatedData = $request->validated();
 
         $task = new Task();
 
-        if (in_array('sprint_id', $validatedata)) {
-            if (!$project->hasSprintWithId($validatedata['sprint_id']))
+        if (in_array('sprint_id', $validatedData)) {
+            if (!$project->hasSprintWithId($validatedData['sprint_id']))
                 return response()->json(['message' => 'sprint does not belong to the specified project.'], 404);
             else
-                $task->sprint_id = $validatedata["sprint_id"];
+                $task->sprint_id = $validatedData["sprint_id"];
         }
 
-        $task->label = $validatedata["label"];
-        $task->description = $validatedata["description"];
-        $task->estimated_timestamp = $validatedata["estimated_timestamp"];
-        $task->realized_timestamp = $validatedata["realized_timestamp"];
-        $task->deadline = $validatedata["deadline"];
-        $task->is_finish = $validatedata["is_finish"];
-        $task->priority_id = $validatedata["priority_id"];
-        $task->status_id = $validatedata["status_id"];
+        $task->label = $validatedData["label"];
+        $task->description = $validatedData["description"];
+        $task->estimated_timestamp = $validatedData["estimated_timestamp"];
+        $task->realized_timestamp = $validatedData["realized_timestamp"];
+        $task->deadline = $validatedData["deadline"];
+        $task->is_finish = $validatedData["is_finish"];
+        $task->priority_id = $validatedData["priority_id"];
+        $task->status_id = $validatedData["status_id"];
         $task->project_id = $project->id;
         $task->save();
 
@@ -106,14 +120,19 @@ class TaskController extends Controller
     {
         $user = $request->user();
 
+        $response_error = null;
+
         if (!$user->hasWorkspace($workspace))
-            return response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
+            $response_error = $this->missingWorkspaceInUserError;
 
-        if (!$workspace->hasProject($project))
-            return response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
+        elseif (!$workspace->hasProject($project))
+            $response_error = $this->missingProjectInWorkspaceError;
 
-        if (!$project->hasTask($task))
-            return response()->json(['message' => 'This task does not belong to the specified project.'], 403);
+        elseif (!$project->hasTask($task))
+            $response_error = $this->missingTaskInProjectError;
+
+        if ($response_error)
+            return $response_error;
 
         $validatedData = $request->validated();
         if (in_array('is_finish', $validatedData)) {
@@ -129,14 +148,19 @@ class TaskController extends Controller
     {
         $user = $request->user();
 
+        $error_message = null;
+
         if (!$user->hasWorkspace($workspace))
-            return response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
+            $error_message = $this->missingWorkspaceInUserError;
 
-        if (!$workspace->hasProject($project))
-            return response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
+        elseif (!$workspace->hasProject($project))
+            $error_message = $this->missingProjectInWorkspaceError;
 
-        if (!$project->hasTask($task))
-            return response()->json(['message' => 'This task does not belong to the specified project.'], 403);
+        elseif (!$project->hasTask($task))
+            $error_message = $this->missingTaskInProjectError;
+
+        if ($error_message)
+            return $error_message;
 
         // Delete the task
         $task->delete();
