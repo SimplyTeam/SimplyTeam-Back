@@ -37,18 +37,18 @@ class TaskController extends Controller
     {
         $user = $request->user();
 
-        $response_error = null;
+        $responseError = null;
 
         if (!$user->hasWorkspace($workspace)) {
-            $response_error = $this->missingWorkspaceInUserError;
+            $responseError = $this->missingWorkspaceInUserError;
         } elseif (!$workspace->hasProject($project)) {
-            $response_error = $this->missingProjectInWorkspaceError;
+            $responseError = $this->missingProjectInWorkspaceError;
         } elseif (!$project->hasSprint($sprint)) {
-            $response_error = $this->sprintMissingInProjectError;
+            $responseError = $this->sprintMissingInProjectError;
         }
 
-        if ($response_error) {
-            return $response_error;
+        if ($responseError) {
+            return $responseError;
         }
 
         $tasks = Task::query()
@@ -86,16 +86,16 @@ class TaskController extends Controller
     {
         $user = $request->user();
 
-        $response_error = null;
+        $responseError = null;
 
         if (!$user->hasWorkspace($workspace))
-            $response_error = $this->missingWorkspaceInUserError;
+            $responseError = $this->missingWorkspaceInUserError;
 
         elseif (!$workspace->hasProject($project))
-            $response_error = $this->missingProjectInWorkspaceError;
+            $responseError = $this->missingProjectInWorkspaceError;
 
-        if ($response_error)
-            return $response_error;
+        if ($responseError)
+            return $responseError;
 
         $validatedData = $request->validated();
 
@@ -126,18 +126,18 @@ class TaskController extends Controller
     {
         $user = $request->user();
 
-        $response_error = null;
+        $responseError = null;
 
         if (!$user->hasWorkspace($workspace)) {
-            $response_error = $this->missingWorkspaceInUserError;
+            $responseError = $this->missingWorkspaceInUserError;
         } elseif (!$workspace->hasProject($project)) {
-            $response_error = $this->missingProjectInWorkspaceError;
+            $responseError = $this->missingProjectInWorkspaceError;
         } elseif (!$project->hasTask($task)) {
-            $response_error = $this->missingTaskInProjectError;
+            $responseError = $this->missingTaskInProjectError;
         }
 
-        if ($response_error) {
-            return $response_error;
+        if ($responseError) {
+            return $responseError;
         }
 
         $validatedData = $request->validated();
