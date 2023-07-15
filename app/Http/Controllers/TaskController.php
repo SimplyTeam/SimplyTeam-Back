@@ -88,14 +88,15 @@ class TaskController extends Controller
 
         $responseError = null;
 
-        if (!$user->hasWorkspace($workspace))
+        if (!$user->hasWorkspace($workspace)) {
             $responseError = $this->missingWorkspaceInUserError;
-
-        elseif (!$workspace->hasProject($project))
+        } elseif (!$workspace->hasProject($project)) {
             $responseError = $this->missingProjectInWorkspaceError;
+        }
 
-        if ($responseError)
+        if ($responseError) {
             return $responseError;
+        }
 
         $validatedData = $request->validated();
 
