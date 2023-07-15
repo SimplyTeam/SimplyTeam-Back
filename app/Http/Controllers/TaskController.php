@@ -103,10 +103,11 @@ class TaskController extends Controller
         $task = new Task();
 
         if (in_array('sprint_id', $validatedData)) {
-            if (!$project->hasSprintWithId($validatedData['sprint_id']))
+            if (!$project->hasSprintWithId($validatedData['sprint_id'])) {
                 return response()->json(['message' => 'sprint does not belong to the specified project.'], 404);
-            else
+            } else {
                 $task->sprint_id = $validatedData["sprint_id"];
+            }
         }
 
         $task->label = $validatedData["label"];
