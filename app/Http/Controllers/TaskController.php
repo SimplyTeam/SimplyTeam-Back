@@ -22,14 +22,19 @@ class TaskController extends Controller
     {
         $user = $request->user();
 
+        $response_error_message = null;
+
         if(!$user->hasWorkspace($workspace))
-            return response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
+            $response_error_message = response()->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
 
-        if(!$workspace->hasProject($project))
-            return response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
+        elseif(!$workspace->hasProject($project))
+            $response_error_message = response()->json(['message' => 'This project does not belong to the specified workspace.'], 403);
 
-        if(!$project->hasSprint($sprint))
-            return response()->json(['message' => 'This sprint does not belong to the specified project.'], 403);
+        elseif(!$project->hasSprint($sprint))
+            $response_error_message = response()->json(['message' => 'This sprint does not belong to the specified project.'], 403);
+
+        if($response_error_message)
+            return $response_error_message;
 
         $tasks = Task::query()
             ->join('sprints', 'tasks.sprint_id', '=', 'sprints.id')
