@@ -62,4 +62,14 @@ class User extends Authenticatable
     {
         return $this->workspaces()->where('id', $workspace->id)->exists();
     }
+
+    public function rewards()
+    {
+        return $this->hasMany(Reward::class);
+    }
+
+    public function level()
+    {
+        return $this->belongsTo(Level::class);
+    }
 }
