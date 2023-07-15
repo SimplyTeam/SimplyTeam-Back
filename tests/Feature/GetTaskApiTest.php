@@ -48,7 +48,8 @@ class GetTaskApiTest extends TestCase
 
         $this->unlink_workspace = Workspace::factory()->create();
         $this->unlink_project = Project::factory()->for($this->unlink_workspace)->create();
-        $this->unlink_sprint = Sprint::factory()->for($this->unlink_project)->create(); // Make a sprint but don't save it to database
+        // Make a sprint but don't save it to database
+        $this->unlink_sprint = Sprint::factory()->for($this->unlink_project)->create();
 
         $this->accessToken = $this->user->createToken('API Token')->accessToken;
         $this->header = ["Authorization" => "Bearer $this->accessToken", "Accept" => "application/json"];
@@ -95,7 +96,11 @@ class GetTaskApiTest extends TestCase
             'status=2',
             'priority=1'
         ];
-        $response = $this->get($this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id) . '?' . join('&', $filters), $this->header);
+        $response = $this->get(
+            $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id) .
+                '?' . join('&', $filters),
+            $this->header
+        );
 
         $response->assertStatus(200);
 
@@ -124,7 +129,11 @@ class GetTaskApiTest extends TestCase
             'sort_field=deadline',
             'sort_order=asc'
         ];
-        $response = $this->get($this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id) . '?' . join('&', $sorting), $this->header);
+        $response = $this->get(
+            $this->generateUrl($this->workspace->id, $this->project->id, $this->sprint->id)
+                . '?' . join('&', $sorting),
+            $this->header
+        );
         $response->assertStatus(200);
         $responseData = $response->json();
         $sortedDeadlines = collect($responseData)->pluck('deadline')->sort();
@@ -159,7 +168,10 @@ class GetTaskApiTest extends TestCase
         );
 
         $response->assertStatus(403);
-        $this->assertEquals($response->json("message"), "This project does not belong to the specified workspace.");
+        $this->assertEquals(
+            $response->json("message"),
+            "This project does not belong to the specified workspace."
+        );
     }
 
     public function test_get_task_with_unlinked_sprint()
@@ -170,6 +182,9 @@ class GetTaskApiTest extends TestCase
         );
 
         $response->assertStatus(403);
-        $this->assertEquals($response->json("message"), "This sprint does not belong to the specified project.");
+        $this->assertEquals(
+            $response->json("message"),
+            "This sprint does not belong to the specified project."
+        );
     }
 }
