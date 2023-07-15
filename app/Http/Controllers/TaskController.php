@@ -110,8 +110,13 @@ class TaskController extends Controller
         if(!$project->hasTask($task))
             return response()->json(['message' => 'This task does not belong to the specified project.'], 403);
 
+        $validatedData = $request->validated();
+        if(in_array('is_finish', $validatedData)) {
+            $validatedData['finished_at'] = $validatedData['is_finish'] ? date('Y-m-d H:i:s') : null;
+        }
+
         // Update the task
-        $task->update($request->validated());
+        $task->update($validatedData);
         return response()->json(['message' => 'Task updated successfully.']);
     }
 
