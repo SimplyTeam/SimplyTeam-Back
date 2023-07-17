@@ -4,20 +4,12 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Tests\TestCase;
+use Tests\Feature\base\BaseTestCase;
 use App\Models\User;
 
-class AuthTest extends TestCase
+class AuthTest extends BaseTestCase
 {
     use RefreshDatabase, WithFaker;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->artisan('passport:install');
-    }
 
     public function test_register_user_with_valid_data()
     {

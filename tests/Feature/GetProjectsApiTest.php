@@ -7,17 +7,12 @@ use App\Models\Workspace;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Tests\Feature\base\BaseTestCase;
 use Tests\TestCase;
 
-class GetProjectsApiTest extends TestCase
+class GetProjectsApiTest extends BaseTestCase
 {
     use DatabaseTransactions, WithFaker;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->artisan('passport:install');
-    }
 
     /**
      * Test getting projects for a workspace.

@@ -3,14 +3,13 @@
 namespace Tests\Feature;
 
 use App\Models\Project;
-use App\Models\Sprint;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
+use Tests\Feature\base\BaseTestCase;
 
-class CreateSprintApiTest extends TestCase
+class CreateSprintApiTest extends BaseTestCase
 {
 
     use DatabaseTransactions, WithFaker;
@@ -18,7 +17,6 @@ class CreateSprintApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->artisan('passport:install');
 
         $this->user = User::factory()->create();
         $this->workspace = Workspace::factory()->create();
