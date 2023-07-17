@@ -61,4 +61,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Level::class);
     }
+
+    public function quests()
+    {
+        return $this->hasMany(UserQuest::class, 'user_id');
+    }
 }
