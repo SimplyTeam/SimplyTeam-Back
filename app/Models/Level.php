@@ -26,15 +26,15 @@ class Level extends Model
     public function getStatusLevelOfAuthenticatedUserAttribute()
     {
         $user = User::getAuthenticatedUser();
-        if(!$user) return null;
+        if (!$user) return null;
 
         $userLevel = $user->level;
 
-        if($userLevel->id === $this->id) {
+        if ($userLevel->id === $this->id) {
             $userLevelToReturn = UserLevelOfAuthenticatedEnum::CURRENT->value;
-        }elseif($userLevel->id < $this->id) {
+        } elseif ($userLevel->id < $this->id) {
             $userLevelToReturn = UserLevelOfAuthenticatedEnum::FUTURE->value;
-        }else{
+        } else {
             $userLevelToReturn = UserLevelOfAuthenticatedEnum::PASSED->value;
         }
 
