@@ -20,4 +20,9 @@ class Quest extends Model
     {
         return $this->belongsTo(QuestType::class);
     }
+
+    public function userQuests()
+    {
+        return $this->hasMany(UserQuest::class, 'quest_id');
+    }
 }
