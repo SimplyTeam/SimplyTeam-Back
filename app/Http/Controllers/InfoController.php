@@ -26,12 +26,18 @@ class InfoController extends Controller
         $numberOfNextLevelToReturn = 4;
         $numberOfPreviousLevelToReturn = 3;
 
-        if($numberOfNextLevel > $numberOfNextLevelToReturn && $numberOfPreviousLevel < $numberOfPreviousLevelToReturn) {
-            $numberOfPreviousLevelToReturn += $numberOfPreviousLevel-$numberOfPreviousLevelToReturn;
+        if (
+            $numberOfNextLevel > $numberOfNextLevelToReturn &&
+            $numberOfPreviousLevel < $numberOfPreviousLevelToReturn
+        ) {
+            $numberOfPreviousLevelToReturn += $numberOfPreviousLevel - $numberOfPreviousLevelToReturn;
             $numberOfNextLevelToReturn = $numberOfLevelsToReturn - 1 - $numberOfPreviousLevelToReturn;
-        }elseif($numberOfNextLevel < $numberOfNextLevelToReturn && $numberOfPreviousLevel > $numberOfPreviousLevelToReturn) {
+        } elseif (
+            $numberOfNextLevel < $numberOfNextLevelToReturn &&
+            $numberOfPreviousLevel > $numberOfPreviousLevelToReturn
+        ) {
             $numberOfPreviousLevelToReturn = $numberOfLevelsToReturn - 1;
-            $numberOfNextLevelToReturn=0;
+            $numberOfNextLevelToReturn = 0;
         }
 
         $levels = Level::where('id', '>=', $user->level->id - $numberOfPreviousLevelToReturn)
