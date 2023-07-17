@@ -32,7 +32,7 @@ class Level extends Model
 
         if($userLevel->id === $this->id) {
             $userLevelToReturn = UserLevelOfAuthenticatedEnum::CURRENT->value;
-        }else if($userLevel->id < $this->id) {
+        }elseif($userLevel->id < $this->id) {
             $userLevelToReturn = UserLevelOfAuthenticatedEnum::FUTURE->value;
         }else{
             $userLevelToReturn = UserLevelOfAuthenticatedEnum::PASSED->value;
