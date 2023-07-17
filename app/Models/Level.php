@@ -31,11 +31,13 @@ class Level extends Model
         $userLevel = $user->level;
 
         if($userLevel->id === $this->id) {
-            return UserLevelOfAuthenticatedEnum::CURRENT->value;
+            $userLevelToReturn = UserLevelOfAuthenticatedEnum::CURRENT->value;
         }else if($userLevel->id < $this->id) {
-            return UserLevelOfAuthenticatedEnum::FUTURE->value;
+            $userLevelToReturn = UserLevelOfAuthenticatedEnum::FUTURE->value;
         }else{
-            return UserLevelOfAuthenticatedEnum::PASSED->value;
+            $userLevelToReturn = UserLevelOfAuthenticatedEnum::PASSED->value;
         }
+
+        return $userLevelToReturn;
     }
 }
