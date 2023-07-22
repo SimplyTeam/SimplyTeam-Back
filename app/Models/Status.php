@@ -10,7 +10,7 @@ class Status extends Model
     use HasFactory;
 
     protected $primaryKey = 'id';
-
+  
     protected $fillable = [
         'label'
     ];
