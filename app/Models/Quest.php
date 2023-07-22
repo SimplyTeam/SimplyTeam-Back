@@ -13,8 +13,12 @@ class Quest extends Model
         'name',
         'description',
         'reward_points',
+        'level',
         'quest_types_id',
+        'previous_quest_id',
     ];
+
+    public $timestamps = false;
 
     public function questType()
     {
