@@ -13,5 +13,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(LevelSeeder::class);
+        $this->call(QuestTypeSeeder::class);
+        $this->call(MaitreDuTempsQuestSeeder::class);
     }
 }
