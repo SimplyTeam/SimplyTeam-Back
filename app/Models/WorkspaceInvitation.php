@@ -15,6 +15,7 @@ class WorkspaceInvitation extends Model
         'email',
         'workspace_id',
         'token',
+        'is_PO',
         'accepted_at',
         'created_by_id'
     ];
