@@ -15,5 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call(LevelSeeder::class);
         $this->call(QuestTypeSeeder::class);
         $this->call(MaitreDuTempsQuestSeeder::class);
+        $this->call(TravailDurQuestSeeder::class);
+        $this->call(MarathonDesSprintsQuestSeeder::class);
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class MaitreDuTempsQuestSeeder extends Seeder
+class MarathonDesSprintsQuestSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -18,11 +18,10 @@ class MaitreDuTempsQuestSeeder extends Seeder
     {
         $maxLevel = 20;
         $rewardsPoint = 50;
-        $questName = 'Maitre du temps';
+        $questName = 'Marathon des sprints';
 
         $NOfQuest = ["1", "2", "4", "8", "16"];
-        $maxId = Quest::query()->max('id');
-        $id = $maxId ? $maxId + 1 : 1;
+        $id = Quest::query()->max('id') + 1;
         $previousId = null;
         $numberOfElementInNOfQuest = count($NOfQuest);
 
@@ -42,12 +41,12 @@ class MaitreDuTempsQuestSeeder extends Seeder
                 'name' => $questName,
                 'description' =>
                     "Finir $numberOfElementToComplete "
-                    . ($numberOfElementToComplete > 1 ? "tâches" : "tâche")
-                    . " sous le temps imparti.",
+                    . ($numberOfElementToComplete > 1 ? "sprints" : "sprint")
+                    . ".",
                 'reward_points' => $rewardsPoint,
                 'level' => $levelNumber,
                 'previous_quest_id' => $previousId,
-                'quest_types_id' => 2,
+                'quest_types_id' => 3,
             ];
 
             if ($quest == null) {
