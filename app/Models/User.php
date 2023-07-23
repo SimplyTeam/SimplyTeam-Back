@@ -134,4 +134,9 @@ class User extends Authenticatable
         // Compare the two dates
         return $premiumExpirationDate >= $today;
     }
+
+    public function linksBetweenUsersAndWorkspaces()
+    {
+        return $this->hasMany(LinkBetweenUsersAndWorkspaces::class, 'user_id');
+    }
 }
