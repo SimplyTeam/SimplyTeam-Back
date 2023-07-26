@@ -21,12 +21,12 @@ class Task extends Model
         'priority_id',
         'status_id',
         'project_id',
-        'assigned_to',
+        'created_by',
     ];
 
-    public function assignedTo(): BelongsTo
+    public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'assigned_to');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function project()

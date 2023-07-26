@@ -7,10 +7,10 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Project;
 use App\Models\Sprint;
 use App\Models\Task;
+use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
@@ -102,11 +102,13 @@ class TaskController extends Controller
 
         $task = new Task();
 
-        if (in_array('sprint_id', $validatedData)) {
-            if (!$project->hasSprintWithId($validatedData['sprint_id'])) {
-                return response()->json(['message' => 'sprint does not belong to the specified project.'], 404);
-            } else {
+        if (isset($validatedData["sprint_id"])) {
+            if ($validatedData['sprint_id'] == null) {
+                $task->sprint_id = null;
+            } else if ($project->hasSprintWithId($validatedData['sprint_id'])) {
                 $task->sprint_id = $validatedData["sprint_id"];
+            } else {
+                return response()->json(['message' => 'Sprint does not belong to the specified project.'], 403);
             }
         }
 
@@ -119,7 +121,13 @@ class TaskController extends Controller
         $task->priority_id = $validatedData["priority_id"];
         $task->status_id = $validatedData["status_id"];
         $task->project_id = $project->id;
+        $task->created_by = $user->id;
         $task->save();
+
+        if (isset($validatedData["assigned_to"])) {
+            $usersToAssign = User::whereIn('email', $validatedData["assigned_to"])->get();
+            $task->users()->attach($usersToAssign->pluck('id'));
+        }
 
         return response()->json(['message' => 'Task created successfully!', 'task' => $task], 201);
     }
@@ -145,6 +153,26 @@ class TaskController extends Controller
         $validatedData = $request->validated();
         if (in_array('is_finish', $validatedData)) {
             $validatedData['finished_at'] = $validatedData['is_finish'] ? date('Y-m-d H:i:s') : null;
+        }
+
+        if (isset($validatedData["assigned_to"])) {
+            $usersToAssign = User::whereIn('email', $validatedData["assigned_to"])->get();
+
+            if (empty($usersToAssign)) {
+                $task->users()->detach();
+            } else {
+                $task->users()->sync($usersToAssign->pluck('id'));
+            }
+        }
+
+        if (isset($validatedData["sprint_id"])) {
+            if ($validatedData['sprint_id'] == null) {
+                $task->sprint_id = null;
+            } else if ($project->hasSprintWithId($validatedData['sprint_id'])) {
+                $task->sprint_id = $validatedData["sprint_id"];
+            } else {
+                return response()->json(['message' => 'Sprint does not belong to the specified project.'], 403);
+            }
         }
 
         // Update the task

@@ -23,13 +23,15 @@ class UpdateTaskRequest extends FormRequest
     {
         return [
             'label' => 'string|max:255',
-            'description' => 'string',
+            'description' => 'string|nullable|max:500',
             'estimated_timestamp' => 'integer',
             'realized_timestamp' => 'integer',
             'deadline' => 'date',
             'is_finish' => 'boolean',
             'priority_id' => 'integer|exists:priority,id',
-            'status_id' => 'integer|exists:status,id'
+            'status_id' => 'integer|exists:status,id',
+            'assigned_to' => 'array',
+            'sprint_id' => 'integer|nullable|exists:sprints,id',
         ];
     }
 }

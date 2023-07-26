@@ -21,7 +21,7 @@ class Project extends Model
 
     public function sprints()
     {
-        return $this->hasMany(Sprint::class);
+        return $this->hasMany(Sprint::class)->with('tasks');
     }
 
     public function tasks()
