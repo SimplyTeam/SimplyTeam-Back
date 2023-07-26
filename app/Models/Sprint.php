@@ -13,11 +13,25 @@ class Sprint extends Model
         'name',
         'begin_date',
         'end_date',
-        'closing_date'
+        'closing_date',
+        'project_id'
     ];
 
+    /**
+     * Get the project of sprint
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function project()
     {
         return $this->belongsTo(Project::class);
+    }
+
+    /**
+     * Get the tasks for the sprint.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tasks()
+    {
+        return $this->hasMany(Task::class)->with(['users', 'createdBy']);
     }
 }

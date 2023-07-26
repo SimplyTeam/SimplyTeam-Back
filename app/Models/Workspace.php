@@ -49,4 +49,8 @@ class Workspace extends Model
     {
         return $this->belongsTo(User::class, 'created_by_id');
     }
+
+    public function hasProject(Project $project) {
+        return $this->projects()->where('id', $project->id)->exists();
+    }
 }

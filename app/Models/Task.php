@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Task extends Model
 {
@@ -11,14 +12,27 @@ class Task extends Model
 
     protected $fillable = [
         'label',
+        'description',
         'estimated_timestamp',
         'realized_timestamp',
         'deadline',
         'is_finish',
         'sprint_id',
         'priority_id',
-        'status_id'
+        'status_id',
+        'project_id',
+        'created_by',
     ];
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
 
     public function sprint()
     {
