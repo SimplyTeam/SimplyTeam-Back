@@ -17,7 +17,7 @@ class LevelSeeder extends Seeder
     {
         $maxPoint = 100;
 
-        Level::create([
+        Level::firstOrCreate([
             'id' => 1,
             'max_point' => $maxPoint,
             'min_point' => 0,
@@ -34,7 +34,7 @@ class LevelSeeder extends Seeder
                 'max_point' => $maxPoint,
                 'min_point' => $minPoint
             ];
-            Level::create($level);
+            Level::firstOrCreate($level);
         }
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
@@ -43,6 +44,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public static function getAuthenticatedUser()
+    {
+        if (Auth::check()) {
+            return Auth::user();
+        }
+        return null;
+    }
+
     public function workspaces()
     {
         return $this->belongsToMany(Workspace::class, 'link_between_users_and_workspaces');
@@ -71,5 +80,10 @@ class User extends Authenticatable
     public function level()
     {
         return $this->belongsTo(Level::class);
+    }
+
+    public function quests()
+    {
+        return $this->hasMany(UserQuest::class, 'user_id');
     }
 }

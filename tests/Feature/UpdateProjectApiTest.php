@@ -6,20 +6,13 @@ use App\Models\Project;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
-use Tests\TestCase;
+use Tests\Feature\base\BaseTestCase;
 
-class UpdateProjectApiTest extends TestCase
+class UpdateProjectApiTest extends BaseTestCase
 {
     use DatabaseTransactions, WithFaker;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->artisan('passport:install');
-    }
 
     /**
      * Test updating a project for a workspace.

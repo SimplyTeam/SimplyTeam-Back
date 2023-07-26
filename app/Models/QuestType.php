@@ -5,13 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Status extends Model
+class QuestType extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id';
-  
-    protected $fillable = [
-        'label'
-    ];
+    public $timestamps = false;
+
+    protected $fillable = ['label'];
 }

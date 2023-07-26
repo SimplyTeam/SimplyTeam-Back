@@ -7,10 +7,9 @@ use App\Models\Sprint;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
+use Tests\Feature\base\BaseTestCase;
 
-class GetSprintApiTest extends TestCase
+class GetSprintApiTest extends BaseTestCase
 {
     use RefreshDatabase;
 
@@ -21,7 +20,6 @@ class GetSprintApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->artisan('passport:install');
 
         $this->user = User::factory()->create();
         $this->workspace = Workspace::factory()->create();
