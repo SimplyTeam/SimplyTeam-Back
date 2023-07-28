@@ -80,6 +80,30 @@ class TaskController extends Controller
         return response()->json($tasks);
     }
 
+    public function backlog(Request $request, Workspace $workspace, Project $project)
+    {
+        $user = $request->user();
+
+        $responseError = null;
+
+        if (!$user->hasWorkspace($workspace)) {
+            $responseError = $this->missingWorkspaceInUserError;
+        } elseif (!$workspace->hasProject($project)) {
+            $responseError = $this->missingProjectInWorkspaceError;
+        }
+
+        if ($responseError) {
+            return $responseError;
+        }
+
+        $tasks = $project->backlog()->with(['users', 'createdBy', 'subtasks'])->get();
+
+        return response()->json($tasks);
+    }
+
+    /**
+     * @throws Exception
+     */
     public function store(StoreTaskRequest $request, Workspace $workspace, Project $project)
     {
         $user = $request->user();
