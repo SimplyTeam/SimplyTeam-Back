@@ -22,6 +22,7 @@ class Task extends Model
         'status_id',
         'project_id',
         'created_by',
+        'parent_id',
     ];
 
     public function createdBy(): BelongsTo
@@ -54,13 +55,13 @@ class Task extends Model
         return $this->belongsToMany(User::class, 'users_tasks');
     }
 
-    public function previousTask()
+    public function subtasks()
     {
-        return $this->belongsTo(Task::class, 'id', 'previous_task_id');
+        return $this->hasMany(Task::class, 'parent_id')->with(['users', 'createdBy', 'parent', 'sprint']);
     }
 
-    public function nextTask()
+    public function parent()
     {
-        return $this->hasOne(Task::class, 'previous_task_id', 'id');
+        return $this->belongsTo(Task::class, 'parent_id');
     }
 }

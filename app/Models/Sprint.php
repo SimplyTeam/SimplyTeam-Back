@@ -32,6 +32,8 @@ class Sprint extends Model
      */
     public function tasks()
     {
-        return $this->hasMany(Task::class)->with(['users', 'createdBy']);
+        return $this->hasMany(Task::class)
+            ->with(['users', 'createdBy', 'subtasks', 'sprint'])
+            ->whereNull('parent_id');
     }
 }

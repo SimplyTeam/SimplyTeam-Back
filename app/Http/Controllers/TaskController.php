@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Project;
-use App\Models\Sprint;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Workspace;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -33,7 +33,7 @@ class TaskController extends Controller
             ->json(['message' => 'This task does not belong to the specified project.'], 403);
     }
 
-    public function index(Request $request, Workspace $workspace, Project $project, Sprint $sprint)
+    public function index(Request $request, Workspace $workspace, Project $project)
     {
         $user = $request->user();
 
@@ -43,8 +43,6 @@ class TaskController extends Controller
             $responseError = $this->missingWorkspaceInUserError;
         } elseif (!$workspace->hasProject($project)) {
             $responseError = $this->missingProjectInWorkspaceError;
-        } elseif (!$project->hasSprint($sprint)) {
-            $responseError = $this->sprintMissingInProjectError;
         }
 
         if ($responseError) {
@@ -52,11 +50,11 @@ class TaskController extends Controller
         }
 
         $tasks = Task::query()
-            ->join('sprints', 'tasks.sprint_id', '=', 'sprints.id')
-            ->where('sprints.id', $sprint->id);
+            ->with(['sprint', 'parent'])
+            ->whereNull('parent_id');
 
         // Apply filters
-        $filters = $request->only(['status', 'priority', 'assigned_to']);
+        $filters = $request->only(['status', 'priority', 'assigned_to', 'search', 'limit']);
         if (!empty($filters['status'])) {
             $tasks->where('tasks.status_id', $filters['status']);
         }
@@ -82,6 +80,30 @@ class TaskController extends Controller
         return response()->json($tasks);
     }
 
+    public function backlog(Request $request, Workspace $workspace, Project $project)
+    {
+        $user = $request->user();
+
+        $responseError = null;
+
+        if (!$user->hasWorkspace($workspace)) {
+            $responseError = $this->missingWorkspaceInUserError;
+        } elseif (!$workspace->hasProject($project)) {
+            $responseError = $this->missingProjectInWorkspaceError;
+        }
+
+        if ($responseError) {
+            return $responseError;
+        }
+
+        $tasks = $project->backlog()->with(['users', 'createdBy', 'subtasks'])->get();
+
+        return response()->json($tasks);
+    }
+
+    /**
+     * @throws Exception
+     */
     public function store(StoreTaskRequest $request, Workspace $workspace, Project $project)
     {
         $user = $request->user();
@@ -103,12 +125,24 @@ class TaskController extends Controller
         $task = new Task();
 
         if (isset($validatedData["sprint_id"])) {
-            if ($validatedData['sprint_id'] == null) {
-                $task->sprint_id = null;
-            } else if ($project->hasSprintWithId($validatedData['sprint_id'])) {
-                $task->sprint_id = $validatedData["sprint_id"];
-            } else {
-                return response()->json(['message' => 'Sprint does not belong to the specified project.'], 403);
+            try {
+                $this->assignSprintToTask($project, $task, $validatedData["sprint_id"]);
+
+                // Remove sprint_id from validated data, to keep it from being override
+                unset($validatedData["sprint_id"]);
+            } catch (Exception $e) {
+                return response()->json(['message' => $e->getMessage()], 403);
+            }
+        }
+
+        if (isset($validatedData["parent_id"])) {
+            try {
+                $this->assignParentToTask($task, $validatedData["parent_id"]);
+
+                // Remove parent_id from validated data, to keep it from being override
+                unset($validatedData["parent_id"]);
+            } catch (Exception $e) {
+                return response()->json(['message' => $e->getMessage()], 403);
             }
         }
 
@@ -122,6 +156,7 @@ class TaskController extends Controller
         $task->status_id = $validatedData["status_id"];
         $task->project_id = $project->id;
         $task->created_by = $user->id;
+
         $task->save();
 
         if (isset($validatedData["assigned_to"])) {
@@ -165,14 +200,33 @@ class TaskController extends Controller
             }
         }
 
+
         if (isset($validatedData["sprint_id"])) {
-            if ($validatedData['sprint_id'] == null) {
-                $task->sprint_id = null;
-            } else if ($project->hasSprintWithId($validatedData['sprint_id'])) {
-                $task->sprint_id = $validatedData["sprint_id"];
-            } else {
-                return response()->json(['message' => 'Sprint does not belong to the specified project.'], 403);
+            try {
+                $this->assignSprintToTask($project, $task, $validatedData["sprint_id"]);
+
+                foreach ($task->subtasks as $subtask) {
+                    $this->assignSprintToTask($project, $subtask, $validatedData["sprint_id"]);
+                }
+
+                // Remove sprint_id from validated data, to keep it from being updated
+                unset($validatedData["sprint_id"]);
+            } catch (Exception $e) {
+                return response()->json(['message' => $e->getMessage()], 403);
             }
+        }
+
+        if (isset($validatedData["parent_id"])) {
+            try {
+                $task = $this->assignParentToTask($task, $validatedData["parent_id"]);
+                $task->save();
+
+                // Remove parent_id from validated data, to keep it from being updated
+                unset($validatedData["parent_id"]);
+            } catch (Exception $e) {
+                return response()->json(['message' => $e->getMessage()], 403);
+            }
+
         }
 
         // Update the task
@@ -202,5 +256,45 @@ class TaskController extends Controller
         $task->delete();
 
         return response()->json(['message' => 'Task deleted successfully.'], 200);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function assignSprintToTask(Project $project, Task $task, ?int $sprintId)
+    {
+        if ($sprintId == 0) {
+            $task->sprint_id = null;
+
+            return $task;
+        }
+
+        if ($project->hasSprintWithId($sprintId)) {
+            $task->sprint_id = $sprintId;
+
+            return $task;
+        }
+
+        throw new Exception('Sprint does not belong to the specified project.');
+    }
+
+    private function assignParentToTask(Task $task, ?int $parentId)
+    {
+        if ($parentId == null) {
+            $task->parent_id = null;
+
+            return $task;
+        }
+
+        $parentTask = Task::findOrFail($parentId);
+
+        if ($parentTask->parent_id != null) {
+            throw new Exception('Cannot add task with subtask, as subtask');
+        }
+
+        $task->parent_id = $parentId;
+        $task->sprint_id = $parentTask->sprint_id;
+
+        return $task;
     }
 }

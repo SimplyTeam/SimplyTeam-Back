@@ -42,6 +42,8 @@ Route::middleware(['auth:api'])->group(function () {
             Route::post('/', [ProjectController::class, 'store']);
             Route::prefix('/{project}')->group(function () {
                 Route::prefix('/tasks')->group(function () {
+                    Route::get('/', [TaskController::class, 'index']);
+                    Route::get('/backlog', [TaskController::class, 'backlog']);
                     Route::post('/', [TaskController::class, 'store']);
                     Route::put('/{task}', [TaskController::class, 'update']);
                     Route::delete('/{task}', [TaskController::class, 'remove']);
@@ -52,9 +54,6 @@ Route::middleware(['auth:api'])->group(function () {
                 Route::post('/', [SprintController::class, 'store']);
                 Route::prefix('/{sprint}')->group(function () {
                     Route::put('/', [SprintController::class, 'update']);
-                    Route::prefix('/tasks')->group(function () {
-                        Route::get('/', [TaskController::class, 'index']);
-                    });
                 });
             });
             Route::put('/{project}', [ProjectController::class, 'update']);

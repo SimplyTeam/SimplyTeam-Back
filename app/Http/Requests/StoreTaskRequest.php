@@ -30,7 +30,8 @@ class StoreTaskRequest extends FormRequest
             'is_finish' => 'required|boolean',
             'priority_id' => 'required|integer|exists:priority,id',
             'status_id' => 'required|integer|exists:status,id',
-            'sprint_id' => 'integer|nullable|exists:sprints,id',
+            'sprint_id' => 'integer',
+            'parent_id' => 'integer|nullable|exists:tasks,id',
             'assigned_to' => 'array',
         ];
     }
