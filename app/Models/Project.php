@@ -24,6 +24,11 @@ class Project extends Model
         return $this->hasMany(Sprint::class)->with('tasks');
     }
 
+    public function backlog()
+    {
+        return $this->hasMany(Task::class)->whereNull('sprint_id');
+    }
+
     public function tasks()
     {
         return $this->hasMany(Task::class);

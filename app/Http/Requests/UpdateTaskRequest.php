@@ -31,7 +31,8 @@ class UpdateTaskRequest extends FormRequest
             'priority_id' => 'integer|exists:priority,id',
             'status_id' => 'integer|exists:status,id',
             'assigned_to' => 'array',
-            'sprint_id' => 'integer|nullable|exists:sprints,id',
+            'sprint_id' => 'integer|nullable',
+            'parent_id' => 'integer|nullable|exists:tasks,id',
         ];
     }
 }
