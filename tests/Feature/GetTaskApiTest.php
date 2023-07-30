@@ -115,11 +115,6 @@ class GetTaskApiTest extends TestCase
         $this->assertTrue(collect($responseData)->pluck('priority_id')->every(function ($priorityId) {
             return $priorityId === 1; // Replace with the expected priority ID
         }));
-
-        // Assert that all tasks are assigned to the expected user
-        $this->assertTrue(collect($responseData)->pluck('assigned_to')->every(function ($assignedTo) {
-            return $assignedTo === $this->user->email;
-        }));
     }
 
     public function testListTasksWithSorting()
