@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Status;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -14,10 +15,8 @@ class StatusSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('status')->insert([
-            ['id' => 1, 'label' => 'New'],
-            ['id' => 2, 'label' => 'In Progress'],
-            ['id' => 3, 'label' => 'Done'],
-        ]);
+        Status::firstOrCreate(['id' => 1, 'label' => 'New']);
+        Status::firstOrCreate(['id' => 2, 'label' => 'In Progress']);
+        Status::firstOrCreate(['id' => 3, 'label' => 'Done']);
     }
 }
