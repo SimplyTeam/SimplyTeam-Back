@@ -9,6 +9,8 @@ class Priority extends Model
 {
     use HasFactory;
 
+    protected $table = 'priority';
+
     protected $fillable = [
         'label'
     ];

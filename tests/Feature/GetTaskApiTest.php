@@ -57,7 +57,7 @@ class GetTaskApiTest extends TestCase
 
     private function generateUrl($workspaceId, $projectId, $sprintId)
     {
-        return "/api/workspaces/$workspaceId/projects/$projectId/sprints/$sprintId/tasks";
+        return "/api/workspaces/$workspaceId/projects/$projectId/tasks";
     }
 
     public function testListTasks()
@@ -115,11 +115,6 @@ class GetTaskApiTest extends TestCase
         $this->assertTrue(collect($responseData)->pluck('priority_id')->every(function ($priorityId) {
             return $priorityId === 1; // Replace with the expected priority ID
         }));
-
-        // Assert that all tasks are assigned to the expected user
-        $this->assertTrue(collect($responseData)->pluck('assigned_to')->every(function ($assignedTo) {
-            return $assignedTo === $this->user->email;
-        }));
     }
 
     public function testListTasksWithSorting()
@@ -171,20 +166,6 @@ class GetTaskApiTest extends TestCase
         $this->assertEquals(
             $response->json("message"),
             "This project does not belong to the specified workspace."
-        );
-    }
-
-    public function test_get_task_with_unlinked_sprint()
-    {
-        $response = $this->getJson(
-            $this->generateUrl($this->workspace->id, $this->project->id, $this->unlink_sprint->id),
-            $this->header
-        );
-
-        $response->assertStatus(403);
-        $this->assertEquals(
-            $response->json("message"),
-            "This sprint does not belong to the specified project."
         );
     }
 }

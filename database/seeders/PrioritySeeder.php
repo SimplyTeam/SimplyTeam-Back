@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Priority;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -14,10 +15,16 @@ class PrioritySeeder extends Seeder
      */
     public function run()
     {
-        DB::table('priority')->insert([
-            ['id' => 1, 'label' => 'Low'],
-            ['id' => 2, 'label' => 'Medium'],
-            ['id' => 3, 'label' => 'High'],
-        ]);
+        Priority::firstOrCreate(
+            ['id' => 1, 'label' => 'Low']
+        );
+
+        Priority::firstOrCreate(
+            ['id' => 2, 'label' => 'Medium']
+        );
+
+        Priority::firstOrCreate(
+            ['id' => 3, 'label' => 'High']
+        );
     }
 }
