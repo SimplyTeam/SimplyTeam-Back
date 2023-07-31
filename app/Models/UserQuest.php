@@ -16,6 +16,7 @@ class UserQuest extends Model
         'user_id',
         'quest_id',
         'completed_count',
+        'in_progress',
         'is_completed',
         'date_completed',
     ];
