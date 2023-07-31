@@ -100,5 +100,6 @@ class User extends Authenticatable
                 'date_completed' => null,
             ]);
         }
+        $this->save();
     }
 }

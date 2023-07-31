@@ -24,6 +24,7 @@ class GetQuestControllerRequest extends FormRequest
         return [
             'quest_type' => 'nullable|integer|exists:quest_types,id',
             'filter_by' => 'nullable',
+            'in_progress_only' => 'nullable|boolean',
             'default_order' => 'nullable|in:asc,desc'
         ];
     }
