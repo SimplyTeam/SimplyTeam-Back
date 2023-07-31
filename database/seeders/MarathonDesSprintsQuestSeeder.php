@@ -44,6 +44,7 @@ class MarathonDesSprintsQuestSeeder extends Seeder
                     . ($numberOfElementToComplete > 1 ? "sprints" : "sprint")
                     . ".",
                 'reward_points' => $rewardsPoint,
+                'count' => $numberOfElementToComplete,
                 'level' => $levelNumber,
                 'previous_quest_id' => $previousId,
                 'quest_types_id' => 3,

@@ -45,6 +45,7 @@ class MaitreDuTempsQuestSeeder extends Seeder
                     . ($numberOfElementToComplete > 1 ? "tâches" : "tâche")
                     . " sous le temps imparti.",
                 'reward_points' => $rewardsPoint,
+                'count' => $numberOfElementToComplete,
                 'level' => $levelNumber,
                 'previous_quest_id' => $previousId,
                 'quest_types_id' => 2,
