@@ -85,7 +85,7 @@ class User extends Authenticatable
 
     public function quests()
     {
-        return $this->belongsToMany(UserQuest::class, 'user_id')
+        return $this->belongsToMany(Quest::class, 'users_quests')
             ->withPivot(['completed_count', 'in_progress', 'is_completed', 'date_completed']);
     }
 
