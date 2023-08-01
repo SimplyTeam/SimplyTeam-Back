@@ -3,25 +3,27 @@
 namespace Tests\Feature;
 
 use App\Models\Project;
+use App\Models\Quest;
 use App\Models\Sprint;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\UserQuest;
 use App\Models\Workspace;
+use Carbon\Carbon;
 use DateTime;
 use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Feature\base\BaseTestCase;
 use Tests\TestCase;
 
-class UpdateTaskApiTest extends TestCase
+class UpdateTaskApiTest extends BaseTestCase
 {
     use DatabaseTransactions, WithFaker;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->artisan('passport:install');
-        $this->artisan('db:seed');
 
         $endDate = $this->faker->date;
         $beginDate = $this->faker->date('Y-m-d', $endDate);
@@ -114,6 +116,151 @@ class UpdateTaskApiTest extends TestCase
         $this->assertEquals($newData['is_finish'], $task->is_finish);
         $this->assertEquals($newData['priority_id'], $task->priority_id);
         $this->assertEquals($newData['status_id'], $task->status_id);
+    }
+
+    public function testFinishTaskUpdateQuest() {
+        $user = $this->user;
+
+        $currentEarnedPointsOfUser = $user->earned_points;
+
+        $task = Task::factory()
+            ->for($this->sprint)
+            ->for($this->project)
+            ->create();
+
+        $questsWithFirstsLevelsOnlyQuery = UserQuest::query()
+            ->join('quests', 'quests.id', '=', 'users_quests.quest_id')
+            ->where('user_id', '=', $user->id)
+            ->where('quests.level', '=', 1)
+            ->where('quests.quest_types_id', '=', 2)
+            ->orderBy('previous_quest_id')
+            ->get()
+            ->toArray();
+
+        $newData = [
+            'deadline' => $this->getDeadlineAfterToday(),
+            'is_finish' => true
+        ];
+
+        $response = $this->putJson(
+            $this->generateUrl($this->workspace->id, $this->project->id, $task->id),
+            $newData,
+            $this->header
+        );
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Task updated successfully.'
+            ]);
+
+        $task->refresh();
+
+        foreach($questsWithFirstsLevelsOnlyQuery as $quest) {
+            $quest['completed_count'] += 1;
+            if($quest['completed_count'] === $quest['count']) {
+                $quest['is_completed'] = true;
+                $quest['in_progress'] = false;
+
+                $nextQuest = Quest::query()
+                    ->where('previous_quest_id', '=', str($quest['id']))
+                    ->first();
+
+                $nextUserQuest = UserQuest::query()
+                    ->join('quests', 'quests.id', '=', 'users_quests.quest_id')
+                    ->where('user_id', '=', $user->id)
+                    ->where('quests.level', '=', 2)
+                    ->where('in_progress', '=', true)
+                    ->where('quests.quest_types_id', '=', 2)
+                    ->where('quest_id', '=', $nextQuest->id)
+                    ->orderBy('previous_quest_id')
+                    ->first();
+
+                $this->assertNotNull(
+                    $nextUserQuest
+                );
+
+                $currentEarnedPointsOfUser += $quest->rewards_points;
+            }
+        }
+
+        $this->assertEquals($newData['is_finish'], $task->is_finish);
+
+        $user->refresh();
+
+        $this->assertTrue($currentEarnedPointsOfUser, $user->earned_points);
+    }
+
+    public function testFinishTaskUpdateQuestButNotInTime() {
+        $user = $this->user;
+
+        $currentEarnedPointsOfUser = $user->earned_points;
+
+        $task = Task::factory()
+            ->for($this->sprint)
+            ->for($this->project)
+            ->create();
+
+        $questsWithFirstsLevelsOnlyQuery = UserQuest::query()
+            ->join('quests', 'quests.id', '=', 'users_quests.quest_id')
+            ->where('user_id', '=', $user->id)
+            ->where('quests.level', '=', 1)
+            ->where('quests.quest_types_id', '=', 2)
+            ->orderBy('previous_quest_id')
+            ->get()
+            ->toArray();
+
+        $newData = [
+            'deadline' => $this->getDeadlineAfterToday(),
+            'is_finish' => true
+        ];
+
+        $response = $this->putJson(
+            $this->generateUrl($this->workspace->id, $this->project->id, $task->id),
+            $newData,
+            $this->header
+        );
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Task updated successfully.'
+            ]);
+
+        $task->refresh();
+
+        foreach($questsWithFirstsLevelsOnlyQuery as $quest) {
+            $quest['completed_count'] += 1;
+            if($quest['completed_count'] === $quest['count']) {
+                $quest['is_completed'] = true;
+                $quest['in_progress'] = false;
+
+                $nextQuest = Quest::query()
+                    ->where('previous_quest_id', '=', str($quest['id']))
+                    ->first();
+
+                $nextUserQuest = UserQuest::query()
+                    ->join('quests', 'quests.id', '=', 'users_quests.quest_id')
+                    ->where('user_id', '=', $user->id)
+                    ->where('quests.level', '=', 2)
+                    ->where('in_progress', '=', true)
+                    ->where('quests.quest_types_id', '=', 2)
+                    ->where('quest_id', '=', $nextQuest->id)
+                    ->whereNot('name', '=', 'Maitre du temps')
+                    ->orderBy('previous_quest_id')
+                    ->first();
+
+                $this->assertNotNull(
+                    $nextUserQuest
+                );
+
+                $currentEarnedPointsOfUser += $quest->rewards_points;
+            }
+        }
+
+        $this->assertEquals($newData['is_finish'], $task->is_finish);
+
+        $user->refresh();
+
+        $this->assertTrue($currentEarnedPointsOfUser, $user->earned_points);
     }
 
     /**

@@ -30,8 +30,6 @@ class GetQuestsApiTest extends BaseTestCase
 
     public function testGetValidQuestsIfUserHasBeenCreatedOnly()
     {
-        // Create some sample data for user quests if needed (e.g., using factories)
-
         $user = $this->user;
 
         $questsWithFirstsLevelsOnly = UserQuest::query()
@@ -43,7 +41,7 @@ class GetQuestsApiTest extends BaseTestCase
         $expected_response = [];
 
         foreach ($questsWithFirstsLevelsOnly as $userQuest) {
-            $quest = $userQuest->quest; // Assuming proper relation defined
+            $quest = $userQuest->quest;
             $questAttribute = $quest->toArray();
             $combinedAttributes = array_merge($questAttribute, [
                 'completed_count' => 0,
