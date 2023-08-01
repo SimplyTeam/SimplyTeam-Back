@@ -126,7 +126,9 @@ class UpdateTaskApiTest extends BaseTestCase
         $task = Task::factory()
             ->for($this->sprint)
             ->for($this->project)
-            ->create();
+            ->create([
+                'is_finish' => false
+            ]);
 
         $questsWithFirstsLevelsOnlyQuery = UserQuest::query()
             ->join('quests', 'quests.id', '=', 'users_quests.quest_id')
@@ -172,14 +174,17 @@ class UpdateTaskApiTest extends BaseTestCase
                     ->where('in_progress', '=', true)
                     ->where('quests.quest_types_id', '=', 2)
                     ->where('quest_id', '=', $nextQuest->id)
-                    ->orderBy('previous_quest_id')
                     ->first();
+
+                if(!$nextUserQuest) {
+                    dd($quest);
+                }
 
                 $this->assertNotNull(
                     $nextUserQuest
                 );
 
-                $currentEarnedPointsOfUser += $quest->rewards_points;
+                $currentEarnedPointsOfUser += $quest['reward_points'];
             }
         }
 
@@ -187,7 +192,7 @@ class UpdateTaskApiTest extends BaseTestCase
 
         $user->refresh();
 
-        $this->assertTrue($currentEarnedPointsOfUser, $user->earned_points);
+        $this->assertEquals($currentEarnedPointsOfUser, $user->earned_points);
     }
 
     public function testFinishTaskUpdateQuestButNotInTime() {
@@ -198,19 +203,22 @@ class UpdateTaskApiTest extends BaseTestCase
         $task = Task::factory()
             ->for($this->sprint)
             ->for($this->project)
-            ->create();
+            ->create([
+                'is_finish' => false
+            ]);
 
         $questsWithFirstsLevelsOnlyQuery = UserQuest::query()
             ->join('quests', 'quests.id', '=', 'users_quests.quest_id')
             ->where('user_id', '=', $user->id)
             ->where('quests.level', '=', 1)
             ->where('quests.quest_types_id', '=', 2)
+            ->where('quests.name', '=', 'Travail Dur')
             ->orderBy('previous_quest_id')
             ->get()
             ->toArray();
 
         $newData = [
-            'deadline' => $this->getDeadlineAfterToday(),
+            'deadline' => $this->getDeadlineBeforeToday(),
             'is_finish' => true
         ];
 
@@ -234,7 +242,7 @@ class UpdateTaskApiTest extends BaseTestCase
                 $quest['in_progress'] = false;
 
                 $nextQuest = Quest::query()
-                    ->where('previous_quest_id', '=', str($quest['id']))
+                    ->where('previous_quest_id', '=', $quest['id'])
                     ->first();
 
                 $nextUserQuest = UserQuest::query()
@@ -244,7 +252,6 @@ class UpdateTaskApiTest extends BaseTestCase
                     ->where('in_progress', '=', true)
                     ->where('quests.quest_types_id', '=', 2)
                     ->where('quest_id', '=', $nextQuest->id)
-                    ->whereNot('name', '=', 'Maitre du temps')
                     ->orderBy('previous_quest_id')
                     ->first();
 
@@ -252,7 +259,7 @@ class UpdateTaskApiTest extends BaseTestCase
                     $nextUserQuest
                 );
 
-                $currentEarnedPointsOfUser += $quest->rewards_points;
+                $currentEarnedPointsOfUser += $quest['reward_points'];
             }
         }
 
@@ -260,7 +267,7 @@ class UpdateTaskApiTest extends BaseTestCase
 
         $user->refresh();
 
-        $this->assertTrue($currentEarnedPointsOfUser, $user->earned_points);
+        $this->assertEquals($currentEarnedPointsOfUser, $user->earned_points);
     }
 
     /**

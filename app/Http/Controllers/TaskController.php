@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Project;
+use App\Models\Quest;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\UserQuest;
 use App\Models\Workspace;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -31,6 +34,8 @@ class TaskController extends Controller
             ->json(['message' => 'This sprint does not belong to the specified project.'], 403);
         $this->missingTaskInProjectError = response()
             ->json(['message' => 'This task does not belong to the specified project.'], 403);
+        $this->taskIsFinish = response()
+            ->json(['message' => 'This task is already finished'], 409);
     }
 
     public function index(Request $request, Workspace $workspace, Project $project)
@@ -179,6 +184,8 @@ class TaskController extends Controller
             $responseError = $this->missingProjectInWorkspaceError;
         } elseif (!$project->hasTask($task)) {
             $responseError = $this->missingTaskInProjectError;
+        } elseif($task['is_finish']) {
+            $responseError = $this->taskIsFinish;
         }
 
         if ($responseError) {
@@ -187,6 +194,62 @@ class TaskController extends Controller
 
         $validatedData = $request->validated();
         if (in_array('is_finish', $validatedData)) {
+            $currentQuest = $user->quests()
+                ->where('name', 'Maitre du temps')
+                ->where('users_quests.in_progress', true)
+                ->first();
+
+            if ($currentQuest) {
+                $currentQuest->pivot->completed_count++;
+                $currentQuest->pivot->is_completed = $currentQuest->pivot->completed_count == $currentQuest->count;
+                $currentQuest->pivot->date_completed = $currentQuest->pivot->is_completed ? Carbon::now() : null;
+                $currentQuest->pivot->in_progress = !$currentQuest->pivot->is_completed;
+                $currentQuest->pivot->save();
+
+                if ($currentQuest->level < 20 && $currentQuest->pivot->is_completed) {
+                    UserQuest::query()
+                        ->join('quests', 'users_quests.quest_id', '=', 'quests.id')
+                        ->where('user_id', $user->id)
+                        ->where('name', 'Maitre du temps')
+                        ->where('users_quests.in_progress', false)
+                        ->where('level', $currentQuest->level + 1)
+                        ->update(['in_progress' => true, 'completed_count' => 0]);
+                }
+
+                if ($currentQuest->pivot->is_completed) {
+                    $user->earned_points += $currentQuest->reward_points;
+                }
+            }
+
+            $validatedData['finished_at'] = $validatedData['is_finish'] ? date('Y-m-d H:i:s') : null;
+
+            $currentQuest = $user->quests()
+                ->where('name', 'Travail Dur')
+                ->where('users_quests.in_progress', true)
+                ->first();
+
+            if ($currentQuest) {
+                $currentQuest->pivot->completed_count++;
+                $currentQuest->pivot->is_completed = $currentQuest->pivot->completed_count == $currentQuest->count;
+                $currentQuest->pivot->date_completed = $currentQuest->pivot->is_completed ? Carbon::now() : null;
+                $currentQuest->pivot->in_progress = !$currentQuest->pivot->is_completed;
+                $currentQuest->pivot->save();
+
+                if ($currentQuest->level < 20 && $currentQuest->pivot->is_completed) {
+                    UserQuest::query()
+                        ->join('quests', 'users_quests.quest_id', '=', 'quests.id')
+                        ->where('user_id', $user->id)
+                        ->where('name', 'Travail Dur')
+                        ->where('users_quests.in_progress', false)
+                        ->where('level', $currentQuest->level + 1)
+                        ->update(['in_progress' => true, 'completed_count' => 0]);
+                }
+
+                if ($currentQuest->pivot->is_completed) {
+                    $user->earned_points += $currentQuest->reward_points;
+                }
+            }
+
             $validatedData['finished_at'] = $validatedData['is_finish'] ? date('Y-m-d H:i:s') : null;
         }
 
@@ -231,6 +294,7 @@ class TaskController extends Controller
 
         // Update the task
         $task->update($validatedData);
+        $user->save();
         return response()->json(['message' => 'Task updated successfully.']);
     }
 

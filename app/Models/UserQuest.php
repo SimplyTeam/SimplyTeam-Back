@@ -9,6 +9,8 @@ class UserQuest extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $table = 'users_quests';
     protected $primaryKey = ['user_id', 'quest_id'];
     public $incrementing = false;
