@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Models\Level\LevelUpdater;
 use App\Models\Project;
 use App\Models\Quest;
 use App\Models\Task;
@@ -252,6 +253,9 @@ class TaskController extends Controller
                     $user->earned_points += $currentQuest->reward_points;
                 }
             }
+
+            $levelUpdater = new LevelUpdater($user);
+            $levelUpdater->updateLevel();
         }
 
         if (isset($validatedData["assigned_to"])) {

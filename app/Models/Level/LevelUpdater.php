@@ -18,11 +18,12 @@ class LevelUpdater implements LevelUpdaterInterface
         $user = $this->user;
 
         $newLevel = Level::query()
-            ->where('min_point', '>=', $user->earned_points)
-            ->where('max_point', '<=', $user->earned_points)
+            ->where('min_point', '<=', $user->earned_points)
+            ->where('max_point', '>=', $user->earned_points)
+            ->get()
             ->first();
 
-        if($newLevel && $newLevel != $user->level) {
+        if($newLevel) {
             $user->level_id = $newLevel->id;
         }
     }

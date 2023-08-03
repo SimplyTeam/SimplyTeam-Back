@@ -279,8 +279,10 @@ class UpdateTaskApiTest extends BaseTestCase
         $currentLevel = Level::find($user->level_id);
 
         $nextLevelId = $currentLevel->id+1;
+        $nextLevel = Level::find($currentLevel->id+1);
 
         $user->earned_points = $currentLevel->max_point - 5;
+        $user->save();
 
         $currentEarnedPointsOfUser = $user->earned_points;
 
@@ -311,8 +313,9 @@ class UpdateTaskApiTest extends BaseTestCase
 
         $user->refresh();
 
-        $this->assertEquals($currentEarnedPointsOfUser, $user->earned_points);
         $this->assertEquals($nextLevelId, $user->level_id);
+        $this->assertLessThanOrEqual($nextLevel->max_point, $user->earned_points);
+        $this->assertGreaterThanOrEqual($nextLevel->min_point, $user->earned_points);
     }
 
     /**
