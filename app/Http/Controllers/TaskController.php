@@ -193,13 +193,18 @@ class TaskController extends Controller
         }
 
         $validatedData = $request->validated();
+
+        $deadline = $task->deadline ? $task->deadline : null;
+
         if (in_array('is_finish', $validatedData)) {
+            $validatedData['finished_at'] = date('Y-m-d H:i:s');
+
             $currentQuest = $user->quests()
                 ->where('name', 'Maitre du temps')
                 ->where('users_quests.in_progress', true)
                 ->first();
 
-            if ($currentQuest) {
+            if ($currentQuest && ($validatedData['finished_at'] < $deadline || $deadline == null)) {
                 $currentQuest->pivot->completed_count++;
                 $currentQuest->pivot->is_completed = $currentQuest->pivot->completed_count == $currentQuest->count;
                 $currentQuest->pivot->date_completed = $currentQuest->pivot->is_completed ? Carbon::now() : null;
@@ -220,8 +225,6 @@ class TaskController extends Controller
                     $user->earned_points += $currentQuest->reward_points;
                 }
             }
-
-            $validatedData['finished_at'] = $validatedData['is_finish'] ? date('Y-m-d H:i:s') : null;
 
             $currentQuest = $user->quests()
                 ->where('name', 'Travail Dur')
@@ -249,8 +252,6 @@ class TaskController extends Controller
                     $user->earned_points += $currentQuest->reward_points;
                 }
             }
-
-            $validatedData['finished_at'] = $validatedData['is_finish'] ? date('Y-m-d H:i:s') : null;
         }
 
         if (isset($validatedData["assigned_to"])) {

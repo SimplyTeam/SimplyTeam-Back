@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Level;
 use App\Models\Project;
 use App\Models\Quest;
 use App\Models\Sprint;
@@ -217,8 +218,10 @@ class UpdateTaskApiTest extends BaseTestCase
             ->get()
             ->toArray();
 
+        $task->deadline = $this->getDeadlineBeforeToday();
+        $task->save();
+
         $newData = [
-            'deadline' => $this->getDeadlineBeforeToday(),
             'is_finish' => true
         ];
 
@@ -268,6 +271,48 @@ class UpdateTaskApiTest extends BaseTestCase
         $user->refresh();
 
         $this->assertEquals($currentEarnedPointsOfUser, $user->earned_points);
+    }
+
+    public function testFinishTaskUpdateQuestUpgradeLevel() {
+        $user = $this->user;
+
+        $currentLevel = Level::find($user->level_id);
+
+        $nextLevelId = $currentLevel->id+1;
+
+        $user->earned_points = $currentLevel->max_point - 5;
+
+        $currentEarnedPointsOfUser = $user->earned_points;
+
+        $task = Task::factory()
+            ->for($this->sprint)
+            ->for($this->project)
+            ->create([
+                'is_finish' => false
+            ]);
+
+        $task->deadline = $this->getDeadlineBeforeToday();
+        $task->save();
+
+        $newData = [
+            'is_finish' => true
+        ];
+
+        $response = $this->putJson(
+            $this->generateUrl($this->workspace->id, $this->project->id, $task->id),
+            $newData,
+            $this->header
+        );
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Task updated successfully.'
+            ]);
+
+        $user->refresh();
+
+        $this->assertEquals($currentEarnedPointsOfUser, $user->earned_points);
+        $this->assertEquals($nextLevelId, $user->level_id);
     }
 
     /**
