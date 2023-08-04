@@ -11,6 +11,7 @@ use App\Models\Task;
 use App\Models\User;
 use App\Models\UserQuest;
 use App\Models\Workspace;
+use App\Services\QuestService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -23,6 +24,7 @@ class TaskController extends Controller
     private JsonResponse $missingProjectInWorkspaceError;
     private JsonResponse $sprintMissingInProjectError;
     private JsonResponse $missingTaskInProjectError;
+    private QuestService $questService;
 
     public function __construct()
     {
@@ -37,6 +39,8 @@ class TaskController extends Controller
             ->json(['message' => 'This task does not belong to the specified project.'], 403);
         $this->taskIsFinish = response()
             ->json(['message' => 'This task is already finished'], 409);
+
+        $this->questService = new QuestService();
     }
 
     public function index(Request $request, Workspace $workspace, Project $project)
@@ -176,7 +180,6 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Workspace $workspace, Project $project, Task $task)
     {
         $user = $request->user();
-
         $responseError = null;
 
         if (!$user->hasWorkspace($workspace)) {
@@ -194,65 +197,13 @@ class TaskController extends Controller
         }
 
         $validatedData = $request->validated();
-
         $deadline = $task->deadline ? $task->deadline : null;
 
         if (in_array('is_finish', $validatedData)) {
             $validatedData['finished_at'] = date('Y-m-d H:i:s');
 
-            $currentQuest = $user->quests()
-                ->where('name', 'Maitre du temps')
-                ->where('users_quests.in_progress', true)
-                ->first();
-
-            if ($currentQuest && ($validatedData['finished_at'] < $deadline || $deadline == null)) {
-                $currentQuest->pivot->completed_count++;
-                $currentQuest->pivot->is_completed = $currentQuest->pivot->completed_count == $currentQuest->count;
-                $currentQuest->pivot->date_completed = $currentQuest->pivot->is_completed ? Carbon::now() : null;
-                $currentQuest->pivot->in_progress = !$currentQuest->pivot->is_completed;
-                $currentQuest->pivot->save();
-
-                if ($currentQuest->level < 20 && $currentQuest->pivot->is_completed) {
-                    UserQuest::query()
-                        ->join('quests', 'users_quests.quest_id', '=', 'quests.id')
-                        ->where('user_id', $user->id)
-                        ->where('name', 'Maitre du temps')
-                        ->where('users_quests.in_progress', false)
-                        ->where('level', $currentQuest->level + 1)
-                        ->update(['in_progress' => true, 'completed_count' => 0]);
-                }
-
-                if ($currentQuest->pivot->is_completed) {
-                    $user->earned_points += $currentQuest->reward_points;
-                }
-            }
-
-            $currentQuest = $user->quests()
-                ->where('name', 'Travail Dur')
-                ->where('users_quests.in_progress', true)
-                ->first();
-
-            if ($currentQuest) {
-                $currentQuest->pivot->completed_count++;
-                $currentQuest->pivot->is_completed = $currentQuest->pivot->completed_count == $currentQuest->count;
-                $currentQuest->pivot->date_completed = $currentQuest->pivot->is_completed ? Carbon::now() : null;
-                $currentQuest->pivot->in_progress = !$currentQuest->pivot->is_completed;
-                $currentQuest->pivot->save();
-
-                if ($currentQuest->level < 20 && $currentQuest->pivot->is_completed) {
-                    UserQuest::query()
-                        ->join('quests', 'users_quests.quest_id', '=', 'quests.id')
-                        ->where('user_id', $user->id)
-                        ->where('name', 'Travail Dur')
-                        ->where('users_quests.in_progress', false)
-                        ->where('level', $currentQuest->level + 1)
-                        ->update(['in_progress' => true, 'completed_count' => 0]);
-                }
-
-                if ($currentQuest->pivot->is_completed) {
-                    $user->earned_points += $currentQuest->reward_points;
-                }
-            }
+            $this->questService->updateQuest($user, 'Travail Dur', $validatedData['finished_at']);
+            $this->questService->updateQuest($user, 'Maitre du temps', $validatedData['finished_at'], $deadline);
 
             $levelUpdater = new LevelUpdater($user);
             $levelUpdater->updateLevel();
