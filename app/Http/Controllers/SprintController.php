@@ -8,7 +8,6 @@ use App\Models\Workspace;
 use App\Models\Project;
 use App\Models\Sprint;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class SprintController extends Controller
@@ -78,6 +77,17 @@ class SprintController extends Controller
         $sprint->update($data);
 
         return response()->json($sprint, 200);
+    }
+
+    public function remove(Workspace $workspace, Project $project, Sprint $sprint)
+    {
+        if(!$project->sprints->contains($sprint)) {
+            return response()->json('Unauthorized', 401);
+        }
+
+        $sprint->delete();
+
+        return response()->json('Sprint deleted', 200);
     }
 }
 
