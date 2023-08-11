@@ -19,6 +19,7 @@ class MarathonDesSprintsQuestSeeder extends Seeder
         $maxLevel = 20;
         $rewardsPoint = 50;
         $questName = 'Marathon des sprints';
+        $image = 'marathon-sprint.svg';
 
         $NOfQuest = ["1", "2", "4", "8", "16"];
         $id = Quest::query()->max('id') + 1;
@@ -57,6 +58,7 @@ class MarathonDesSprintsQuestSeeder extends Seeder
                 'previous_quest_id' => $previousId,
                 'quest_types_id' => 3,
                 'grade' => $grade,
+                'image' => $image
             ];
 
             if ($quest == null) {

@@ -19,6 +19,7 @@ class TravailDurQuestSeeder extends Seeder
         $maxLevel = 20;
         $rewardsPoint = 50;
         $questName = "Travail Dur";
+        $image = "travail-dur.svg";
 
         $NOfQuest = ["1", "2", "4", "8", "16"];
         $id = Quest::query()->max('id') + 1;
@@ -57,6 +58,7 @@ class TravailDurQuestSeeder extends Seeder
                 'previous_quest_id' => $previousId,
                 'quest_types_id' => 2,
                 'grade' => $grade,
+                'image' => $image
             ];
 
             if ($quest == null) {

@@ -19,6 +19,7 @@ class MaitreDuTempsQuestSeeder extends Seeder
         $maxLevel = 20;
         $rewardsPoint = 50;
         $questName = 'Maitre du temps';
+        $image = 'maitre-temps.svg';
 
         $NOfQuest = ["1", "2", "4", "8", "16"];
         $maxId = Quest::query()->max('id');
@@ -58,6 +59,7 @@ class MaitreDuTempsQuestSeeder extends Seeder
                 'previous_quest_id' => $previousId,
                 'quest_types_id' => 2,
                 'grade' => $grade,
+                'image' => $image
             ];
 
             if ($quest == null) {
