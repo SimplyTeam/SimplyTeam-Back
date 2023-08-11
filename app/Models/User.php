@@ -89,6 +89,14 @@ class User extends Authenticatable
             ->withPivot(['completed_count', 'in_progress', 'is_completed', 'date_completed']);
     }
 
+    protected static function booted()
+    {
+        static::created(function (User $user) {
+            // Obtenez tous les quests
+            $user->initQuestsPivotData();
+        });
+    }
+
     public function initQuestsPivotData()
     {
         $quests = DB::table('quests')->get();

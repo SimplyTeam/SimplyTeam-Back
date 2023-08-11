@@ -32,13 +32,6 @@ class UserFactory extends Factory
         ];
     }
 
-    public function configure()
-    {
-        return $this->afterCreating(function (User $user) {
-            $user->initQuestsPivotData();
-        });
-    }
-
     /**
      * Indicate that the model's email address should be unverified.
      */
