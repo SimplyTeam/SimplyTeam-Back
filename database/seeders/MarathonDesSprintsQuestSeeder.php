@@ -37,6 +37,14 @@ class MarathonDesSprintsQuestSeeder extends Seeder
                 ->where('level', '=', $levelNumber)
                 ->first();
 
+            // Determine grade based on the level.
+            $grade = 'bronze'; // default value
+            if ($levelNumber > ($maxLevel * 2 / 3)) {
+                $grade = 'gold';
+            } elseif ($levelNumber > ($maxLevel / 3)) {
+                $grade = 'silver';
+            }
+
             $newData = [
                 'name' => $questName,
                 'description' =>
@@ -48,6 +56,7 @@ class MarathonDesSprintsQuestSeeder extends Seeder
                 'level' => $levelNumber,
                 'previous_quest_id' => $previousId,
                 'quest_types_id' => 3,
+                'grade' => $grade,
             ];
 
             if ($quest == null) {
