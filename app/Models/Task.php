@@ -64,4 +64,9 @@ class Task extends Model
     {
         return $this->belongsTo(Task::class, 'parent_id');
     }
+
+    public function getDeadline($task)
+    {
+        return $task->deadline ? $task->deadline : null;
+    }
 }

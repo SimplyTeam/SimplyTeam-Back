@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
@@ -22,7 +23,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'password'
     ];
 
     /**
@@ -84,6 +85,29 @@ class User extends Authenticatable
 
     public function quests()
     {
-        return $this->hasMany(UserQuest::class, 'user_id');
+        return $this->belongsToMany(Quest::class, 'users_quests')
+            ->withPivot(['completed_count', 'in_progress', 'is_completed', 'date_completed']);
+    }
+
+    protected static function booted()
+    {
+        static::created(function (User $user) {
+            // Obtenez tous les quests
+            $user->initQuestsPivotData();
+        });
+    }
+
+    public function initQuestsPivotData()
+    {
+        $quests = DB::table('quests')->get();
+        foreach ($quests as $quest) {
+            $this->quests()->attach($quest->id, [
+                'completed_count' => 0,
+                'in_progress' => $quest->level == 1,
+                'is_completed' => false,
+                'date_completed' => null,
+            ]);
+        }
+        $this->save();
     }
 }

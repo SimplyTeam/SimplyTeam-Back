@@ -19,6 +19,7 @@ class TravailDurQuestSeeder extends Seeder
         $maxLevel = 20;
         $rewardsPoint = 50;
         $questName = "Travail Dur";
+        $image = "travail-dur.svg";
 
         $NOfQuest = ["1", "2", "4", "8", "16"];
         $id = Quest::query()->max('id') + 1;
@@ -37,6 +38,14 @@ class TravailDurQuestSeeder extends Seeder
                 ->where('level', '=', $levelNumber)
                 ->first();
 
+            // Determine grade based on the level.
+            $grade = 'bronze'; // default value
+            if ($levelNumber > ($maxLevel * 2 / 3)) {
+                $grade = 'gold';
+            } elseif ($levelNumber > ($maxLevel / 3)) {
+                $grade = 'silver';
+            }
+
             $newData = [
                 'name' => $questName,
                 'description' =>
@@ -44,9 +53,12 @@ class TravailDurQuestSeeder extends Seeder
                     . ($numberOfElementToComplete > 1 ? "tâches" : "tâche")
                     . ".",
                 'reward_points' => $rewardsPoint,
+                'count' => $numberOfElementToComplete,
                 'level' => $levelNumber,
                 'previous_quest_id' => $previousId,
                 'quest_types_id' => 2,
+                'grade' => $grade,
+                'image' => $image
             ];
 
             if ($quest == null) {

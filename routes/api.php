@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InfoController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\QuestController;
 use App\Http\Controllers\SprintController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\WorkspaceApiController;
@@ -28,6 +29,10 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/info', [InfoController::class, 'index']);
+
+    Route::prefix('/quests')->group(function () {
+        Route::get('/', [QuestController::class, 'index']);
+    });
 
     Route::prefix('workspaces')->group(function () {
         Route::get('/', [WorkspaceApiController::class, 'index']);
@@ -58,6 +63,7 @@ Route::middleware(['auth:api'])->group(function () {
                 });
             });
             Route::put('/{project}', [ProjectController::class, 'update']);
+
         });
     });
 });

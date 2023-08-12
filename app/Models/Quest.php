@@ -16,6 +16,7 @@ class Quest extends Model
         'level',
         'quest_types_id',
         'previous_quest_id',
+        'count'
     ];
 
     public $timestamps = false;

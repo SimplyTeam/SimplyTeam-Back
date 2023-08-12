@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Models\Level\LevelUpdater;
 use App\Models\Project;
+use App\Models\Quest;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\UserQuest;
 use App\Models\Workspace;
+use App\Services\QuestService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,6 +24,7 @@ class TaskController extends Controller
     private JsonResponse $missingProjectInWorkspaceError;
     private JsonResponse $sprintMissingInProjectError;
     private JsonResponse $missingTaskInProjectError;
+    private QuestService $questService;
 
     public function __construct()
     {
@@ -31,6 +37,10 @@ class TaskController extends Controller
             ->json(['message' => 'This sprint does not belong to the specified project.'], 403);
         $this->missingTaskInProjectError = response()
             ->json(['message' => 'This task does not belong to the specified project.'], 403);
+        $this->taskIsFinish = response()
+            ->json(['message' => 'This task is already finished'], 409);
+
+        $this->questService = new QuestService();
     }
 
     public function index(Request $request, Workspace $workspace, Project $project)
@@ -170,7 +180,6 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Workspace $workspace, Project $project, Task $task)
     {
         $user = $request->user();
-
         $responseError = null;
 
         if (!$user->hasWorkspace($workspace)) {
@@ -179,6 +188,8 @@ class TaskController extends Controller
             $responseError = $this->missingProjectInWorkspaceError;
         } elseif (!$project->hasTask($task)) {
             $responseError = $this->missingTaskInProjectError;
+        } elseif($task['is_finish']) {
+            $responseError = $this->taskIsFinish;
         }
 
         if ($responseError) {
@@ -186,8 +197,16 @@ class TaskController extends Controller
         }
 
         $validatedData = $request->validated();
+        $deadline = $task->deadline ? $task->deadline : null;
+
         if (in_array('is_finish', $validatedData)) {
-            $validatedData['finished_at'] = $validatedData['is_finish'] ? date('Y-m-d H:i:s') : null;
+            $validatedData['finished_at'] = date('Y-m-d H:i:s');
+
+            $this->questService->updateQuest($user, 'Travail Dur', $validatedData['finished_at']);
+            $this->questService->updateQuest($user, 'Maitre du temps', $validatedData['finished_at'], $deadline);
+
+            $levelUpdater = new LevelUpdater($user);
+            $levelUpdater->updateLevel();
         }
 
         if (isset($validatedData["assigned_to"])) {
@@ -231,6 +250,7 @@ class TaskController extends Controller
 
         // Update the task
         $task->update($validatedData);
+        $user->save();
         return response()->json(['message' => 'Task updated successfully.']);
     }
 

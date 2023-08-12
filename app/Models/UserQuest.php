@@ -9,6 +9,8 @@ class UserQuest extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $table = 'users_quests';
     protected $primaryKey = ['user_id', 'quest_id'];
     public $incrementing = false;
@@ -16,6 +18,7 @@ class UserQuest extends Model
         'user_id',
         'quest_id',
         'completed_count',
+        'in_progress',
         'is_completed',
         'date_completed',
     ];
