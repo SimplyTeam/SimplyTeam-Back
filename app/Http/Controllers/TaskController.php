@@ -85,7 +85,7 @@ class TaskController extends Controller
             $tasks->orderBy($sortField, $sortOrder);
         }
 
-        $tasks = $tasks->get();
+        $tasks = $tasks->where('project_id', $project->id)->get();
 
         return response()->json($tasks);
     }
