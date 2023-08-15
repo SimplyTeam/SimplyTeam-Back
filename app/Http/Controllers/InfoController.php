@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Level;
+use App\Models\Reward;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
 
@@ -18,6 +19,7 @@ class InfoController extends Controller
     {
         $user = $request->user();
 
+        # Get levels
         $numberOfNextLevel = Level::where('id', '>', $user->level->id)
             ->count();
         $numberOfPreviousLevel = Level::where('id', '<', $user->level->id)
@@ -49,8 +51,11 @@ class InfoController extends Controller
             $level->status = $level->getStatusLevelOfAuthenticatedUserAttribute();
         }
 
+        $rewards = $user->rewards;
+
         return [
-            "levels" => $levels
+            "levels" => $levels,
+            "rewards" => $rewards
         ];
     }
 }
