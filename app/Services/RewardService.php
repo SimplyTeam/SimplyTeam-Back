@@ -22,4 +22,12 @@ class RewardService
             ->where('user_id', '=', $user->id)
             ->first();
     }
+
+    public function getLatestRewardsOfUser(User $user, $limit=6) {
+        return $user->rewards()->latest('date_achieved')->take($limit)->get();
+    }
+
+    public function getAllRewardsOfUser(User $user) {
+        return $user->rewards;
+    }
 }
