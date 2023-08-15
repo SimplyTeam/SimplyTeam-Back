@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Level;
 use App\Models\Project;
 use App\Models\Quest;
+use App\Models\Reward;
 use App\Models\Sprint;
 use App\Models\Task;
 use App\Models\User;
@@ -312,6 +313,55 @@ class UpdateTaskApiTest extends BaseTestCase
             ]);
 
         $user->refresh();
+
+        $this->assertEquals($nextLevelId, $user->level_id);
+        $this->assertLessThanOrEqual($nextLevel->max_point, $user->earned_points);
+        $this->assertGreaterThanOrEqual($nextLevel->min_point, $user->earned_points);
+    }
+
+    public function testFinishTaskUpdateQuestUpgradeLevelAndReturnAssignedReward() {
+        $user = $this->user;
+
+        $currentLevel = Level::find($user->level_id);
+
+        $nextLevelId = $currentLevel->id+1;
+        $nextLevel = Level::find($currentLevel->id+1);
+
+        $user->earned_points = $currentLevel->max_point - 5;
+        $user->save();
+
+        $next_reward = Reward::factory()->create(['level_id' => $nextLevelId]);
+
+        $currentEarnedPointsOfUser = $user->earned_points;
+
+        $task = Task::factory()
+            ->for($this->sprint)
+            ->for($this->project)
+            ->create([
+                'is_finish' => false
+            ]);
+
+        $task->deadline = $this->getDeadlineBeforeToday();
+        $task->save();
+
+        $newData = [
+            'is_finish' => true
+        ];
+
+        $response = $this->putJson(
+            $this->generateUrl($this->workspace->id, $this->project->id, $task->id),
+            $newData,
+            $this->header
+        );
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Task updated successfully.'
+            ]);
+
+        $user->refresh();
+
+        $response->assertJsonIsObject('gain_reward');
 
         $this->assertEquals($nextLevelId, $user->level_id);
         $this->assertLessThanOrEqual($nextLevel->max_point, $user->earned_points);
