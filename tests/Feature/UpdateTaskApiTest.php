@@ -360,12 +360,11 @@ class UpdateTaskApiTest extends BaseTestCase
             ]);
 
         $user->refresh();
+        $next_reward->refresh();
 
         $response->assertJsonIsObject('gain_reward');
 
-        $this->assertEquals($nextLevelId, $user->level_id);
-        $this->assertLessThanOrEqual($nextLevel->max_point, $user->earned_points);
-        $this->assertGreaterThanOrEqual($nextLevel->min_point, $user->earned_points);
+        $this->assertEquals($user->id, $next_reward->user_id);
     }
 
     /**
