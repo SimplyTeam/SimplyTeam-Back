@@ -10,9 +10,44 @@ use App\Models\Sprint;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
+/**
+ * @OA\Tag(
+ *     name="Sprints",
+ *     description="API Endpoints for Managing Sprints"
+ * )
+ */
 class SprintController extends Controller
 {
-    // Use constructor to check authenticated user's access to a project
+
+    /**
+     * @OA\Get(
+     *     path="/workspaces/{workspace}/projects/{project}/sprints",
+     *     tags={"Sprints"},
+     *     summary="List sprints for a given project",
+     *     @OA\Parameter(
+     *         name="workspace",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the workspace",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="project",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the project",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of sprints for the project",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Sprint"))
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
