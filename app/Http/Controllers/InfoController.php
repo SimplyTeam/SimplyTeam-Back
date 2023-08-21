@@ -6,9 +6,36 @@ use App\Models\Level;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Tag(
+ *     name="Info",
+ *     description="API Endpoints for Information"
+ * )
+ */
 class InfoController extends Controller
 {
     /**
+     * @OA\Get(
+     *     path="/info",
+     *     tags={"Info"},
+     *     summary="Display a listing of the projects for a user in the given workspace.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of levels relative to the user's current level",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="levels",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/Level")
+     *             )
+     *         )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     *
      * Display a listing of the projects for a user in the given workspace.
      *
      * @param \Illuminate\Http\Request $request
