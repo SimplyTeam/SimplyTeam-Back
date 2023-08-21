@@ -17,6 +17,12 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Tag(
+ *     name="Tasks",
+ *     description="Operations related to tasks in a project",
+ * )
+ */
 class TaskController extends Controller
 {
 
@@ -43,6 +49,37 @@ class TaskController extends Controller
         $this->questService = new QuestService();
     }
 
+    /**
+     * @OA\Get(
+     *     path="/workspace/{workspace}/project/{project}/tasks",
+     *     tags={"Tasks"},
+     *     summary="Get list of tasks for a project",
+     *     description="Returns list of tasks",
+     *     @OA\Parameter(
+     *         name="workspace",
+     *         in="path",
+     *         required=true,
+     *         description="ID of workspace",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="project",
+     *         in="path",
+     *         required=true,
+     *         description="ID of project",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Task"))
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     )
+     * )
+     */
     public function index(Request $request, Workspace $workspace, Project $project)
     {
         $user = $request->user();
@@ -90,6 +127,37 @@ class TaskController extends Controller
         return response()->json($tasks);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/workspace/{workspace}/project/{project}/tasks/backlog",
+     *     tags={"Tasks"},
+     *     summary="Get list of tasks for a project",
+     *     description="Returns list of tasks",
+     *     @OA\Parameter(
+     *         name="workspace",
+     *         in="path",
+     *         required=true,
+     *         description="ID of workspace",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="project",
+     *         in="path",
+     *         required=true,
+     *         description="ID of project",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Task"))
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     )
+     * )
+     */
     public function backlog(Request $request, Workspace $workspace, Project $project)
     {
         $user = $request->user();
@@ -112,6 +180,40 @@ class TaskController extends Controller
     }
 
     /**
+     * @OA\Post(
+     *     path="/workspace/{workspace}/project/{project}/tasks",
+     *     tags={"Tasks"},
+     *     summary="Create a new task",
+     *     description="Returns the created task",
+     *     @OA\Parameter(
+     *         name="workspace",
+     *         in="path",
+     *         required=true,
+     *         description="ID of workspace",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="project",
+     *         in="path",
+     *         required=true,
+     *         description="ID of project",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Task data",
+     *         @OA\JsonContent(ref="#/components/schemas/StoreTaskRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Successful operation",
+     *         @OA\JsonContent(ref="#/components/schemas/Task")
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     )
+     * )
      * @throws Exception
      */
     public function store(StoreTaskRequest $request, Workspace $workspace, Project $project)
@@ -177,6 +279,42 @@ class TaskController extends Controller
         return response()->json(['message' => 'Task created successfully!', 'task' => $task], 201);
     }
 
+    /**
+     * @OA\Put(
+     *     path="/workspace/{workspace}/project/{project}/tasks",
+     *     tags={"Tasks"},
+     *     summary="Create a new task",
+     *     description="Returns the created task",
+     *     @OA\Parameter(
+     *         name="workspace",
+     *         in="path",
+     *         required=true,
+     *         description="ID of workspace",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="project",
+     *         in="path",
+     *         required=true,
+     *         description="ID of project",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Task data",
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateTaskRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Successful operation",
+     *         @OA\JsonContent(ref="#/components/schemas/Task")
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     )
+     * )
+     */
     public function update(UpdateTaskRequest $request, Workspace $workspace, Project $project, Task $task)
     {
         $user = $request->user();
@@ -254,6 +392,36 @@ class TaskController extends Controller
         return response()->json(['message' => 'Task updated successfully.']);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/workspace/{workspace}/project/{project}/tasks",
+     *     tags={"Tasks"},
+     *     summary="Create a new task",
+     *     description="Returns the created task",
+     *     @OA\Parameter(
+     *         name="workspace",
+     *         in="path",
+     *         required=true,
+     *         description="ID of workspace",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="project",
+     *         in="path",
+     *         required=true,
+     *         description="ID of project",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Task deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     )
+     * )
+     */
     public function remove(Request $request, Workspace $workspace, Project $project, Task $task)
     {
         $user = $request->user();
