@@ -329,7 +329,7 @@ class UpdateTaskApiTest extends BaseTestCase
         $user->earned_points = $currentLevel->max_point - 5;
         $user->save();
 
-        $next_reward = Reward::factory()->create(['level_id' => $nextLevelId]);
+        $nextReward = Reward::factory()->create(['level_id' => $nextLevelId]);
 
         $task = Task::factory()
             ->for($this->sprint)
@@ -357,11 +357,11 @@ class UpdateTaskApiTest extends BaseTestCase
             ]);
 
         $user->refresh();
-        $next_reward->refresh();
+        $nextReward->refresh();
 
         $response->assertJsonIsObject('gain_reward');
 
-        $this->assertEquals($user->id, $next_reward->user_id);
+        $this->assertEquals($user->id, $nextReward->user_id);
     }
 
     /**
