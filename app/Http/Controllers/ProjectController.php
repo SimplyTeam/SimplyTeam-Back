@@ -10,15 +10,46 @@ use App\Models\Workspace;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @OA\Tag(
+ *     name="Projects",
+ *     description="API Endpoints for Managing Projects"
+ * )
+ */
 class ProjectController extends Controller
 {
-
     /**
+     * @OA\Get(
+     *     path="/workspaces/{workspace}/projects",
+     *     tags={"Projects"},
+     *     summary="List projects for a user in a given workspace",
+     *     @OA\Parameter(
+     *         name="workspace",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the workspace",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of projects",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Project"))
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Workspace not found",
+     *         @OA\JsonContent(@OA\Property(property="message", type="string", example="Workspace not found."))
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     *
      * Display a listing of the projects for a user in the given workspace.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Workspace  $workspace
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|ProjectCollection
      */
     public function index(Request $request, Workspace $workspace)
     {
@@ -37,6 +68,36 @@ class ProjectController extends Controller
     }
 
     /**
+     * @OA\Post(
+     *     path="/workspaces/{workspace}/projects",
+     *     tags={"Projects"},
+     *     summary="Create a new project in a workspace",
+     *     @OA\Parameter(
+     *         name="workspace",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the workspace",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/ProjectFormRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Project created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Project")
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden access",
+     *         @OA\JsonContent(@OA\Property(property="messages", type="string", example="L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"))
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     *
      * Store a newly created resource in storage.
      */
     public function store(Workspace $workspace, ProjectFormRequest $request)
@@ -67,6 +128,43 @@ class ProjectController extends Controller
     }
 
     /**
+     * @OA\Put(
+     *     path="/workspaces/{workspace}/projects/{project}",
+     *     tags={"Projects"},
+     *     summary="Update an existing project in a workspace",
+     *     @OA\Parameter(
+     *         name="workspace",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the workspace",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="project",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the project to be updated",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/ProjectFormRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Project updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Project")
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden access",
+     *         @OA\JsonContent(@OA\Property(property="messages", type="string", example="L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"))
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     *
      * Update the specified resource in storage.
      */
     public function update(ProjectFormRequest $request, Workspace $workspace, Project $project)
