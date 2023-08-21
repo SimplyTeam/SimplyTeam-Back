@@ -8,13 +8,41 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
+/**
+ * @OA\Tag(
+ *     name="Google Authentication",
+ *     description="API Endpoints for Google OAuth2.0 Authentication"
+ * )
+ */
 class GoogleAuthController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/auth/google/redirect",
+     *     tags={"Google Authentication"},
+     *     summary="Redirect to Google for authentication",
+     *     @OA\Response(
+     *         response=302,
+     *         description="Redirect to Google OAuth2.0 authorization page"
+     *     )
+     * )
+     */
     public function redirectToGoogle()
     {
         return Socialite::driver('google')->redirect();
     }
 
+    /**
+     * @OA\Get(
+     *     path="/auth/google/callback",
+     *     tags={"Google Authentication"},
+     *     summary="Handle the callback from Google",
+     *     @OA\Response(
+     *         response=302,
+     *         description="Redirect back to the web application with an access token or error message"
+     *     )
+     * )
+     */
     public function handleGoogleCallback(Request $request)
     {
         $user = Socialite::driver('google')->user();
