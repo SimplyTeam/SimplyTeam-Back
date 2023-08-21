@@ -17,8 +17,6 @@ class RewardApiController extends Controller
     public function index(Request $request) {
         $user = $request->user();
 
-        $rewards = $this->rewardService->getAllRewardsOfUser($user);
-
-        return $rewards;
+        return $this->rewardService->getAllRewardsOfUser($user);
     }
 }
