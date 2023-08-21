@@ -132,30 +132,30 @@ class InfoApiTest extends BaseTestCase
      */
     public function test_route_info_return_rewards(): void
     {
-        $new_level = 5;
+        $newLevel = 5;
 
         $reward1 = Reward::factory([
             'user_id' => $this->user->id,
-            'level_id' => $new_level - 2
+            'level_id' => $newLevel - 2
         ])->create();
 
         $reward2 = Reward::factory([
             'user_id' => $this->user->id,
-            'level_id' => $new_level
+            'level_id' => $newLevel
         ])->create();
 
-        $this->user->level_id = $new_level;
+        $this->user->level_id = $newLevel;
         $this->user->save();
 
         $response = $this->getJson('/api/info', $this->header);
 
-        $expected_response = [
+        $expectedResponse = [
             "rewards" => [$reward1->toArray(), $reward2->toArray()]
         ];
 
         $response->assertStatus(200);
         $response->assertJson(
-            $expected_response
+            $expectedResponse
         );
     }
 }
