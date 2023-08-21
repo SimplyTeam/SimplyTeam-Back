@@ -8,8 +8,40 @@ use App\Models\Workspace;
 use App\Models\WorkspaceInvitation;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Tag(
+ *     name="Workspace Invitations",
+ *     description="API Endpoints for Managing Workspace Invitations"
+ * )
+ */
 class WorkspaceInvitationController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/workspaces/invitations/accept",
+     *     tags={"Workspace Invitations"},
+     *     summary="Accept a workspace invitation",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/AcceptWorkspaceInvitationRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Workspace details after accepting the invitation",
+     *         @OA\JsonContent(ref="#/components/schemas/WorkspaceResource")
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Unauthorized action",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Unauthorized action.")
+     *         )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
     public function accept(AcceptWorkspaceInvitationRequest $request)
     {
         $invitation = WorkspaceInvitation::where('token', $request->input('token'))->firstOrFail();
