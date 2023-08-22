@@ -1,0 +1,2077 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Simply Team API",
+        "version": "0.8"
+    },
+    "paths": {
+        "/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register a new user",
+                "operationId": "0903f2e0df1a8857bee538fc055417f0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRegistrationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object"
+                                        },
+                                        "access_token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Log in a user",
+                "operationId": "2dd578ff7aba2721293dac66833b27d1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserLoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User logged in successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object"
+                                        },
+                                        "access_token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Invalid credentials"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/me": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get the authenticated user's data",
+                "operationId": "e18baa7d6dfc432241dca2fc1985ce40",
+                "responses": {
+                    "200": {
+                        "description": "Current user's data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Log out the authenticated user",
+                "operationId": "68a6108af04af5e3bc1ea68a6c6f1299",
+                "responses": {
+                    "200": {
+                        "description": "Successfully logged out",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully logged out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/google/redirect": {
+            "get": {
+                "tags": [
+                    "Google Authentication"
+                ],
+                "summary": "Redirect to Google for authentication",
+                "operationId": "b8b70e3100935d56fe5d64ff37623599",
+                "responses": {
+                    "302": {
+                        "description": "Redirect to Google OAuth2.0 authorization page"
+                    }
+                }
+            }
+        },
+        "/auth/google/callback": {
+            "get": {
+                "tags": [
+                    "Google Authentication"
+                ],
+                "summary": "Handle the callback from Google",
+                "operationId": "e9b82bcbf1bf4ce865aa533070f20eb8",
+                "responses": {
+                    "302": {
+                        "description": "Redirect back to the web application with an access token or error message"
+                    }
+                }
+            }
+        },
+        "/info": {
+            "get": {
+                "tags": [
+                    "Info"
+                ],
+                "summary": "Display a listing of the projects for a user in the given workspace.",
+                "operationId": "3c44adf03e7f65687ec2fdb106fd29cb",
+                "responses": {
+                    "200": {
+                        "description": "List of levels relative to the user's current level",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "levels": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Level"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/workspaces/{workspace}/projects": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "List projects for a user in a given workspace",
+                "operationId": "7736ca06a58b04eb7d1b526c3044f1d7",
+                "parameters": [
+                    {
+                        "name": "workspace",
+                        "in": "path",
+                        "description": "ID of the workspace",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of projects",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Project"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Workspace not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Workspace not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Create a new project in a workspace",
+                "operationId": "8d4f93369d44a65a3b834609e37be38f",
+                "parameters": [
+                    {
+                        "name": "workspace",
+                        "in": "path",
+                        "description": "ID of the workspace",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProjectFormRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Project created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Project"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "messages": {
+                                            "type": "string",
+                                            "example": "L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/workspaces/{workspace}/projects/{project}": {
+            "put": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Update an existing project in a workspace",
+                "operationId": "269f5b9361155eb46b2009ed3d33b82d",
+                "parameters": [
+                    {
+                        "name": "workspace",
+                        "in": "path",
+                        "description": "ID of the workspace",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "project",
+                        "in": "path",
+                        "description": "ID of the project to be updated",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProjectFormRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Project updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Project"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "messages": {
+                                            "type": "string",
+                                            "example": "L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/quests": {
+            "get": {
+                "tags": [
+                    "Quests"
+                ],
+                "summary": "Retrieve a list of quests for the authenticated user based on various query parameters",
+                "operationId": "dc62116172b603af58bed81d6f1c0887",
+                "parameters": [
+                    {
+                        "name": "quest_type",
+                        "in": "query",
+                        "description": "Filter quests by quest type ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "default_order",
+                        "in": "query",
+                        "description": "Order by completion ratio (asc or desc)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "in_progress_only",
+                        "in": "query",
+                        "description": "Filter quests that are in progress only",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of quests for the authenticated user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Quest"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/workspaces/{workspace}/projects/{project}/sprints": {
+            "get": {
+                "tags": [
+                    "Sprints"
+                ],
+                "summary": "List sprints for a given project",
+                "operationId": "8c554e82e728c6565bccb0f1ea83767a",
+                "parameters": [
+                    {
+                        "name": "workspace",
+                        "in": "path",
+                        "description": "ID of the workspace",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "project",
+                        "in": "path",
+                        "description": "ID of the project",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of sprints for the project",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Sprint"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/workspace/{workspace}/project/{project}/tasks": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Get list of tasks for a project",
+                "description": "Returns list of tasks",
+                "operationId": "73b555027a4f0ddd5b8a26295e35742d",
+                "parameters": [
+                    {
+                        "name": "workspace",
+                        "in": "path",
+                        "description": "ID of workspace",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "project",
+                        "in": "path",
+                        "description": "ID of project",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Task"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Create a new task",
+                "description": "Returns the created task",
+                "operationId": "e46dcd2141dd92ad0a4c9515a3a0606a",
+                "parameters": [
+                    {
+                        "name": "workspace",
+                        "in": "path",
+                        "description": "ID of workspace",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "project",
+                        "in": "path",
+                        "description": "ID of project",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Task data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateTaskRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Task"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Create a new task",
+                "description": "Returns the created task",
+                "operationId": "17cafd76e35a3047f931f5c02e7320ea",
+                "parameters": [
+                    {
+                        "name": "workspace",
+                        "in": "path",
+                        "description": "ID of workspace",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "project",
+                        "in": "path",
+                        "description": "ID of project",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Task data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreTaskRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Task"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Create a new task",
+                "description": "Returns the created task",
+                "operationId": "c51bb2612a025d28a76afb7e667c7b9e",
+                "parameters": [
+                    {
+                        "name": "workspace",
+                        "in": "path",
+                        "description": "ID of workspace",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "project",
+                        "in": "path",
+                        "description": "ID of project",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Task deleted successfully"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/workspace/{workspace}/project/{project}/tasks/backlog": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Get list of tasks for a project",
+                "description": "Returns list of tasks",
+                "operationId": "a514e0f74efd4ef8dbbe3f9f4d63d705",
+                "parameters": [
+                    {
+                        "name": "workspace",
+                        "in": "path",
+                        "description": "ID of workspace",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "project",
+                        "in": "path",
+                        "description": "ID of project",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Task"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/workspaces": {
+            "get": {
+                "tags": [
+                    "Workspaces"
+                ],
+                "summary": "List workspaces for the authenticated user",
+                "operationId": "af9f6c5516a0114d241eed6e004d24ed",
+                "responses": {
+                    "200": {
+                        "description": "List of workspaces for the authenticated user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Workspace"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Workspaces"
+                ],
+                "summary": "Create a new workspace and send invitations",
+                "operationId": "cb074240480fba432b55577d24bd1a29",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WorkspaceFormRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Workspace successfully created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WorkspaceResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/workspaces/{id}": {
+            "get": {
+                "tags": [
+                    "Workspaces"
+                ],
+                "summary": "Display a specific workspace",
+                "operationId": "eef9697db33e8e2785851b52f50b1c7d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the workspace",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Specific workspace details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WorkspaceResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/workspaces/{workspace}": {
+            "put": {
+                "tags": [
+                    "Workspaces"
+                ],
+                "summary": "Update an existing workspace and send new invitations",
+                "operationId": "37874d79e1da592925f6d2c5afb21360",
+                "parameters": [
+                    {
+                        "name": "workspace",
+                        "in": "path",
+                        "description": "ID of the workspace to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WorkspaceFormRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Workspace successfully updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WorkspaceResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Workspaces"
+                ],
+                "summary": "Delete a workspace",
+                "operationId": "bbaf6b118348605beb94a7a06b3ccc1d",
+                "parameters": [
+                    {
+                        "name": "workspace",
+                        "in": "path",
+                        "description": "ID of the workspace to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Workspace successfully deleted"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/workspaces/{workspace}/users/{userId}": {
+            "delete": {
+                "tags": [
+                    "Workspaces"
+                ],
+                "summary": "Remove a specific user from a workspace",
+                "operationId": "ce03f1a0f3a5ce14cdaa5811a5e781ab",
+                "parameters": [
+                    {
+                        "name": "workspace",
+                        "in": "path",
+                        "description": "ID of the workspace",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "ID of the user to remove",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "User successfully removed from workspace"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/workspaces/invitations/accept": {
+            "post": {
+                "tags": [
+                    "Workspace Invitations"
+                ],
+                "summary": "Accept a workspace invitation",
+                "operationId": "99ccb4236468163e9c999b6355a427a9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AcceptWorkspaceInvitationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Workspace details after accepting the invitation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WorkspaceResource"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized action",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized action."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AcceptWorkspaceInvitationRequest": {
+                "title": "Accept Workspace Invitation Request",
+                "description": "Request body for accepting a workspace invitation",
+                "required": [
+                    "token"
+                ],
+                "properties": {
+                    "token": {
+                        "description": "Token associated with the workspace invitation",
+                        "type": "string",
+                        "example": "a1b2c3d4e5f6a7b8c9d0"
+                    }
+                },
+                "type": "object"
+            },
+            "GetQuestControllerRequest": {
+                "title": "Get Quests Request",
+                "description": "Request parameters for fetching quests",
+                "properties": {
+                    "quest_type": {
+                        "description": "The type of quest to fetch",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "filter_by": {
+                        "description": "Filter quests by a specific attribute",
+                        "type": "string",
+                        "example": "category"
+                    },
+                    "in_progress_only": {
+                        "description": "Flag to fetch only the quests in progress",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "default_order": {
+                        "description": "Ordering of quests (ascending or descending)",
+                        "type": "string",
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "example": "asc"
+                    }
+                },
+                "type": "object"
+            },
+            "ProjectFormRequest": {
+                "title": "Project Form Request",
+                "description": "Request body for creating or updating a project",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "The name of the project",
+                        "type": "string",
+                        "maxLength": 128,
+                        "example": "New Project"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreSprintRequest": {
+                "title": "Store Sprint Request",
+                "description": "Request body for storing a sprint",
+                "required": [
+                    "name",
+                    "begin_date",
+                    "end_date"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "The name of the sprint",
+                        "type": "string",
+                        "example": "Sprint 1"
+                    },
+                    "begin_date": {
+                        "description": "The start date of the sprint",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-08-01"
+                    },
+                    "end_date": {
+                        "description": "The end date of the sprint",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-08-15"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreTaskRequest": {
+                "title": "Store Task Request",
+                "description": "Request body for storing a task",
+                "required": [
+                    "label",
+                    "estimated_timestamp",
+                    "realized_timestamp",
+                    "deadline",
+                    "is_finish",
+                    "priority_id",
+                    "status_id"
+                ],
+                "properties": {
+                    "label": {
+                        "description": "The label of the task",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Implement API endpoint"
+                    },
+                    "description": {
+                        "description": "Description of the task",
+                        "type": "string",
+                        "maxLength": 500,
+                        "example": "Endpoint for retrieving user data"
+                    },
+                    "estimated_timestamp": {
+                        "description": "Estimated time for task completion",
+                        "type": "integer",
+                        "example": 120
+                    },
+                    "realized_timestamp": {
+                        "description": "Actual time taken for task completion",
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "deadline": {
+                        "description": "Deadline for the task",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-08-20"
+                    },
+                    "is_finish": {
+                        "description": "Flag indicating if the task is finished",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "priority_id": {
+                        "description": "ID of the task's priority",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "status_id": {
+                        "description": "ID of the task's status",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "sprint_id": {
+                        "description": "ID of the sprint the task belongs to",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "parent_id": {
+                        "description": "ID of the parent task (if any)",
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "assigned_to": {
+                        "description": "Array of user IDs assigned to the task",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateSprintRequest": {
+                "title": "Update Sprint Request",
+                "description": "Request body for updating a sprint",
+                "properties": {
+                    "name": {
+                        "description": "The name of the sprint",
+                        "type": "string",
+                        "example": "Updated Sprint 1"
+                    },
+                    "begin_date": {
+                        "description": "The updated start date of the sprint",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-09-01"
+                    },
+                    "end_date": {
+                        "description": "The updated end date of the sprint",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-09-15"
+                    },
+                    "closing_date": {
+                        "description": "The closing date of the sprint",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-09-12"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateTaskRequest": {
+                "title": "Update Task Request",
+                "description": "Request body for updating a task",
+                "properties": {
+                    "label": {
+                        "description": "The label of the task",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Updated API endpoint"
+                    },
+                    "description": {
+                        "description": "Description of the task",
+                        "type": "string",
+                        "maxLength": 500,
+                        "example": "Updated endpoint for retrieving user data"
+                    },
+                    "estimated_timestamp": {
+                        "description": "Estimated time for task completion",
+                        "type": "integer",
+                        "example": 120
+                    },
+                    "realized_timestamp": {
+                        "description": "Actual time taken for task completion",
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "deadline": {
+                        "description": "Deadline for the task",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-08-30"
+                    },
+                    "is_finish": {
+                        "description": "Flag indicating if the task is finished",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "priority_id": {
+                        "description": "ID of the task's priority",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "status_id": {
+                        "description": "ID of the task's status",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "sprint_id": {
+                        "description": "ID of the sprint the task belongs to",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "parent_id": {
+                        "description": "ID of the parent task (if any)",
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "assigned_to": {
+                        "description": "Array of user IDs assigned to the task",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UserLoginRequest": {
+                "title": "User Login Request",
+                "description": "Request body for user login",
+                "properties": {
+                    "email": {
+                        "description": "The email of the user",
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "password": {
+                        "description": "The password of the user",
+                        "type": "string",
+                        "format": "password",
+                        "example": "password123"
+                    }
+                },
+                "type": "object"
+            },
+            "UserRegistrationRequest": {
+                "title": "User Registration Request",
+                "description": "Request body for user registration",
+                "properties": {
+                    "name": {
+                        "description": "The name of the user",
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "description": "The email of the user",
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "password": {
+                        "description": "The password of the user. It must contain at least one uppercase letter, one lowercase letter, one special character, and one digit.",
+                        "type": "string",
+                        "format": "password",
+                        "example": "Password@123"
+                    },
+                    "password_confirmation": {
+                        "description": "Password confirmation for validation",
+                        "type": "string",
+                        "format": "password",
+                        "example": "Password@123"
+                    }
+                },
+                "type": "object"
+            },
+            "WorkspaceFormRequest": {
+                "title": "Workspace Form Request",
+                "description": "Request body for creating/updating a workspace",
+                "properties": {
+                    "name": {
+                        "description": "The name of the workspace",
+                        "type": "string",
+                        "example": "MyWorkspace"
+                    },
+                    "description": {
+                        "description": "The description of the workspace",
+                        "type": "string",
+                        "example": "This is my personal workspace"
+                    },
+                    "invitations": {
+                        "description": "List of email addresses to send workspace invitations",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "email",
+                            "example": "user@example.com"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "LevelResource": {
+                "title": "LevelResource",
+                "description": "Level Resource representation",
+                "required": [
+                    "id",
+                    "max_point",
+                    "min_point",
+                    "status"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the Level",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "max_point": {
+                        "description": "Maximum points for the Level",
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "min_point": {
+                        "description": "Minimum points required for the Level",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "status": {
+                        "description": "Status of the Level for the currently authenticated user",
+                        "type": "string",
+                        "example": "active"
+                    }
+                },
+                "type": "object"
+            },
+            "ProjectCollection": {
+                "title": "ProjectCollection",
+                "description": "Collection of Projects",
+                "properties": {
+                    "projects": {
+                        "description": "Array of projects",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProjectResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ProjectResource": {
+                "title": "ProjectResource",
+                "description": "Project Resource representation",
+                "required": [
+                    "id",
+                    "name",
+                    "workspace_id",
+                    "created_at",
+                    "updated_at"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the Project",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Name of the Project",
+                        "type": "string",
+                        "example": "My Project"
+                    },
+                    "workspace_id": {
+                        "description": "ID of the associated Workspace",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "created_at": {
+                        "description": "Time when the Project was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last time the Project was updated",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "title": "UserResource",
+                "description": "User Resource representation",
+                "required": [
+                    "id",
+                    "name",
+                    "email",
+                    "level",
+                    "created_at",
+                    "updated_at"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the User",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Name of the User",
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "description": "Email address of the User",
+                        "type": "string",
+                        "format": "email",
+                        "example": "john.doe@example.com"
+                    },
+                    "level": {
+                        "description": "Level of the User",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "created_at": {
+                        "description": "Time when the User was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last time the User was updated",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "WorkspaceCollection": {
+                "title": "WorkspaceCollection",
+                "description": "Collection of Workspaces",
+                "properties": {
+                    "workspaces": {
+                        "description": "Array of workspaces",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WorkspaceResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "WorkspaceResource": {
+                "title": "WorkspaceResource",
+                "description": "Workspace Resource representation",
+                "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "created_at",
+                    "updated_at"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the Workspace",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Name of the Workspace",
+                        "type": "string",
+                        "example": "My Workspace"
+                    },
+                    "description": {
+                        "description": "Description of the Workspace",
+                        "type": "string",
+                        "example": "A brief description about the workspace."
+                    },
+                    "created_at": {
+                        "description": "Time when the Workspace was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last time the Workspace was updated",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "created_by": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "users": {
+                        "description": "List of Users associated with the Workspace",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserResource"
+                        }
+                    },
+                    "projects": {
+                        "description": "List of Projects under the Workspace",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProjectResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "Level": {
+                "title": "Level",
+                "description": "Level model",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier for the level",
+                        "type": "integer"
+                    },
+                    "max_point": {
+                        "description": "The maximum points for the level",
+                        "type": "integer"
+                    },
+                    "min_point": {
+                        "description": "The minimum points for the level",
+                        "type": "integer"
+                    },
+                    "statusLevelOfAuthenticatedUser": {
+                        "description": "The status of the level for the authenticated user",
+                        "type": "string",
+                        "enum": [
+                            "current",
+                            "future",
+                            "passed"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "Priority": {
+                "title": "Priority",
+                "description": "Priority model",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier for the priority",
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "label": {
+                        "description": "The label for the priority",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Project": {
+                "title": "Project",
+                "description": "Project model",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier for the project",
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "description": "The name of the project",
+                        "type": "string"
+                    },
+                    "workspace_id": {
+                        "description": "The identifier of the associated workspace",
+                        "type": "integer"
+                    },
+                    "sprints": {
+                        "description": "List of sprints associated with the project",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Sprint"
+                        }
+                    },
+                    "backlog": {
+                        "description": "List of tasks in the backlog for the project",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Task"
+                        }
+                    },
+                    "tasks": {
+                        "description": "List of all tasks associated with the project",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Task"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "Quest": {
+                "title": "Quest",
+                "description": "Quest model",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier for the quest",
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "description": "The name of the quest",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "The description of the quest",
+                        "type": "string"
+                    },
+                    "reward_points": {
+                        "description": "The number of points awarded for completing the quest",
+                        "type": "integer"
+                    },
+                    "level": {
+                        "description": "The level of the quest",
+                        "type": "integer"
+                    },
+                    "quest_types_id": {
+                        "description": "The identifier of the quest type associated with the quest",
+                        "type": "integer"
+                    },
+                    "previous_quest_id": {
+                        "description": "The identifier of the previous quest",
+                        "type": "integer"
+                    },
+                    "count": {
+                        "description": "The count of quests",
+                        "type": "integer"
+                    },
+                    "questType": {
+                        "$ref": "#/components/schemas/QuestType"
+                    },
+                    "userQuests": {
+                        "description": "List of user quests associated with the quest",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserQuest"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "QuestType": {
+                "title": "QuestType",
+                "description": "QuestType model",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier for the quest type",
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "label": {
+                        "description": "The label of the quest type",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Reward": {
+                "title": "Reward",
+                "description": "Reward model",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier for the reward",
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "coupon": {
+                        "description": "The coupon code or reference of the reward",
+                        "type": "string"
+                    },
+                    "date_achieved": {
+                        "description": "The date when the reward was achieved",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "level_id": {
+                        "description": "The associated level's ID for the reward",
+                        "type": "integer"
+                    },
+                    "user_id": {
+                        "description": "The associated user's ID who achieved the reward",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "Sprint": {
+                "title": "Sprint",
+                "description": "Sprint model",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier for the sprint",
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "description": "The name of the sprint",
+                        "type": "string"
+                    },
+                    "begin_date": {
+                        "description": "The start date of the sprint",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "end_date": {
+                        "description": "The end date of the sprint",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "closing_date": {
+                        "description": "The closing date of the sprint",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "project_id": {
+                        "description": "The associated project's ID for the sprint",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "Status": {
+                "title": "Status",
+                "description": "Status model",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier for the status",
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "label": {
+                        "description": "The label of the status",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Task": {
+                "title": "Task",
+                "description": "Task model",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier for the task",
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "label": {
+                        "description": "The label or title of the task",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "The description of the task",
+                        "type": "string"
+                    },
+                    "estimated_timestamp": {
+                        "description": "Estimated time for task completion",
+                        "type": "integer"
+                    },
+                    "realized_timestamp": {
+                        "description": "Actual time taken for task completion",
+                        "type": "integer"
+                    },
+                    "deadline": {
+                        "description": "Deadline for the task",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "is_finish": {
+                        "description": "Indicates if the task is finished or not",
+                        "type": "boolean"
+                    },
+                    "sprint_id": {
+                        "description": "Associated sprint's ID",
+                        "type": "integer"
+                    },
+                    "priority_id": {
+                        "description": "ID of the task's priority",
+                        "type": "integer"
+                    },
+                    "status_id": {
+                        "description": "ID of the task's status",
+                        "type": "integer"
+                    },
+                    "project_id": {
+                        "description": "Associated project's ID",
+                        "type": "integer"
+                    },
+                    "created_by": {
+                        "description": "ID of the user who created the task",
+                        "type": "integer"
+                    },
+                    "parent_id": {
+                        "description": "ID of the parent task if this is a subtask",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "title": "User",
+                "description": "User model",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier for the user",
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "description": "The name of the user",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "The email address of the user",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "email_verified_at": {
+                        "description": "The datetime when the email was verified",
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "password": {
+                        "description": "The hashed password of the user",
+                        "type": "string",
+                        "format": "password",
+                        "readOnly": true
+                    },
+                    "remember_token": {
+                        "description": "Token to remember the user",
+                        "type": "string",
+                        "readOnly": true,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UserQuest": {
+                "title": "UserQuest",
+                "description": "UserQuest model",
+                "properties": {
+                    "user_id": {
+                        "description": "The identifier for the user",
+                        "type": "integer"
+                    },
+                    "quest_id": {
+                        "description": "The identifier for the quest",
+                        "type": "integer"
+                    },
+                    "completed_count": {
+                        "description": "The count of completed quests",
+                        "type": "integer"
+                    },
+                    "in_progress": {
+                        "description": "Indicates if the quest is in progress",
+                        "type": "boolean"
+                    },
+                    "is_completed": {
+                        "description": "Indicates if the quest is completed",
+                        "type": "boolean"
+                    },
+                    "date_completed": {
+                        "description": "The datetime when the quest was completed",
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Workspace": {
+                "title": "Workspace",
+                "description": "Workspace model",
+                "required": [
+                    "name",
+                    "description"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the Workspace",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Name of the Workspace",
+                        "type": "string",
+                        "example": "My Workspace"
+                    },
+                    "description": {
+                        "description": "Description of the Workspace",
+                        "type": "string",
+                        "example": "A brief description about the workspace"
+                    },
+                    "created_at": {
+                        "description": "Time when the Workspace was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last time the Workspace was updated",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "description": "Time when the Workspace was deleted (if soft deleted)",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "created_by_id": {
+                        "description": "ID of the user who created the Workspace",
+                        "type": "integer",
+                        "example": 2
+                    }
+                },
+                "type": "object"
+            },
+            "WorkspaceInvitation": {
+                "title": "WorkspaceInvitation",
+                "description": "Workspace Invitation model",
+                "required": [
+                    "email",
+                    "workspace_id",
+                    "token"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the Workspace Invitation",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "email": {
+                        "description": "Email address to which the invitation was sent",
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "workspace_id": {
+                        "description": "ID of the associated Workspace",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "token": {
+                        "description": "Invitation token for verification",
+                        "type": "string",
+                        "example": "abcd1234"
+                    },
+                    "accepted_at": {
+                        "description": "Time when the invitation was accepted",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "created_at": {
+                        "description": "Time when the invitation was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last time the invitation was updated",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "invited_by_id": {
+                        "description": "ID of the user who sent the invitation",
+                        "type": "integer",
+                        "example": 3
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "API Endpoints for Authentication"
+        },
+        {
+            "name": "Google Authentication",
+            "description": "API Endpoints for Google OAuth2.0 Authentication"
+        },
+        {
+            "name": "Info",
+            "description": "API Endpoints for Information"
+        },
+        {
+            "name": "Projects",
+            "description": "API Endpoints for Managing Projects"
+        },
+        {
+            "name": "Quests",
+            "description": "API Endpoints for Managing Quests"
+        },
+        {
+            "name": "Sprints",
+            "description": "API Endpoints for Managing Sprints"
+        },
+        {
+            "name": "Tasks",
+            "description": "Operations related to tasks in a project"
+        },
+        {
+            "name": "Workspaces",
+            "description": "API Endpoints for Managing Workspaces"
+        },
+        {
+            "name": "Workspace Invitations",
+            "description": "API Endpoints for Managing Workspace Invitations"
+        }
+    ]
+}
