@@ -6,6 +6,35 @@ use App\Enums\UserLevelOfAuthenticatedEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @OA\Schema(
+ *     schema="Level",
+ *     type="object",
+ *     title="Level",
+ *     description="Level model",
+ *     @OA\Property(
+ *         property="id",
+ *         type="integer",
+ *         description="The unique identifier for the level",
+ *     ),
+ *     @OA\Property(
+ *         property="max_point",
+ *         type="integer",
+ *         description="The maximum points for the level",
+ *     ),
+ *     @OA\Property(
+ *         property="min_point",
+ *         type="integer",
+ *         description="The minimum points for the level",
+ *     ),
+ *     @OA\Property(
+ *         property="statusLevelOfAuthenticatedUser",
+ *         type="string",
+ *         description="The status of the level for the authenticated user",
+ *         enum={"current", "future", "passed"},
+ *     ),
+ * )
+ */
 class Level extends Model
 {
     protected $primaryKey = 'id';

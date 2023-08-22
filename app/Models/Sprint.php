@@ -5,6 +5,48 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @OA\Schema(
+ *     schema="Sprint",
+ *     type="object",
+ *     title="Sprint",
+ *     description="Sprint model",
+ *     @OA\Property(
+ *         property="id",
+ *         type="integer",
+ *         description="The unique identifier for the sprint",
+ *         readOnly=true
+ *     ),
+ *     @OA\Property(
+ *         property="name",
+ *         type="string",
+ *         description="The name of the sprint"
+ *     ),
+ *     @OA\Property(
+ *         property="begin_date",
+ *         type="string",
+ *         format="date",
+ *         description="The start date of the sprint"
+ *     ),
+ *     @OA\Property(
+ *         property="end_date",
+ *         type="string",
+ *         format="date",
+ *         description="The end date of the sprint"
+ *     ),
+ *     @OA\Property(
+ *         property="closing_date",
+ *         type="string",
+ *         format="date",
+ *         description="The closing date of the sprint"
+ *     ),
+ *     @OA\Property(
+ *         property="project_id",
+ *         type="integer",
+ *         description="The associated project's ID for the sprint"
+ *     )
+ * )
+ */
 class Sprint extends Model
 {
     use HasFactory;

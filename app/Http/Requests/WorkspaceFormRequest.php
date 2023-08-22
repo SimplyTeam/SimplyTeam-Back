@@ -4,6 +4,36 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="WorkspaceFormRequest",
+ *     type="object",
+ *     title="Workspace Form Request",
+ *     description="Request body for creating/updating a workspace",
+ *     @OA\Property(
+ *         property="name",
+ *         type="string",
+ *         description="The name of the workspace",
+ *         example="MyWorkspace"
+ *     ),
+ *     @OA\Property(
+ *         property="description",
+ *         type="string",
+ *         description="The description of the workspace",
+ *         example="This is my personal workspace"
+ *     ),
+ *     @OA\Property(
+ *         property="invitations",
+ *         type="array",
+ *         @OA\Items(
+ *             type="string",
+ *             format="email",
+ *             example="user@example.com"
+ *         ),
+ *         description="List of email addresses to send workspace invitations"
+ *     )
+ * )
+ */
 class WorkspaceFormRequest extends FormRequest
 {
     public function authorize()

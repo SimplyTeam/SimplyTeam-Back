@@ -4,6 +4,22 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="ProjectFormRequest",
+ *     type="object",
+ *     title="Project Form Request",
+ *     description="Request body for creating or updating a project",
+ *     required={"name"},
+ *     @OA\Property(
+ *         property="name",
+ *         type="string",
+ *         description="The name of the project",
+ *         maxLength=128,
+ *         example="New Project"
+ *     )
+ * )
+ */
 class ProjectFormRequest extends FormRequest
 {
     /**

@@ -11,6 +11,52 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
 
+/**
+ * @OA\Schema(
+ *     schema="User",
+ *     type="object",
+ *     title="User",
+ *     description="User model",
+ *     @OA\Property(
+ *         property="id",
+ *         type="integer",
+ *         description="The unique identifier for the user",
+ *         readOnly=true
+ *     ),
+ *     @OA\Property(
+ *         property="name",
+ *         type="string",
+ *         description="The name of the user"
+ *     ),
+ *     @OA\Property(
+ *         property="email",
+ *         type="string",
+ *         format="email",
+ *         description="The email address of the user"
+ *     ),
+ *     @OA\Property(
+ *         property="email_verified_at",
+ *         type="string",
+ *         format="date-time",
+ *         description="The datetime when the email was verified",
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="password",
+ *         type="string",
+ *         format="password",
+ *         description="The hashed password of the user",
+ *         readOnly=true
+ *     ),
+ *     @OA\Property(
+ *         property="remember_token",
+ *         type="string",
+ *         description="Token to remember the user",
+ *         nullable=true,
+ *         readOnly=true
+ *     )
+ * )
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
