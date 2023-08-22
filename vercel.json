@@ -1,5 +1,6 @@
 {
     "version": 2,
+    "framework": null,
     "functions": {
         "api/index.php": { "runtime": "vercel-php@0.6.0" }
     },
@@ -12,7 +13,7 @@
     "env": {
         "APP_NAME": "Laravel Vercel",
         "APP_ENV": "production",
-        "APP_DEBUG": "false",
+        "APP_DEBUG": "true",
         "APP_URL": "https://simply-team-back-git-develop-simplyteam.vercel.app/",
 
         "APP_CONFIG_CACHE": "/tmp/config.php",
