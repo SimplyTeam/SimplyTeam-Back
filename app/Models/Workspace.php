@@ -8,6 +8,57 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+
+/**
+ * @OA\Schema(
+ *     schema="Workspace",
+ *     description="Workspace model",
+ *     title="Workspace",
+ *     required={"name", "description"},
+ *     @OA\Property(
+ *         property="id",
+ *         type="integer",
+ *         description="Unique identifier for the Workspace",
+ *         example=1
+ *     ),
+ *     @OA\Property(
+ *         property="name",
+ *         type="string",
+ *         description="Name of the Workspace",
+ *         example="My Workspace"
+ *     ),
+ *     @OA\Property(
+ *         property="description",
+ *         type="string",
+ *         description="Description of the Workspace",
+ *         example="A brief description about the workspace"
+ *     ),
+ *     @OA\Property(
+ *         property="created_at",
+ *         type="string",
+ *         format="date-time",
+ *         description="Time when the Workspace was created"
+ *     ),
+ *     @OA\Property(
+ *         property="updated_at",
+ *         type="string",
+ *         format="date-time",
+ *         description="Last time the Workspace was updated"
+ *     ),
+ *     @OA\Property(
+ *         property="deleted_at",
+ *         type="string",
+ *         format="date-time",
+ *         description="Time when the Workspace was deleted (if soft deleted)"
+ *     ),
+ *     @OA\Property(
+ *         property="created_by_id",
+ *         type="integer",
+ *         description="ID of the user who created the Workspace",
+ *         example=2
+ *     )
+ * )
+ */
 class Workspace extends Model
 {
     use HasFactory, SoftDeletes;
