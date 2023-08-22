@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Enums\UserLevelOfAuthenticatedEnum;
 use App\Models\Level;
+use App\Models\Reward;
 use App\Models\User;
 use Tests\Feature\base\BaseTestCase;
 
@@ -123,6 +124,38 @@ class InfoApiTest extends BaseTestCase
         $response->assertStatus(200);
         $response->assertJson(
             $expected_response
+        );
+    }
+
+    /**
+     * A basic feature test example.
+     */
+    public function test_route_info_return_rewards(): void
+    {
+        $newLevel = 5;
+
+        $reward1 = Reward::factory([
+            'user_id' => $this->user->id,
+            'level_id' => $newLevel - 2
+        ])->create();
+
+        $reward2 = Reward::factory([
+            'user_id' => $this->user->id,
+            'level_id' => $newLevel
+        ])->create();
+
+        $this->user->level_id = $newLevel;
+        $this->user->save();
+
+        $response = $this->getJson('/api/info', $this->header);
+
+        $expectedResponse = [
+            "rewards" => [$reward1->toArray(), $reward2->toArray()]
+        ];
+
+        $response->assertStatus(200);
+        $response->assertJson(
+            $expectedResponse
         );
     }
 }

@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Level;
+use App\Models\Reward;
 use App\Models\Workspace;
+use App\Services\RewardService;
 use Illuminate\Http\Request;
 
 class InfoController extends Controller
 {
+    public function __construct()
+    {
+        $this->rewardService = new RewardService();
+    }
+
     /**
      * Display a listing of the projects for a user in the given workspace.
      *
@@ -18,6 +25,7 @@ class InfoController extends Controller
     {
         $user = $request->user();
 
+        # Get levels
         $numberOfNextLevel = Level::where('id', '>', $user->level->id)
             ->count();
         $numberOfPreviousLevel = Level::where('id', '<', $user->level->id)
@@ -49,8 +57,11 @@ class InfoController extends Controller
             $level->status = $level->getStatusLevelOfAuthenticatedUserAttribute();
         }
 
+        $latestRewards = $this->rewardService->getLatestRewardsOfUser($user);
+
         return [
-            "levels" => $levels
+            "levels" => $levels,
+            "rewards" => $latestRewards
         ];
     }
 }

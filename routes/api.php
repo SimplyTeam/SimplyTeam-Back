@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InfoController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\QuestController;
+use App\Http\Controllers\RewardApiController;
 use App\Http\Controllers\SprintController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\WorkspaceApiController;
@@ -36,6 +37,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::prefix('workspaces')->group(function () {
         Route::get('/', [WorkspaceApiController::class, 'index']);
+        Route::get('/rewards', [RewardApiController::class, 'index']);
         Route::get('/{workspace}', [WorkspaceApiController::class, 'show']);
         Route::delete('/{workspace}/users/{user}', [WorkspaceApiController::class, 'removeUser']);
         Route::post('/', [WorkspaceApiController::class, 'store']);

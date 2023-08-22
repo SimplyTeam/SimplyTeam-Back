@@ -18,6 +18,8 @@ class Reward extends Model
         'level_id',
         'user_id',
     ];
+    
+    protected $hidden = ['user_id'];
 
     public function level()
     {

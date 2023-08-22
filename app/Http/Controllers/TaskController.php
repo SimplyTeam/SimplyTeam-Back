@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Level\LevelUpdater;
+use App\Models\Level\UserRewardAssignment;
 use App\Models\Project;
 use App\Models\Quest;
 use App\Models\Task;
@@ -181,6 +182,7 @@ class TaskController extends Controller
     {
         $user = $request->user();
         $responseError = null;
+        $newReward = null;
 
         if (!$user->hasWorkspace($workspace)) {
             $responseError = $this->missingWorkspaceInUserError;
@@ -207,6 +209,9 @@ class TaskController extends Controller
 
             $levelUpdater = new LevelUpdater($user);
             $levelUpdater->updateLevel();
+
+            $userRewardAssignment = new UserRewardAssignment($user);
+            $newReward = $userRewardAssignment->assignAllowedRewardOnUser();
         }
 
         if (isset($validatedData["assigned_to"])) {
@@ -250,8 +255,14 @@ class TaskController extends Controller
 
         // Update the task
         $task->update($validatedData);
-        $user->save();
-        return response()->json(['message' => 'Task updated successfully.']);
+
+        $response = ['message' => 'Task updated successfully.'];
+
+        if($newReward) {
+            $response['gain_reward'] = $newReward;
+        }
+
+        return response()->json($response);
     }
 
     public function remove(Request $request, Workspace $workspace, Project $project, Task $task)

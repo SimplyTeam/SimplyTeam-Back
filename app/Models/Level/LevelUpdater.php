@@ -25,6 +25,7 @@ class LevelUpdater implements LevelUpdaterInterface
 
         if($newLevel) {
             $user->level_id = $newLevel->id;
+            $user->save();
         }
     }
 }
