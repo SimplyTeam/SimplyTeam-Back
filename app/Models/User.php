@@ -113,7 +113,10 @@ class User extends Authenticatable
         $this->save();
     }
 
-    function isPremiumValid() {
+    /**
+     * @throws \Exception
+     */
+    public function isPremiumValid($forceConvertDate=false) {
         // Convert the premium expiration date to a DateTime object
         $premiumExpirationDate = $this->premium_expiration_date;
 
@@ -123,6 +126,11 @@ class User extends Authenticatable
 
         // Get today's date as a DateTime object
         $today = new DateTime();
+
+        if($forceConvertDate){
+            $premiumExpirationDate = new DateTime($premiumExpirationDate);
+        }
+
 
         // Compare the two dates
         return $premiumExpirationDate >= $today;
