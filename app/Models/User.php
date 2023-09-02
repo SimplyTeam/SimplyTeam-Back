@@ -131,7 +131,6 @@ class User extends Authenticatable
             $premiumExpirationDate = new DateTime($premiumExpirationDate);
         }
 
-
         // Compare the two dates
         return $premiumExpirationDate >= $today;
     }
