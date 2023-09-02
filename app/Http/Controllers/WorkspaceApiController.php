@@ -37,6 +37,14 @@ class WorkspaceApiController extends Controller
                );
         }
 
+        if ($currentUserAuthenticated->isPremiumValid() || ($request->has('invitations') && count($request['invitations']) > 8)) {
+            return response()
+                ->json(
+                    ['message' => 'You cannot invite more than 8 users. Please purchase to premium if you want to invite more than 8 users!'],
+                    402
+                );
+        }
+
         $workspace = Workspace::create([
             'name' => $validatedData['name'],
             'description' => $validatedData["description"] ?? null,
@@ -46,7 +54,7 @@ class WorkspaceApiController extends Controller
         $workspace->users()->attach($currentUserAuthenticated);
 
         // Create invitations for each email in the list
-       $this->sendEmail($request, $workspace, $currentUserAuthenticated);
+        $this->sendEmail($request, $workspace, $currentUserAuthenticated);
 
         $workspace->save();
 

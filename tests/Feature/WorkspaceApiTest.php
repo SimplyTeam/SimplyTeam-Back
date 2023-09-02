@@ -176,6 +176,40 @@ class WorkspaceApiTest extends BaseTestCase
         });
     }
 
+    public function test_cannote_create_more_than_8_invitation_of_workspace_with_email_if_user_is_not_subscribed()
+    {
+        Mail::fake(); // initialisation de Mail Fake
+        $user = User::factory()->create();
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+        $dataSend = [
+            'name' => $this->faker->name,
+            'invitations' => [
+                'user1@example.com',
+                'user2@example.com',
+                'user3@example.com',
+                'user4@example.com',
+                'user5@example.com',
+                'user6@example.com',
+                'user7@example.com',
+                'user8@example.com',
+                'user9@example.com',
+                'user10@example.com',
+                'user11@example.com',
+                'user12@example.com'
+            ]
+        ];
+
+        $response = $this->postJson(
+            '/api/workspaces',
+            $dataSend,
+            ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]
+        );
+
+        $response->assertStatus(Response::HTTP_PAYMENT_REQUIRED)
+            ->assertJson(['message'=>'You cannot invite more than 8 users. Please purchase to premium if you want to invite more than 8 users!']);
+    }
+
     public function test_name_should_not_exceed_128_characters()
     {
         $user = User::factory()->create();
