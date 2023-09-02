@@ -24,9 +24,9 @@ class ValidatePaymentApiControllerRequest extends FormRequest
     {
         return [
             'premium_expiration_date' => [
-                'require',
+                'required',
                 'date',
-                Rule::afterOrEqual(now()),
+                'after_or_equal:today',
             ]
         ];
     }
