@@ -101,6 +101,39 @@ class WorkspaceApiTest extends BaseTestCase
                 ))->response()->getData(true));
     }
 
+    public function test_cannot_create_workspace_if_unsubscribed()
+    {
+        $user = User::factory()->create();
+        $user->premium_expiration_date = null;
+        $workspace_1 = Workspace::factory()->create([
+            "created_by_id" => $user->id
+        ]);
+        $user->workspaces()->attach($workspace_1->id);
+        $workspace_1->save();
+        $user->save();
+
+
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+        $data = [
+            'name' => $this->faker->name,
+            'description' => $this->faker->realText()
+        ];
+
+        $response = $this->postJson(
+            '/api/workspaces',
+            $data,
+            ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]
+        );
+
+        $response->assertStatus(Response::HTTP_PAYMENT_REQUIRED)
+            ->assertJson(
+                [
+                    'message' => 'You cannot create more than 1 workspace. Please purchase to premium if you want to continue!'
+                ]
+            );
+    }
+
     public function test_can_create_workspace_with_email()
     {
         Mail::fake(); // initialisation de Mail Fake
