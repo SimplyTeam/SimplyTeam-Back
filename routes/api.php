@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ExecPassportInstall;
 use App\Http\Controllers\InfoController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\QuestController;
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/api/php/activate/passport/install', [ExecPassportInstall::class, 'activatePassportInstall']);
 
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
