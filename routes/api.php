@@ -7,6 +7,7 @@ use App\Http\Controllers\QuestController;
 use App\Http\Controllers\RewardApiController;
 use App\Http\Controllers\SprintController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\ValidatePaymentApiController;
 use App\Http\Controllers\WorkspaceApiController;
 use App\Http\Controllers\WorkspaceInvitationController;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/validatePayment', [ValidatePaymentApiController::class, 'index']);
 
     Route::get('/info', [InfoController::class, 'index']);
 

@@ -8,6 +8,7 @@ use App\Http\Resources\WorkspaceResource;
 use App\Mail\WorkspaceInvitationEmail;
 use App\Models\Workspace;
 use App\Models\WorkspaceInvitation;
+use App\Services\WorkspaceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -26,6 +27,24 @@ class WorkspaceApiController extends Controller
     {
         $validatedData = $request->validated();
         $currentUserAuthenticated = $request->user();
+
+        $workspaceService = new WorkspaceService();
+        if (!$workspaceService->userIsAllowToCreateWorkspace($currentUserAuthenticated)) {
+           return response()
+               ->json(
+                   ['message' => 'You cannot create more than 1 workspace. Please purchase to premium if you want to continue!'],
+                   402
+               );
+        }
+
+        if ($currentUserAuthenticated->isPremiumValid() || ($request->has('invitations') && count($request['invitations']) > 8)) {
+            return response()
+                ->json(
+                    ['message' => 'You cannot invite more than 8 users. Please purchase to premium if you want to invite more than 8 users!'],
+                    402
+                );
+        }
+
         $workspace = Workspace::create([
             'name' => $validatedData['name'],
             'description' => $validatedData["description"] ?? null,
@@ -35,7 +54,7 @@ class WorkspaceApiController extends Controller
         $workspace->users()->attach($currentUserAuthenticated);
 
         // Create invitations for each email in the list
-       $this->sendEmail($request, $workspace, $currentUserAuthenticated);
+        $this->sendEmail($request, $workspace, $currentUserAuthenticated);
 
         $workspace->save();
 
@@ -94,7 +113,7 @@ class WorkspaceApiController extends Controller
 
         return response()->json(null, 204);
     }
-    
+
     public function sendEmail($request, $workspace, $user) {
         if ($request->has('invitations')) {
            foreach ($request->input('invitations') as $email) {

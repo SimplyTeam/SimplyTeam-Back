@@ -16,6 +16,10 @@ class UserRewardAssignment
     }
 
     public function assignAllowedRewardOnUser() {
+        if (!$this->user->isPremiumValid(true)) {
+           return null;
+        }
+
         $rewardService = new RewardService();
 
         $assignedRewardOfCurrentLevel = $rewardService->getFirstAssignedRewardWithLevelAndUser(
