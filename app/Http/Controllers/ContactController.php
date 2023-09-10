@@ -26,7 +26,7 @@ class ContactController extends Controller
         $organization = 'SimplyTeam'; // Remplacez par le nom de l'organisation
         $repository = 'gestion-des-incidents'; // Remplacez par le nom du dépôt
 
-        $token = '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'; // Remplacez par votre jeton d'accès GitHub
+        $token = env('GITHUB_KEY'); // Remplacez par votre jeton d'accès GitHub
 
         $url = "https://api.github.com/repos/{$organization}/{$repository}/issues";
 
