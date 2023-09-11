@@ -7,6 +7,10 @@ use App\Models\Workspace;
 
 class WorkspaceService
 {
+    public function checkIfUserIsPOOfWorkspace($user, $workspace) {
+        return $workspace->users()->where('id', $user->id)->where('is_PO', true)->exists();
+    }
+
     public function getNumberOfWorkspaceOfUser(User $user) : int {
         return $user->workspaces()->count();
     }

@@ -8,6 +8,7 @@ use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\Workspace;
 use App\Services\ProjectService;
+use App\Services\WorkspaceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,6 +25,13 @@ class ProjectController extends Controller
         $this->missingProjectInWorkspaceError = response()
             ->json(['message' => 'This project does not belong to the specified workspace.'], 403);
      }
+
+    protected WorkspaceService $workspaceService;
+
+    public function __construct()
+    {
+        $this->workspaceService = new WorkspaceService();
+    }
 
     /**
      * Display a listing of the projects for a user in the given workspace.
@@ -63,9 +71,9 @@ class ProjectController extends Controller
             ], 402);
         }
 
-        if($user->id != $workspace->created_by_id){
+        if($user->id != $workspace->created_by_id && !$this->workspaceService->checkIfUserIsPOOfWorkspace($user, $workspace)){
             return Response()->json([
-                "messages" => "L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"
+                "message" => "You cannot create project if you are not PO of owner of selected workspace!"
             ], Response::HTTP_FORBIDDEN);
         }
 

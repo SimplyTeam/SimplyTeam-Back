@@ -29,7 +29,7 @@ class CreateProjectApiTest extends BaseTestCase
         $workspace = Workspace::factory()->create([
             "created_by_id" => $user->id
         ]);
-        $workspace->users()->attach($user);
+        $workspace->users()->attach($user, ['is_PO' => true]);
 
         $workspaceId = $workspace->id;
 
@@ -45,6 +45,35 @@ class CreateProjectApiTest extends BaseTestCase
                     Project::find($response->json('data')["id"]
                     )
                 ))->response()->getData(true));
+    }
+
+    /**
+     * Test successful creation of a project.
+     *
+     * @return void
+     */
+    public function test_cannot_create_project_if_user_is_not_PO()
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $accessToken = $otherUser->createToken('API Token')->accessToken;
+
+        $workspace = Workspace::factory()->create([
+            "created_by_id" => $user->id
+        ]);
+        $workspace->users()->attach($otherUser, ['is_PO' => false]);
+
+        $workspaceId = $workspace->id;
+
+        $data = [
+            'name' => $this->faker->name
+        ];
+
+        $response = $this->postJson("/api/workspaces/$workspaceId/projects", $data, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
+
+        $response
+            ->assertStatus(Response::HTTP_FORBIDDEN)
+            ->assertJson(["message" => "You cannot create project if you are not PO of owner of selected workspace!"]);
     }
 
     /**
@@ -133,7 +162,8 @@ class CreateProjectApiTest extends BaseTestCase
 
         $response = $this->postJson("/api/workspaces/$workspaceId/projects", $data, ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
 
-        $response->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJson(["messages" => "L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"]);
+        $response
+            ->assertStatus(Response::HTTP_FORBIDDEN)
+            ->assertJson(["message" => "You cannot create project if you are not PO of owner of selected workspace!"]);
     }
 }
