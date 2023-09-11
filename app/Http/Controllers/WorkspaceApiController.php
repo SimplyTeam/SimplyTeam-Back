@@ -18,6 +18,8 @@ class WorkspaceApiController extends Controller
 {
     public function index(Request $request)
     {
+        return response()->json(['OK' => "ok"]);
+
         try {
             $user = $request->user();
             $workspaces = $user->workspaces()->orderBy('updated_at', 'desc')->get();
