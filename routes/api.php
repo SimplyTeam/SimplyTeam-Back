@@ -39,7 +39,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/', [QuestController::class, 'index']);
     });
 
-    Route::prefix('workspaces')->group(function () {
+    Route::prefix('/workspaces')->group(function () {
         Route::get('/', [WorkspaceApiController::class, 'index']);
         Route::get('/rewards', [RewardApiController::class, 'index']);
         Route::get('/{workspace}', [WorkspaceApiController::class, 'show']);
