@@ -43,6 +43,10 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/', [WorkspaceApiController::class, 'index']);
     });
 
+    Route::prefix('/wkspc')->group(function () {
+        Route::get('/', [WorkspaceApiController::class, 'index']);
+    });
+
     Route::prefix('/workspacess')->group(function () {
         Route::get('/', [WorkspaceApiController::class, 'index']);
         Route::get('/rewards', [RewardApiController::class, 'index']);
