@@ -24,7 +24,7 @@ class WorkspaceApiController extends Controller
             $workspaces = $user->workspaces->orderBy('updated_at', 'desc')->get();
 
             return new WorkspaceCollection($workspaces);
-        }catch (Exception $e) {
+        }catch (\Throwable $e) {
             return response()->json($e->getMessage());
         }
     }
