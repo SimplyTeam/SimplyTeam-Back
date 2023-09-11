@@ -65,6 +65,31 @@ class UpdateSprintApiTest extends BaseTestCase
         $this->assertDatabaseHas('sprints', $newData);
     }
 
+    /**
+     * Test if we can create sprint for project unlink
+     * @return void
+     */
+    public function test_update_sprint_for_project_with_user_not_PO_of_linked_workspace_not_work()
+    {
+        $new_user = User::factory()->create();
+
+        $accessToken = $new_user->createToken('API Token')->accessToken;
+        $header = ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"];
+
+        $this->workspace->users()->attach($new_user, ['is_PO' => false]);
+
+        $newData = $this->generateData();
+
+        $response = $this->putJson(
+            "/api/workspaces/{$this->workspace->id}/projects/{$this->project->id}/sprints/{$this->sprint->id}",
+            $newData,
+            $header
+        );
+
+        $response->assertUnauthorized();
+        $response->assertJson(['message' => 'User can\'t manage sprint if he is not owner or PO of workspace']);
+    }
+
     public function testUpdateSprintUnauthorized()
     {
         $workspace = Workspace::factory()->create();
