@@ -19,7 +19,7 @@ class CreateSprintApiTest extends BaseTestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
-        $this->workspace = Workspace::factory()->create();
+        $this->workspace = Workspace::factory()->create(['created_by_id' => $this->user->id]);
         $this->workspace->users()->attach($this->user->id);
         $this->project = Project::factory()->for($this->workspace)->create();
 
@@ -80,6 +80,31 @@ class CreateSprintApiTest extends BaseTestCase
         );
 
         $response->assertUnauthorized();
+    }
+
+    /**
+     * Test if we can create sprint for project unlink
+     * @return void
+     */
+    public function test_create_sprint_for_project_with_user_not_PO_not_work()
+    {
+        $new_user = User::factory()->create();
+
+        $accessToken = $new_user->createToken('API Token')->accessToken;
+        $header = ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"];
+
+        $this->workspace->users()->attach($new_user, ['is_PO' => false]);
+
+        $sprintData = $this->generateSprintData();
+
+        $response = $this->postJson(
+            $this->generateUrl($this->workspace->id, $this->project->id),
+            $sprintData,
+            $header
+        );
+
+        $response->assertUnauthorized();
+        $response->assertJson(['message' => 'User can\'t manage sprint if he is not owner or PO of workspace']);
     }
 
     /**

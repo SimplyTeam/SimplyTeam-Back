@@ -14,18 +14,18 @@ use Carbon\Carbon;
 class SprintController extends Controller
 {
     // Use constructor to check authenticated user's access to a project
+    private WorkspaceService $workspaceService;
+
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
             $workspace = $request->route('workspace');
             $project = $request->route('project');
             $user = $request->user();
-            $workspaceService = new WorkspaceService();
+            $this->workspaceService = new WorkspaceService();
 
             if (!$project || !$workspace->users->contains($user) || !$workspace->projects->contains($project)) {
                 return response()->json('Unauthorized', 401);
-            }elseif ($workspace->created_by_id != $user->id && $workspaceService->checkIfUserIsPOOfWorkspace($user, $workspace)) {
-                return response()->json(['message' => 'User can\'t manage sprint if he is not owner or PO of workspace']);
             }
 
             return $next($request);
@@ -47,6 +47,12 @@ class SprintController extends Controller
 
     public function store(StoreSprintRequest $request, Workspace $workspace, Project $project)
     {
+        $user = $request->user();
+
+        if ($workspace->created_by_id != $user->id && !$this->workspaceService->checkIfUserIsPOOfWorkspace($user, $workspace)) {
+            return response()->json(['message' => 'User can\'t manage sprint if he is not owner or PO of workspace'], 401);
+        }
+
         $validatedata = $request->validated();
 
         $beginDate = Carbon::parse($validatedata['begin_date']);
@@ -69,8 +75,12 @@ class SprintController extends Controller
 
     public function update(UpdateSprintRequest $request, Workspace $workspace, Project $project, Sprint $sprint)
     {
+        $user = $request->user();
+
         if(!$project->sprints->contains($sprint)) {
             return response()->json('Unauthorized', 401);
+        }elseif ($workspace->created_by_id != $user->id && !$this->workspaceService->checkIfUserIsPOOfWorkspace($user, $workspace)) {
+            return response()->json(['message' => 'User can\'t manage sprint if he is not owner or PO of workspace'], 401);
         }
 
         // Validate and get validated data

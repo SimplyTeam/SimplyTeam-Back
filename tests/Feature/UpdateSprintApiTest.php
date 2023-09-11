@@ -20,7 +20,7 @@ class UpdateSprintApiTest extends BaseTestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
-        $this->workspace = Workspace::factory()->create();
+        $this->workspace = Workspace::factory()->create(['created_by_id' => $this->user->id]);
         $this->workspace->users()->attach($this->user->id);
         $this->project = Project::factory()->for($this->workspace)->create();
 
