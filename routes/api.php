@@ -41,14 +41,6 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::prefix('/workspaces')->group(function () {
         Route::get('/', [WorkspaceApiController::class, 'index']);
-    });
-
-    Route::prefix('/wkspc')->group(function () {
-        Route::get('/', [WorkspaceApiController::class, 'index']);
-    });
-
-    Route::prefix('/workspacess')->group(function () {
-        Route::get('/', [WorkspaceApiController::class, 'index']);
         Route::get('/rewards', [RewardApiController::class, 'index']);
         Route::get('/{workspace}', [WorkspaceApiController::class, 'show']);
         Route::delete('/{workspace}/users/{user}', [WorkspaceApiController::class, 'removeUser']);
