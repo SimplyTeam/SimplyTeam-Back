@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\UserQuest;
 use App\Models\Workspace;
 use App\Services\QuestService;
+use App\Services\WorkspaceService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -26,6 +27,8 @@ class TaskController extends Controller
     private JsonResponse $sprintMissingInProjectError;
     private JsonResponse $missingTaskInProjectError;
     private QuestService $questService;
+    protected WorkspaceService $workspaceService;
+    private JsonResponse $taskIsFinish;
 
     public function __construct()
     {
@@ -40,7 +43,10 @@ class TaskController extends Controller
             ->json(['message' => 'Cette tâche n\'appartient pas au projet spécifié.'], 403);
         $this->taskIsFinish = response()
             ->json(['message' => 'Cette tâche est déjà terminée.'], 409);
+        $this->userIsNotPOOrCreatorOfWorkspace = response()
+            ->json(['message' => 'You cannot finish task if you are not owner or PO of workspace!'], 409);
 
+        $this->workspaceService = new WorkspaceService();
         $this->questService = new QuestService();
     }
 
@@ -183,11 +189,19 @@ class TaskController extends Controller
         $user = $request->user();
         $responseError = null;
         $newReward = null;
+        $validatedData = $request->validated();
 
         if (!$user->hasWorkspace($workspace)) {
             $responseError = $this->missingWorkspaceInUserError;
         } elseif (!$workspace->hasProject($project)) {
             $responseError = $this->missingProjectInWorkspaceError;
+        } elseif (
+            in_array('is_finish', $validatedData) &&
+            $validatedData['is_finish'] &&
+            $workspace->created_by_id != $user->id &&
+            !$this->workspaceService->checkIfUserIsPOOfWorkspace($user, $workspace)
+        ) {
+            $responseError = $this->userIsNotPOOrCreatorOfWorkspace;
         } elseif (!$project->hasTask($task)) {
             $responseError = $this->missingTaskInProjectError;
         } elseif($task['is_finish']) {
@@ -198,10 +212,9 @@ class TaskController extends Controller
             return $responseError;
         }
 
-        $validatedData = $request->validated();
         $deadline = $task->deadline ? $task->deadline : null;
 
-        if (in_array('is_finish', $validatedData)) {
+        if (in_array('is_finish', $validatedData) && $validatedData['is_finish']) {
             $validatedData['finished_at'] = date('Y-m-d H:i:s');
 
             $this->questService->updateQuest($user, 'Travail Dur', $validatedData['finished_at']);

@@ -31,7 +31,7 @@ class UpdateTaskApiTest extends BaseTestCase
         $beginDate = $this->faker->date('Y-m-d', $endDate);
 
         $this->user = User::factory()->create();
-        $this->workspace = Workspace::factory()->create();
+        $this->workspace = Workspace::factory()->create(['created_by_id' => $this->user->id]);
         $this->workspace->users()->attach($this->user->id);
 
         $this->project = Project::factory()->for($this->workspace)->create();
@@ -93,7 +93,7 @@ class UpdateTaskApiTest extends BaseTestCase
         $task = Task::factory()
             ->for($this->sprint)
             ->for($this->project)
-            ->create();
+            ->create(['is_finish' => false, 'finished_at' => null]);
 
         $newData = $this->getGeneratedData();
 
@@ -103,10 +103,14 @@ class UpdateTaskApiTest extends BaseTestCase
             $this->header
         );
 
-        $response->assertStatus(200)
-            ->assertJson([
-                'message' => 'Tâche modifiée avec succès'
-            ]);
+        try {
+            $response->assertStatus(200)
+                ->assertJson([
+                    'message' => 'Tâche modifiée avec succès'
+                ]);
+        }catch (Exception $exception) {
+            dd($response);
+        }
 
         $task->refresh();
 
