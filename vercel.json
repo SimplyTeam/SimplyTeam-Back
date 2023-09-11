@@ -11,9 +11,9 @@
     ],
     "env": {
         "APP_NAME": "Laravel Vercel",
-        "APP_ENV": "production",
+        "APP_ENV": "development",
         "APP_DEBUG": "false",
-        "APP_URL": "https://simply-team-back-git-feat-trycatchreturn-simplyteam.vercel.app/",
+        "APP_URL": "https://simply-team-back-git-develop-simplyteam.vercel.app/",
 
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
