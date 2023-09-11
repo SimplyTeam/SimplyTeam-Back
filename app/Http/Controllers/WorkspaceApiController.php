@@ -20,7 +20,7 @@ class WorkspaceApiController extends Controller
     {
         try {
             $user = $request->user();
-            $workspaces = $user->workspaces->orderBy('updated_at', 'desc')->get();
+            $workspaces = $user->workspaces()->orderBy('updated_at', 'desc')->get();
 
             return new WorkspaceCollection($workspaces);
         }catch (\Throwable $e) {

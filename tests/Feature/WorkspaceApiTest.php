@@ -32,6 +32,8 @@ class WorkspaceApiTest extends BaseTestCase
 
         $response = $this->get('/api/workspaces', ["Authorization" => "Bearer $accessToken", "accept" => "application/json"]);
 
+        dd($response->json());
+
         $response->assertStatus(Response::HTTP_OK)
             ->assertJson((new WorkspaceCollection($workspaces))->response()->getData(true));
     }
