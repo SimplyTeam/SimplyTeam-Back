@@ -21,7 +21,7 @@ class WorkspaceApiController extends Controller
         try {
             $user = $request->user();
             $workspaces = $user->workspaces()->orderBy('updated_at', 'desc')->get();
-            return response()->json(['OK' => "ok"]);
+            return response()->json(['OK' => $user->workspaces()]);
 
             return new WorkspaceCollection($workspaces);
         }catch (Exception $e) {
