@@ -12,15 +12,20 @@ use App\Services\WorkspaceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use PHPUnit\Exception;
 
 class WorkspaceApiController extends Controller
 {
     public function index(Request $request)
     {
-        $user = $request->user();
-        $workspaces = $user->workspaces()->orderBy('updated_at', 'desc')->get();
+        try {
+            $user = $request->user();
+            $workspaces = $user->workspaces()->orderBy('updated_at', 'desc')->get();
 
-        return new WorkspaceCollection($workspaces);
+            return new WorkspaceCollection($workspaces);
+        }catch (Exception $e) {
+            return response()->json($e->getMessage());
+        }
     }
 
     public function store(WorkspaceFormRequest $request)
