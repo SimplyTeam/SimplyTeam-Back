@@ -40,7 +40,6 @@
     "scripts": {
         "post-deploy": [
             "@php artisan migrate --force",
-            "@php artisan key:gen",
             "@php artisan passport:install"
         ],
         "post-autoload-dump": [
