@@ -23,6 +23,9 @@ class Level extends Model
         return $this->hasMany(User::class);
     }
 
+    public function reward() {
+        return $this->hasOne(Reward::class)->select(['id', 'brand', 'image', 'level_id', 'description']);
+    }
     public function getStatusLevelOfAuthenticatedUserAttribute()
     {
         $user = User::getAuthenticatedUser();

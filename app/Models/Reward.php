@@ -17,8 +17,11 @@ class Reward extends Model
         'date_achieved',
         'level_id',
         'user_id',
+        'image',
+        'brand',
+        'description'
     ];
-    
+
     protected $hidden = ['user_id'];
 
     public function level()

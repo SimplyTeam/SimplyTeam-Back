@@ -28,6 +28,10 @@ class RewardService
     }
 
     public function getAllRewardsOfUser(User $user) {
-        return $user->rewards;
+        if( $user->premium_expiration_date !== null) {
+            return $user->rewards()->where('level_id', '<=', $user->level->id)->get();
+        }
+        return $user->rewards()->where('level_id', '<=', $user->level->id)->select('id', 'brand', 'image', 'description', 'level_id')->get();
+
     }
 }

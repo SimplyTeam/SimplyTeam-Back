@@ -50,6 +50,7 @@ class InfoController extends Controller
 
         $levels = Level::where('id', '>=', $user->level->id - $numberOfPreviousLevelToReturn)
             ->where('id', '<=', $user->level->id + $numberOfNextLevelToReturn)
+            ->with('reward')
             ->orderBy('id')
             ->get();
 

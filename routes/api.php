@@ -34,6 +34,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/validatePayment', [ValidatePaymentApiController::class, 'index']);
 
     Route::get('/info', [InfoController::class, 'index']);
+    Route::get('/rewards', [RewardApiController::class, 'index']);
 
     Route::prefix('/quests')->group(function () {
         Route::get('/', [QuestController::class, 'index']);
@@ -41,7 +42,6 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::prefix('/workspaces')->group(function () {
         Route::get('/', [WorkspaceApiController::class, 'index']);
-        Route::get('/rewards', [RewardApiController::class, 'index']);
         Route::get('/{workspace}', [WorkspaceApiController::class, 'show']);
         Route::delete('/{workspace}/users/{user}', [WorkspaceApiController::class, 'removeUser']);
         Route::post('/', [WorkspaceApiController::class, 'store']);
@@ -69,7 +69,6 @@ Route::middleware(['auth:api'])->group(function () {
                 });
             });
             Route::put('/{project}', [ProjectController::class, 'update']);
-
         });
     });
 });
