@@ -12,15 +12,20 @@ class AuthController extends Controller
 {
     public function register(UserRegistrationRequest $request): \Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
-        $validatedData = $request->validated();
 
-        $validatedData['password'] = bcrypt($request->password);
+        try {
+            $validatedData = $request->validated();
 
-        $user = User::create($validatedData);
+            $validatedData['password'] = bcrypt($request->password);
 
-        $accessToken = $user->createToken('API Token')->accessToken;
+            $user = User::create($validatedData);
 
-        return response(['user' => $user, 'access_token' => $accessToken], 201);
+            $accessToken = $user->createToken('API Token')->accessToken;
+
+            return response(['user' => $user, 'access_token' => $accessToken], 201);
+        }catch (\Exception $e){
+            return response(['error' => $e->getMessage()]);
+        }
     }
 
     public function login(UserLoginRequest $request): \Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory

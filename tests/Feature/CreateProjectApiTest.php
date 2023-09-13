@@ -48,6 +48,44 @@ class CreateProjectApiTest extends BaseTestCase
     }
 
     /**
+     * Test successful creation of a project.
+     *
+     * @return void
+     */
+    public function test_cannot_create_project_if_user_is_not_subscribed_and_have_2_projects()
+    {
+        $user = User::factory()->create();
+        $accessToken = $user->createToken('API Token')->accessToken;
+
+        $workspace = Workspace::factory()->create([
+            "created_by_id" => $user->id
+        ]);
+        $workspace->users()->attach($user);
+        $workspaceId = $workspace->id;
+
+        $projects = Project::factory(2)->create([
+            'workspace_id' => $workspaceId
+        ]);
+
+        $data = [
+            'name' => $this->faker->name
+        ];
+
+        $response = $this->postJson(
+            "/api/workspaces/$workspaceId/projects",
+            $data,
+            ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]
+        );
+
+        $response->assertStatus(Response::HTTP_PAYMENT_REQUIRED)
+            ->assertJson(
+                [
+                    'message' => 'User cannot create more than 2 project in workspace. If you want to do this, please subscribe to premium!'
+                ]
+            );
+    }
+
+    /**
      * Test creation of a project with missing parameters.
      *
      * @return void

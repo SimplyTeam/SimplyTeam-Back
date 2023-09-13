@@ -7,6 +7,7 @@ use App\Http\Resources\ProjectCollection;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\Workspace;
+use App\Services\ProjectService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -42,8 +43,16 @@ class ProjectController extends Controller
     public function store(Workspace $workspace, ProjectFormRequest $request)
     {
         $validatedData = $request->validated();
+        $user = $request->user();
 
-        if($request->user()->id != $workspace->created_by_id){
+        $projectService = new ProjectService();
+        if (!$projectService->isUserAllowedToCreateProjectInWorkspaceWithSubscription($user, $workspace)) {
+            return Response()->json([
+                "message" => "User cannot create more than 2 project in workspace. If you want to do this, please subscribe to premium!"
+            ], 402);
+        }
+
+        if($user->id != $workspace->created_by_id){
             return Response()->json([
                 "messages" => "L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"
             ], Response::HTTP_FORBIDDEN);

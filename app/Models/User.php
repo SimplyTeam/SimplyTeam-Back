@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -23,7 +24,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password'
+        'password',
+        'premium_expiration_date'
     ];
 
     /**
@@ -109,5 +111,27 @@ class User extends Authenticatable
             ]);
         }
         $this->save();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function isPremiumValid($forceConvertDate=false) {
+        // Convert the premium expiration date to a DateTime object
+        $premiumExpirationDate = $this->premium_expiration_date;
+
+        if (!$premiumExpirationDate) {
+            return false;
+        }
+
+        // Get today's date as a DateTime object
+        $today = new DateTime();
+
+        if($forceConvertDate){
+            $premiumExpirationDate = new DateTime($premiumExpirationDate);
+        }
+
+        // Compare the two dates
+        return $premiumExpirationDate >= $today;
     }
 }

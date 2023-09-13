@@ -364,6 +364,50 @@ class UpdateTaskApiTest extends BaseTestCase
         $this->assertEquals($user->id, $nextReward->user_id);
     }
 
+    public function testFinishTaskUpdateQuestUpgradeLevelAndDoesntReturnRewardIfUserIsNotSubscribe() {
+        $user = $this->user;
+
+        $currentLevel = Level::find($user->level_id);
+
+        $nextLevelId = $currentLevel->id+1;
+
+        $user->earned_points = $currentLevel->max_point - 5;
+        $user->premium_expiration_date = null;
+        $user->save();
+
+        $nextReward = Reward::factory()->create(['level_id' => $nextLevelId]);
+
+        $task = Task::factory()
+            ->for($this->sprint)
+            ->for($this->project)
+            ->create([
+                'is_finish' => false
+            ]);
+
+        $task->deadline = $this->getDeadlineBeforeToday();
+        $task->save();
+
+        $newData = [
+            'is_finish' => true
+        ];
+
+        $response = $this->putJson(
+            $this->generateUrl($this->workspace->id, $this->project->id, $task->id),
+            $newData,
+            $this->header
+        );
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Task updated successfully.'
+            ]);
+
+        $user->refresh();
+        $nextReward->refresh();
+
+        $this->assertNotEquals($user->id, $nextReward->user_id);
+    }
+
     /**
      * Test task creation with unauthorized user
      *

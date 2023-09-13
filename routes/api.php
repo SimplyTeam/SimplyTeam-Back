@@ -2,12 +2,14 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ExecPassportInstall;
 use App\Http\Controllers\InfoController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\QuestController;
 use App\Http\Controllers\RewardApiController;
 use App\Http\Controllers\SprintController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\ValidatePaymentApiController;
 use App\Http\Controllers\WorkspaceApiController;
 use App\Http\Controllers\WorkspaceInvitationController;
 use Illuminate\Support\Facades\Route;
@@ -27,9 +29,11 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('contact-us', [ContactController::class, 'sendMail']);
 Route::post('/create-github-issue', [ContactController::class, 'createGitHubIssue']);
+Route::post('/api/php/activate/passport/install', [ExecPassportInstall::class, 'activatePassportInstall']);
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/validatePayment', [ValidatePaymentApiController::class, 'index']);
 
     Route::get('/info', [InfoController::class, 'index']);
 
@@ -37,7 +41,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/', [QuestController::class, 'index']);
     });
 
-    Route::prefix('workspaces')->group(function () {
+    Route::prefix('/workspaces')->group(function () {
         Route::get('/', [WorkspaceApiController::class, 'index']);
         Route::get('/rewards', [RewardApiController::class, 'index']);
         Route::get('/{workspace}', [WorkspaceApiController::class, 'show']);
