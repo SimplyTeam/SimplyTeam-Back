@@ -55,6 +55,9 @@ class CreateProjectApiTest extends BaseTestCase
     public function test_cannot_create_project_if_user_is_not_subscribed_and_have_2_projects()
     {
         $user = User::factory()->create();
+        $user->premium_expiration_date = null;
+        $user->save();
+
         $accessToken = $user->createToken('API Token')->accessToken;
 
         $workspace = Workspace::factory()->create([
