@@ -59,11 +59,16 @@ class SetOrUnsetPOUserOnWorkspaceApiTest extends BaseTestCase
         $workspaceId = $this->workspace->id;
         $userId = $user_to_assign->id;
 
+        $accessToken = $user_to_assign->createToken('API Token')->accessToken;
+        $header = [
+            "Authorization" => "Bearer $accessToken",
+            "Accept" => "application/json"
+        ];
 
         $response = $this->postJson(
             "/api/workspaces/$workspaceId/users/$userId/setIsPO",
             [],
-            $this->header
+            $header
         );
 
         $response
@@ -71,7 +76,7 @@ class SetOrUnsetPOUserOnWorkspaceApiTest extends BaseTestCase
             ->assertJson(['message' => 'Seul le créateur du workspace peut définir les PO!']);
 
         $user = $this->workspace->users()->where('user_id', $user_to_assign->id)->first();
-        $this->assertEquals(true, $user->pivot->is_PO, 'User must be PO!');
+        $this->assertEquals(false, $user->pivot->is_PO, 'User must be PO!');
 
     }
 
@@ -83,9 +88,7 @@ class SetOrUnsetPOUserOnWorkspaceApiTest extends BaseTestCase
         $workspaceId = $this->workspace->id;
         $userId = $user_to_assign->id;
 
-        $user = $this->workspace->users()->where('user_id', $user_to_assign->id)->first();
-        $user->pivot->is_PO = true;
-        $user->save();
+        $this->workspace->users()->updateExistingPivot($user_to_assign->id, ['is_PO' => true]);
 
         $response = $this->postJson(
             "/api/workspaces/$workspaceId/users/$userId/unsetIsPO",
@@ -109,9 +112,7 @@ class SetOrUnsetPOUserOnWorkspaceApiTest extends BaseTestCase
         $workspaceId = $this->workspace->id;
         $userId = $user_to_assign->id;
 
-        $user = $this->workspace->users()->where('user_id', $user_to_assign->id)->first();
-        $user->pivot->is_PO = true;
-        $user->save();
+        $this->workspace->users()->updateExistingPivot($user_to_assign->id, ['is_PO' => true]);
 
         $accessToken = $user_to_assign->createToken('API Token')->accessToken;
         $header = [

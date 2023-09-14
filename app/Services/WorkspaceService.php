@@ -63,7 +63,7 @@ class WorkspaceService
         $isPOValue = 1;
 
         // Update the pivot attribute
-        $workspace->users()->updateExistingPivot($user->id, ['is_po' => $isPOValue]);
+        $workspace->users()->updateExistingPivot($user->id, ['is_PO' => $isPOValue]);
     }
 
     /**
@@ -86,7 +86,7 @@ class WorkspaceService
         $isPOValue = 0;
 
         // Update the pivot attribute
-        $workspace->users()->updateExistingPivot($user->id, ['is_po' => $isPOValue]);
+        $workspace->users()->updateExistingPivot($user->id, ['is_PO' => $isPOValue]);
     }
 
     public function userCanInviteNUsersInWorkspaceIsAllow (

@@ -44,7 +44,7 @@ class TaskController extends Controller
         $this->taskIsFinish = response()
             ->json(['message' => 'Cette tâche est déjà terminée.'], 409);
         $this->userIsNotPOOrCreatorOfWorkspace = response()
-            ->json(['message' => 'You cannot finish task if you are not owner or PO of workspace!'], 409);
+            ->json(['message' => "Vous ne pouvez pas terminer la tâche si vous n'êtes pas le propriétaire ou le PO (Product Owner) de l'espace de travail !"], 409);
 
         $this->workspaceService = new WorkspaceService();
         $this->questService = new QuestService();
