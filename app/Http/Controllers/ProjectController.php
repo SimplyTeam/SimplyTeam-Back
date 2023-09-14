@@ -8,6 +8,7 @@ use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\Workspace;
 use App\Services\ProjectService;
+use App\Services\WorkspaceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +17,7 @@ class ProjectController extends Controller
 {
     private JsonResponse $missingWorkspaceInUserError;
     private JsonResponse $missingProjectInWorkspaceError;
+    protected WorkspaceService $workspaceService;
 
      public function __construct() {
         $this->middleware('auth:api');
@@ -23,6 +25,7 @@ class ProjectController extends Controller
             ->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
         $this->missingProjectInWorkspaceError = response()
             ->json(['message' => 'This project does not belong to the specified workspace.'], 403);
+         $this->workspaceService = new WorkspaceService();
      }
 
     /**
@@ -63,9 +66,9 @@ class ProjectController extends Controller
             ], 402);
         }
 
-        if($user->id != $workspace->created_by_id){
+        if($user->id != $workspace->created_by_id && !$this->workspaceService->checkIfUserIsPOOfWorkspace($user, $workspace)){
             return Response()->json([
-                "messages" => "L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"
+                "message" => "You cannot create project if you are not PO of owner of selected workspace!"
             ], Response::HTTP_FORBIDDEN);
         }
 
@@ -84,7 +87,7 @@ class ProjectController extends Controller
     public function show(Workspace $workspace, Project $project)
     {
         $projetdata = $project;
-        return (new ProjectResource($projetdata))->response()->setStatusCode(201);        ;
+        return (new ProjectResource($projetdata))->response()->setStatusCode(201);
     }
 
     /**
@@ -92,8 +95,13 @@ class ProjectController extends Controller
      */
     public function update(ProjectFormRequest $request, Workspace $workspace, Project $project)
     {
+        $user = $request->user();
+
         // Check if user can update workspace
-        if($request->user()->id != $workspace->created_by_id || !$workspace->projects->contains($project)){
+        if( $user->id != $workspace->created_by_id ||
+            (!$workspace->projects->contains($project) &&
+            !$this->workspaceService->checkIfUserIsPOOfWorkspace($user, $workspace))
+        ){
             return Response()->json([
                 "messages" => "L'utilisateur n'a pas accès à ce projet ou ne possède pas les droits nécessaires !"
             ], Response::HTTP_FORBIDDEN);
@@ -101,7 +109,8 @@ class ProjectController extends Controller
 
         // Check that the project belongs to the workspace
         if ($project->workspace_id !== $workspace->id) {
-            return Response()->json(["messages" => "Le projet ne fait pas parti du workspace renseigné !"]);
+            return Response()->json(["messages" => "Le projet ne fait pas parti du workspace renseigné !"],
+                Response::HTTP_FORBIDDEN);
         }
 
         $project->update($request->validated());

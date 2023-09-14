@@ -25,7 +25,13 @@ class Workspace extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'link_between_users_and_workspaces', 'workspace_id', 'user_id');
+        return $this
+            ->belongsToMany(
+                User::class,
+                'link_between_users_and_workspaces',
+                'workspace_id',
+                'user_id')
+            ->withPivot('is_PO');
     }
 
     public function invitations()
@@ -48,6 +54,11 @@ class Workspace extends Model
     public function created_by()
     {
         return $this->belongsTo(User::class, 'created_by_id');
+    }
+
+    public function linksBetweenUsersAndWorkspaces()
+    {
+        return $this->hasMany(LinkBetweenUsersAndWorkspaces::class, 'workspace_id');
     }
 
     public function hasProject(Project $project) {

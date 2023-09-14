@@ -9,6 +9,10 @@ class LinkBetweenUsersAndWorkspaces extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'is_PO'
+    ];
+
     protected $table = 'link_between_users_and_workspaces';
     public $timestamps = false;
 }

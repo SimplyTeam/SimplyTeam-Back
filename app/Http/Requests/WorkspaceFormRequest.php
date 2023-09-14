@@ -17,7 +17,8 @@ class WorkspaceFormRequest extends FormRequest
             'name' => 'required|max:128',
             'description' => 'nullable|string',
             'invitations' => 'sometimes|array',
-            'invitations.*' => 'email'
+            'invitations.*.email' => 'email',
+            'invitations.*.isPO' => 'boolean',
         ];
     }
 

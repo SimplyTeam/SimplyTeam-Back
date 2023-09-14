@@ -13,7 +13,7 @@ class AuthTest extends BaseTestCase
 
     public function test_register_user_with_valid_data()
     {
-        $password = $this->faker->regexify('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W])[a-zA-Z\d\W]{10,}$/');
+        $password = $this->faker->regexify('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d])[\w\W]{10,}$/');
 
         $data = [
             'name' => $this->faker->name(),

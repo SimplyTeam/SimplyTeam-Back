@@ -151,26 +151,29 @@ class WorkspaceApiController extends Controller
 
     public function sendEmail($request, $workspace, $user) {
         if ($request->has('invitations')) {
-           foreach ($request->input('invitations') as $email) {
-               $token = Str::uuid()->toString();
+            foreach ($request->input('invitations') as $invitationData) {
+                $email = $invitationData['email'];
+                $isPO = $invitationData['is_PO'] ?? false;
+                $token = Str::uuid()->toString();
 
-               $invitation = WorkspaceInvitation::create([
-                   'email' => $email,
-                   'workspace_id' => $workspace->id,
-                   'token' => $token
-               ]);
+                $invitation = WorkspaceInvitation::create([
+                    'email' => $email,
+                    'workspace_id' => $workspace->id,
+                    'is_PO' => $isPO,
+                    'token' => $token
+                ]);
 
-               $invitation->invitedBy()->associate($user);
-               $invitation->save();
+                $invitation->invitedBy()->associate($user);
+                $invitation->save();
 
-               // Send email to the invitation
-               Mail::to($email)->send(
-                   new WorkspaceInvitationEmail(
-                       $invitation,
-                       env("REDIRECTED_URL_MAIL") . "?token=" . urlencode($token)
-                   )
-               );
-           }
-       }
-   }
+                // Send email to the invitation
+                Mail::to($email)->send(
+                    new WorkspaceInvitationEmail(
+                        $invitation,
+                        env("REDIRECTED_URL_MAIL") . "?token=" . urlencode($token)
+                    )
+                );
+            }
+        }
+    }
 }

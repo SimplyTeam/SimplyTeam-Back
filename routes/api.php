@@ -7,6 +7,7 @@ use App\Http\Controllers\InfoController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\QuestController;
 use App\Http\Controllers\RewardApiController;
+use App\Http\Controllers\SetOrUnsetPOUserOnWorkspace;
 use App\Http\Controllers\SprintController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ValidatePaymentApiController;
@@ -44,7 +45,21 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::prefix('/workspaces')->group(function () {
         Route::get('/', [WorkspaceApiController::class, 'index']);
-        Route::get('/{workspace}', [WorkspaceApiController::class, 'show']);
+        Route::prefix('/{workspace}')->group(function() {
+            Route::get('/', [WorkspaceApiController::class, 'show']);
+            Route::prefix('/users')->group(function() {
+                Route::prefix('/{user}')->group(function() {
+                    Route::post(
+                        '/setIsPO',
+                        [SetOrUnsetPOUserOnWorkspace::class, 'setIsPOOfUserOnWorkspace']
+                    );
+                    Route::post(
+                        '/unsetIsPO',
+                        [SetOrUnsetPOUserOnWorkspace::class, 'unsetIsPOOfUserOnWorkspace']
+                    );
+                });
+            });
+        });
         Route::delete('/{workspace}/users/{user}', [WorkspaceApiController::class, 'removeUser']);
         Route::post('/', [WorkspaceApiController::class, 'store']);
         Route::put('/{workspace}', [WorkspaceApiController::class, 'update']);

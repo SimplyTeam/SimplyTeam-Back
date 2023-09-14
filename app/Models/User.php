@@ -57,7 +57,9 @@ class User extends Authenticatable
 
     public function workspaces()
     {
-        return $this->belongsToMany(Workspace::class, 'link_between_users_and_workspaces');
+        return $this
+            ->belongsToMany(Workspace::class, 'link_between_users_and_workspaces')
+            ->withPivot('is_PO');
     }
 
     public function created_workspaces()
@@ -133,5 +135,10 @@ class User extends Authenticatable
 
         // Compare the two dates
         return $premiumExpirationDate >= $today;
+    }
+
+    public function linksBetweenUsersAndWorkspaces()
+    {
+        return $this->hasMany(LinkBetweenUsersAndWorkspaces::class, 'user_id');
     }
 }

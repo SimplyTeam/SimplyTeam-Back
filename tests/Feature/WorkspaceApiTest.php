@@ -144,8 +144,14 @@ class WorkspaceApiTest extends BaseTestCase
         $dataSend = [
             'name' => $this->faker->name,
             'invitations' => [
-                'user1@example.com',
-                'user2@example.com'
+                [
+                    'email'=> 'user1@example.com',
+                    'is_PO'=> true
+                ],
+                [
+                    'email'=> 'user2@example.com',
+                    'is_PO'=> false
+                ]
             ]
         ];
 
@@ -163,17 +169,19 @@ class WorkspaceApiTest extends BaseTestCase
         // Vérification que les e-mails ont été correctement créés
         Mail::assertSent(function (WorkspaceInvitationEmail $mail) use ($user, $data, $dataSend) {
             $mailData = $mail->workspaceInvitation->attributesToArray();
-            return $mail->hasTo($dataSend['invitations'][0])
+            return $mail->hasTo($dataSend['invitations'][0]['email'])
                 && $mailData['workspace_id'] === $data['id']
                 && starts_with($mail->invitationUrl, "https://example.com/invitation")
-                && $mailData['invited_by_id'] === $user->id;
+                && $mailData['invited_by_id'] === $user->id
+                && $mailData['is_PO'];
         });
         Mail::assertSent(function (WorkspaceInvitationEmail $mail) use ($user, $data, $dataSend) {
             $mailData = $mail->workspaceInvitation->attributesToArray();
-            return $mail->hasTo($dataSend['invitations'][1])
+            return $mail->hasTo($dataSend['invitations'][1]['email'])
                 && $mailData['workspace_id'] === $data['id']
                 && starts_with($mail->invitationUrl, "https://example.com/invitation")
-                && $mailData['invited_by_id'] === $user->id;
+                && $mailData['invited_by_id'] === $user->id
+                && !$mailData['is_PO'];
         });
     }
 
