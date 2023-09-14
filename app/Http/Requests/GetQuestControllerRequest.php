@@ -28,4 +28,19 @@ class GetQuestControllerRequest extends FormRequest
             'default_order' => 'nullable|in:asc,desc'
         ];
     }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'quest_type.integer' => 'Le champ quest_type doit être un entier.',
+            'quest_type.exists' => 'Le type de quête sélectionné est invalide.',
+            'in_progress_only.boolean' => 'Le champ in_progress_only doit être vrai ou faux.',
+            'default_order.in' => 'Le champ default_order doit être "asc" ou "desc".'
+        ];
+    }
 }
