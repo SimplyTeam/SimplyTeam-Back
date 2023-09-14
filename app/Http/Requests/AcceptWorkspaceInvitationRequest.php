@@ -25,4 +25,17 @@ class AcceptWorkspaceInvitationRequest extends FormRequest
             'token' => 'required|string',
         ];
     }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'token.required' => 'Le champ token est obligatoire.',
+            'token.string'   => 'Le champ token doit être une chaîne de caractères.',
+        ];
+    }
 }

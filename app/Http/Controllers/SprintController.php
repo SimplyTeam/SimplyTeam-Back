@@ -45,20 +45,7 @@ class SprintController extends Controller
     {
         $validatedata = $request->validated();
 
-        $beginDate = Carbon::parse($validatedata['begin_date']);
-        $endDate = Carbon::parse($validatedata['end_date']);
-
-        // Ensure that there are no overlapping sprints
-        $overlappingSprint = $project->sprints()
-            ->whereBetween('begin_date', [$beginDate, $endDate])
-            ->orWhereBetween('end_date', [$beginDate, $endDate])
-            ->exists();
-
-        if ($overlappingSprint) {
-            return response()->json('Sprint dates overlap with an existing sprint', 400);
-        }
-
-        $sprint = new Sprint($request->all());
+        $sprint = new Sprint($validatedata);
         $project->sprints()->save($sprint);
 
         return response()->json($sprint, 201);

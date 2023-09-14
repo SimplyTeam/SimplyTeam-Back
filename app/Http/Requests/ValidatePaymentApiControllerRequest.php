@@ -30,4 +30,18 @@ class ValidatePaymentApiControllerRequest extends FormRequest
             ]
         ];
     }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'premium_expiration_date.required' => 'La date d\'expiration premium est obligatoire.',
+            'premium_expiration_date.date' => 'La date d\'expiration premium doit être une date valide.',
+            'premium_expiration_date.after_or_equal' => 'La date d\'expiration premium doit être ultérieure ou égale à la date d\'aujourd\'hui.'
+        ];
+    }
 }

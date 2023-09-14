@@ -80,7 +80,8 @@ class CreateProjectApiTest extends BaseTestCase
         $response->assertStatus(Response::HTTP_PAYMENT_REQUIRED)
             ->assertJson(
                 [
-                    'message' => 'User cannot create more than 2 project in workspace. If you want to do this, please subscribe to premium!'
+                    'message' => "L'utilisateur ne peut pas créer plus de 2 projets dans l'espace de travail. ".
+                                 "Si vous souhaitez le faire, veuillez vous abonner à la version premium !"
                 ]
             );
     }
@@ -99,7 +100,11 @@ class CreateProjectApiTest extends BaseTestCase
 
         $workspaceId = $workspace->id;
 
-        $response = $this->postJson("/api/workspaces/$workspaceId/projects", [], ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]);
+        $response = $this->postJson(
+            "/api/workspaces/$workspaceId/projects",
+            [],
+            ["Authorization" => "Bearer $accessToken", "Accept" => "application/json"]
+        );
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['name']);

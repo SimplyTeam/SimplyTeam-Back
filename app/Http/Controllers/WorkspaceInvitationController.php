@@ -17,7 +17,7 @@ class WorkspaceInvitationController extends Controller
 
         // Check if the email of the invitation matches the email of the authenticated user
         if ($invitation->email !== $user->email) {
-            return response()->json(['error' => 'Unauthorized action.'], 403);
+            return response()->json(['error' => 'Action non autorisée.'], 403);
         }
 
         $workspace = Workspace::find($invitation->workspace_id);

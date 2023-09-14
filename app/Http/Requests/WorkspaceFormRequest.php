@@ -23,10 +23,12 @@ class WorkspaceFormRequest extends FormRequest
 
     public function messages()
     {
-        return parent::messages() + [
+        return [
             "name.required" => "Le nom doit être renseigné !",
             "name.max" => "Le nom doit avoir une taille max de 128 caractères !",
             "description.string" => "La description doit être un texte",
+            "invitations.array" => "Les invitations doivent être sous forme de tableau.",
+            "invitations.*.email" => "Chaque invitation doit être une adresse e-mail valide.",
         ];
     }
 }

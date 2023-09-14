@@ -105,7 +105,7 @@ class UpdateTaskApiTest extends BaseTestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'Task updated successfully.'
+                'message' => 'Tâche modifiée avec succès'
             ]);
 
         $task->refresh();
@@ -154,7 +154,7 @@ class UpdateTaskApiTest extends BaseTestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'Task updated successfully.'
+                'message' => 'Tâche modifiée avec succès'
             ]);
 
         $task->refresh();
@@ -234,7 +234,7 @@ class UpdateTaskApiTest extends BaseTestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'Task updated successfully.'
+                'message' => 'Tâche modifiée avec succès'
             ]);
 
         $task->refresh();
@@ -309,7 +309,7 @@ class UpdateTaskApiTest extends BaseTestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'Task updated successfully.'
+                'message' => 'Tâche modifiée avec succès'
             ]);
 
         $user->refresh();
@@ -353,7 +353,7 @@ class UpdateTaskApiTest extends BaseTestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'Task updated successfully.'
+                'message' => 'Tâche modifiée avec succès'
             ]);
 
         $user->refresh();
@@ -399,7 +399,7 @@ class UpdateTaskApiTest extends BaseTestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'Task updated successfully.'
+                'message' => 'Tâche modifiée avec succès'
             ]);
 
         $user->refresh();
@@ -452,7 +452,10 @@ class UpdateTaskApiTest extends BaseTestCase
         );
 
         $response->assertStatus(403);
-        $this->assertEquals($response->json("message"), "This project does not belong to the specified workspace.");
+        $this->assertEquals(
+            $response->json("message"),
+            "Ce projet n'appartient pas à l'espace de travail spécifié."
+        );
     }
 
     public function test_update_task_with_unlinked_sprint()
@@ -467,6 +470,9 @@ class UpdateTaskApiTest extends BaseTestCase
         );
 
         $response->assertStatus(403);
-        $this->assertEquals($response->json("message"), "This project does not belong to the specified workspace.");
+        $this->assertEquals(
+            $response->json("message"),
+            "Ce projet n'appartient pas à l'espace de travail spécifié."
+        );
     }
 }

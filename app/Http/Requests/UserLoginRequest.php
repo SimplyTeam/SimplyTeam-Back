@@ -26,4 +26,19 @@ class UserLoginRequest extends FormRequest
             'password' => 'required',
         ];
     }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'L\'email est obligatoire.',
+            'email.email' => 'L\'email doit être une adresse email valide.',
+
+            'password.required' => 'Le mot de passe est obligatoire.',
+        ];
+    }
 }

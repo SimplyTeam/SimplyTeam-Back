@@ -129,7 +129,8 @@ class WorkspaceApiTest extends BaseTestCase
         $response->assertStatus(Response::HTTP_PAYMENT_REQUIRED)
             ->assertJson(
                 [
-                    'message' => 'You cannot create more than 1 workspace. Please purchase to premium if you want to continue!'
+                    'message' => 'Vous ne pouvez pas créer plus d\'un espace de travail. ' .
+                                 'Veuillez souscrire à une offre si vous voulez continuer !'
                 ]
             );
     }
@@ -207,7 +208,9 @@ class WorkspaceApiTest extends BaseTestCase
         );
 
         $response->assertStatus(Response::HTTP_PAYMENT_REQUIRED)
-            ->assertJson(['message'=>'You cannot invite more than 8 users. Please purchase to premium if you want to invite more than 8 users!']);
+            ->assertJson(
+                ['message'=>'Vous ne pouvez pas inviter plus de 8 utilisateurs. '.
+                            'Veuillez passer à la version premium si vous souhaitez inviter plus de 8 utilisateurs !']);
     }
 
     public function test_name_should_not_exceed_128_characters()

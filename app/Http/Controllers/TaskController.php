@@ -31,15 +31,15 @@ class TaskController extends Controller
     {
         $this->middleware('auth:api');
         $this->missingWorkspaceInUserError = response()
-            ->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
+            ->json(['message' => 'Cet espace de travail n\'appartient pas à l\'utilisateur authentifié.'], 403);
         $this->missingProjectInWorkspaceError = response()
-            ->json(['message' => 'This project does not belong to the specified workspace.'], 403);
+            ->json(['message' => 'Ce projet n\'appartient pas à l\'espace de travail spécifié.'], 403);
         $this->sprintMissingInProjectError = response()
-            ->json(['message' => 'This sprint does not belong to the specified project.'], 403);
+            ->json(['message' => 'Ce sprint n\'appartient pas au projet spécifié.'], 403);
         $this->missingTaskInProjectError = response()
-            ->json(['message' => 'This task does not belong to the specified project.'], 403);
+            ->json(['message' => 'Cette tâche n\'appartient pas au projet spécifié.'], 403);
         $this->taskIsFinish = response()
-            ->json(['message' => 'This task is already finished'], 409);
+            ->json(['message' => 'Cette tâche est déjà terminée.'], 409);
 
         $this->questService = new QuestService();
     }
@@ -175,7 +175,7 @@ class TaskController extends Controller
             $task->users()->attach($usersToAssign->pluck('id'));
         }
 
-        return response()->json(['message' => 'Task created successfully!', 'task' => $task], 201);
+        return response()->json(['message' => 'Tâche créée avec succès!', 'task' => $task], 201);
     }
 
     public function update(UpdateTaskRequest $request, Workspace $workspace, Project $project, Task $task)
@@ -256,7 +256,7 @@ class TaskController extends Controller
         // Update the task
         $task->update($validatedData);
 
-        $response = ['message' => 'Task updated successfully.'];
+        $response = ['message' => 'Tâche modifiée avec succès'];
 
         if($newReward) {
             $response['gain_reward'] = $newReward;
@@ -286,7 +286,7 @@ class TaskController extends Controller
         // Delete the task
         $task->delete();
 
-        return response()->json(['message' => 'Task deleted successfully.'], 200);
+        return response()->json(['message' => 'Tâche supprimée avec succès.'], 200);
     }
 
     /**
@@ -306,7 +306,7 @@ class TaskController extends Controller
             return $task;
         }
 
-        throw new Exception('Sprint does not belong to the specified project.');
+        throw new Exception('Le sprint n\'appartient pas au projet spécifié.');
     }
 
     private function assignParentToTask(Task $task, ?int $parentId)
@@ -320,7 +320,9 @@ class TaskController extends Controller
         $parentTask = Task::findOrFail($parentId);
 
         if ($parentTask->parent_id != null) {
-            throw new Exception('Cannot add task with subtask, as subtask');
+            throw new Exception(
+                'Impossible d\'ajouter une tâche avec une sous-tâche, en tant que sous-tâche'
+            );
         }
 
         $task->parent_id = $parentId;

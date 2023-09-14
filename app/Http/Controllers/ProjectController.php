@@ -8,6 +8,7 @@ use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\Workspace;
 use App\Services\ProjectService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,9 +18,9 @@ class ProjectController extends Controller
     /**
      * Display a listing of the projects for a user in the given workspace.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Workspace  $workspace
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Workspace $workspace
+     * @return ProjectCollection|JsonResponse
      */
     public function index(Request $request, Workspace $workspace)
     {
@@ -27,7 +28,7 @@ class ProjectController extends Controller
 
         // Check that the workspace belongs to the user
         if (!$user->workspaces->contains($workspace)) {
-            return response()->json(['message' => 'Workspace not found.'], 404);
+            return response()->json(['message' => 'Workspace non trouvé.'], 404);
         }
 
         // Get the projects associated with the workspace
@@ -48,7 +49,7 @@ class ProjectController extends Controller
         $projectService = new ProjectService();
         if (!$projectService->isUserAllowedToCreateProjectInWorkspaceWithSubscription($user, $workspace)) {
             return Response()->json([
-                "message" => "User cannot create more than 2 project in workspace. If you want to do this, please subscribe to premium!"
+                "message" => "L'utilisateur ne peut pas créer plus de 2 projets dans l'espace de travail. Si vous souhaitez le faire, veuillez vous abonner à la version premium !"
             ], 402);
         }
 

@@ -34,7 +34,7 @@ class ValidatePaymentApiControllerTest extends BaseTestCase
             ], $this->headers);
 
         $response->assertStatus(200)
-            ->assertJson(['message' => 'Subscription has been successful set']);
+            ->assertJson(['message' => 'L\'abonnement a été effectuée avec succès !']);
 
         $this->assertDatabaseHas('users', [
             'id' => $user->id,

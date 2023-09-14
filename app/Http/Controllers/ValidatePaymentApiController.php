@@ -13,6 +13,6 @@ class ValidatePaymentApiController extends Controller
 
         $user->update($validatedData);
 
-        return response()->json(['message' => 'Subscription has been successful set']);
+        return response()->json(['message' => 'L\'abonnement a été effectuée avec succès !']);
     }
 }
