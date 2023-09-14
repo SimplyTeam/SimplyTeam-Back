@@ -27,4 +27,23 @@ class GithubRequest extends FormRequest
             'labels' => 'required|array'
         ];
     }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'title.required' => 'Le champ titre est obligatoire.',
+            'title.string' => 'Le champ titre doit être une chaîne de caractères.',
+
+            'body.required' => 'Le champ corps est obligatoire.',
+            'body.string' => 'Le champ corps doit être une chaîne de caractères.',
+
+            'labels.required' => 'Le champ étiquettes est obligatoire.',
+            'labels.array' => 'Le champ étiquettes doit être un tableau.'
+        ];
+    }
 }
