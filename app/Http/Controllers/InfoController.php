@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 
 class InfoController extends Controller
 {
+    private RewardService $rewardService;
+
     public function __construct()
     {
         $this->rewardService = new RewardService();

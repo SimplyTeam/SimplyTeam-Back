@@ -35,7 +35,7 @@ class AuthController extends Controller
         $user = User::where('email', $loginData['email'])->first();
 
         if (!$user || !Hash::check($loginData['password'], $user->password)) {
-            return response(['errors' => ['message' => 'Invalid credentials']], 422);
+            return response(['errors' => ['message' => 'Informations d\'authentification invalides']], 422);
         }
 
         $accessToken = $user->createToken('API Token')->accessToken;
@@ -53,6 +53,6 @@ class AuthController extends Controller
     public function logout(Request $request): \Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         $request->user()->token()->revoke();
-        return response(['message' => 'Successfully logged out'], 200);
+        return response(['message' => 'Déconnexion réussie'], 200);
     }
 }
