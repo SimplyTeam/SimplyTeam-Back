@@ -160,7 +160,7 @@ class AuthTest extends BaseTestCase
         // assert that the response has a successful status code
         $response
             ->assertStatus(200)
-            ->assertJson(['message' => 'Successfully logged out']);;
+            ->assertJson(['message' => 'Déconnexion réussie']);;
     }
 
     /**
