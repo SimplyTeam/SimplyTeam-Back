@@ -12,7 +12,7 @@ class ProjectService
     }
 
     public function isUserAllowedToCreateProjectInWorkspaceWithSubscription(User $user, Workspace $workspace) {
-        return $user->isPremiumValid() || (
+        return $user->isPremiumValid(true) || (
             $this->getNumberOfProjectOfWorkspaceOfUser($user, $workspace) < 2
         );
     }

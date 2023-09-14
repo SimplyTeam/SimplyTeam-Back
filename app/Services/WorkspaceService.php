@@ -12,7 +12,7 @@ class WorkspaceService
     }
 
     public function userIsAllowToCreateWorkspace(User $user) : bool {
-        return $user->isPremiumValid() || (
+        return $user->isPremiumValid(true) || (
             $this->getNumberOfWorkspaceOfUser($user) == 0
         );
     }
@@ -32,6 +32,6 @@ class WorkspaceService
 
         $totalInvitedUserCount = $numberOfUserInWorkspace + $numberOfInvitationInWorkspace + $numberOfUserToInvite;
 
-        return $user->isPremiumValid() || $totalInvitedUserCount <= 8;
+        return $user->isPremiumValid(true) || $totalInvitedUserCount <= 8;
     }
 }
