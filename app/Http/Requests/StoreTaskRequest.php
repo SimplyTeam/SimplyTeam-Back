@@ -72,8 +72,8 @@ class StoreTaskRequest extends FormRequest
 
             'sprint_id.integer' => 'Le sprint doit être un entier.',
 
-            'parent_id.integer' => 'La tâche parent doit être un entier.',
-            'parent_id.exists' => 'La tâche parent sélectionnée est invalide.',
+            'parent_id.integer' => 'Le champ parent_id doit être un entier.',
+            'parent_id.exists' => 'Le champ parent_id sélectionnée est invalide.',
 
             'assigned_to.array' => 'Le champ "assigné à" doit être un tableau.'
         ];
