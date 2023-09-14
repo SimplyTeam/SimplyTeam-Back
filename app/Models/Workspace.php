@@ -25,7 +25,13 @@ class Workspace extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'link_between_users_and_workspaces', 'workspace_id', 'user_id');
+        return $this
+            ->belongsToMany(
+                User::class,
+                'link_between_users_and_workspaces',
+                'workspace_id',
+                'user_id')
+            ->withPivot('is_PO');
     }
 
     public function invitations()
