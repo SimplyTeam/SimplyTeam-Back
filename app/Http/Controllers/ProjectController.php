@@ -14,6 +14,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProjectController extends Controller
 {
+    private JsonResponse $missingWorkspaceInUserError;
+    private JsonResponse $missingProjectInWorkspaceError;
+
+     public function __construct() {
+        $this->middleware('auth:api');
+        $this->missingWorkspaceInUserError = response()
+            ->json(['message' => 'This workspace does not belong to the authenticated user.'], 403);
+        $this->missingProjectInWorkspaceError = response()
+            ->json(['message' => 'This project does not belong to the specified workspace.'], 403);
+     }
 
     /**
      * Display a listing of the projects for a user in the given workspace.
@@ -71,9 +81,10 @@ class ProjectController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Workspace $workspace, Project $project)
     {
-        //
+        $projetdata = $project;
+        return (new ProjectResource($projetdata))->response()->setStatusCode(201);        ;
     }
 
     /**
@@ -101,8 +112,25 @@ class ProjectController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, Workspace $workspace, Project $project)
     {
-        //
+        $user = $request->user();
+
+        $errorMessage = null;
+
+        if (!$user->hasWorkspace($workspace)) {
+            $errorMessage = $this->missingWorkspaceInUserError;
+        } elseif (!$workspace->hasProject($project)) {
+            $errorMessage = $this->missingProjectInWorkspaceError;
+        }
+
+        if ($errorMessage) {
+            return $errorMessage;
+        }
+
+        // Delete the task
+        $project->delete();
+
+        return response()->json(['message' => 'Projet supprimé.'], 200);
     }
 }
