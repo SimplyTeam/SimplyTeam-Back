@@ -16,6 +16,13 @@ use PHPUnit\Exception;
 
 class WorkspaceApiController extends Controller
 {
+    private WorkspaceService $workspaceService;
+
+    public function __construct()
+    {
+        $this->workspaceService = new WorkspaceService();
+    }
+
     public function index(Request $request)
     {
         try {
@@ -37,15 +44,21 @@ class WorkspaceApiController extends Controller
         if (!$workspaceService->userIsAllowToCreateWorkspace($currentUserAuthenticated)) {
            return response()
                ->json(
-                   ['message' => 'You cannot create more than 1 workspace. Please purchase to premium if you want to continue!'],
+                   ['message' => 'Vous ne pouvez pas créer plus d\'un espace de travail. ' .
+                                 'Veuillez souscrire à une offre si vous voulez continuer !'],
                    402
                );
         }
 
-        if ($currentUserAuthenticated->isPremiumValid() || ($request->has('invitations') && count($request['invitations']) > 8)) {
+        if (
+            !$currentUserAuthenticated->isPremiumValid() &&
+            $request->has('invitations') &&
+            count($request['invitations']) > 8
+        ) {
             return response()
                 ->json(
-                    ['message' => 'You cannot invite more than 8 users. Please purchase to premium if you want to invite more than 8 users!'],
+                    ['message' => 'Vous ne pouvez pas inviter plus de 8 utilisateurs. '.
+                                  'Veuillez passer à la version premium si vous souhaitez inviter plus de 8 utilisateurs !'],
                     402
                 );
         }
@@ -84,6 +97,23 @@ class WorkspaceApiController extends Controller
         if (!$workspace->users->contains($user)) {
             return response()->json(['error' => "Vous n'avez pas accès à ce workspace ou celui-ci n'existe pas"], 403);
         }
+
+        if (
+            $request->has('invitations') &&
+            $this->workspaceService->userCanInviteNUsersInWorkspaceIsAllow(
+                $user,
+                count($request['invitations']),
+                $workspace
+            )
+        ) {
+            return response()
+                ->json(
+                    ['message' => 'Vous ne pouvez pas inviter plus de 8 utilisateurs. '.
+                        'Veuillez passer à la version premium si vous souhaitez inviter plus de 8 utilisateurs !'],
+                    402
+                );
+        }
+
         $this->sendEmail($request, $workspace, $user);
 
         $workspace->update($request->validated());

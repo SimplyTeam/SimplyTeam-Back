@@ -3,16 +3,35 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Models\Workspace;
 
 class WorkspaceService
 {
-    public function getNumberOfWorkspaceOfUser(User $user){
+    public function getNumberOfWorkspaceOfUser(User $user) : int {
         return $user->workspaces()->count();
     }
 
-    public function userIsAllowToCreateWorkspace(User $user) {
+    public function userIsAllowToCreateWorkspace(User $user) : bool {
         return $user->isPremiumValid() || (
             $this->getNumberOfWorkspaceOfUser($user) == 0
         );
+    }
+
+    public function userCanInviteNUsersInWorkspaceIsAllow (
+        User $user,
+        int $numberOfUserToInvite,
+        Workspace $workspace
+    ) : bool  {
+        $numberOfUserInWorkspace = 0;
+
+        if($workspace) {
+            $numberOfUserInWorkspace = $workspace->users()->count();
+        }
+
+        $numberOfInvitationInWorkspace = $workspace->invitations()->count();
+
+        $totalInvitedUserCount = $numberOfUserInWorkspace + $numberOfInvitationInWorkspace + $numberOfUserToInvite;
+
+        return $user->isPremiumValid() || $totalInvitedUserCount <= 8;
     }
 }
