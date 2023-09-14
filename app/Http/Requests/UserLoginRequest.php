@@ -13,17 +13,18 @@ class UserLoginRequest extends FormRequest
     {
         return true;
     }
-
     /**
-     * Get the validation rules that apply to the request.
+     * Get custom messages for validator errors.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
+     * @return array
      */
-    public function rules(): array
+    public function messages(): array
     {
         return [
-            'email' => 'email|required',
-            'password' => 'required',
+            'email.required' => 'L\'email est obligatoire.',
+            'email.email' => 'L\'email doit être une adresse email valide.',
+
+            'password.required' => 'Le mot de passe est obligatoire.',
         ];
     }
 }

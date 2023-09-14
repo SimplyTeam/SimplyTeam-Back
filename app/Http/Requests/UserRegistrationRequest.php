@@ -36,8 +36,20 @@ class UserRegistrationRequest extends FormRequest
 
     public function messages()
     {
-        return parent::messages() + [
-                'password.regex' => 'The password must contain at least one uppercase letter, one lowercase letter, one special character, and one digit.'
-            ];
+        return [
+            'name.required' => 'Le nom est obligatoire.',
+            'name.max' => 'Le nom doit contenir au maximum 55 caractères.',
+
+            'email.required' => 'L\'email est obligatoire.',
+            'email.email' => 'L\'email doit être une adresse email valide.',
+            'email.unique' => 'L\'email est déjà utilisé.',
+
+            'password.required' => 'Le mot de passe est obligatoire.',
+            'password.string' => 'Le mot de passe doit être une chaîne de caractères.',
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'password.regex' => 'Le mot de passe doit contenir au moins une majuscule, une minuscule, '.
+                'un caractère spécial et un chiffre.',
+            'password.confirmed' => 'Les mots de passe ne correspondent pas.'
+        ];
     }
 }
