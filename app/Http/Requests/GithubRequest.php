@@ -36,13 +36,13 @@ class GithubRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.required' => 'Le champ titre est obligatoire.',
+            'title.required' => 'Le champ titre doit être renseigné !',
             'title.string' => 'Le champ titre doit être une chaîne de caractères.',
 
-            'body.required' => 'Le champ corps est obligatoire.',
+            'body.required' => 'Le champ corps doit être renseigné !',
             'body.string' => 'Le champ corps doit être une chaîne de caractères.',
 
-            'labels.required' => 'Le champ étiquettes est obligatoire.',
+            'labels.required' => 'Des étiquettes doivent être renseignées !',
             'labels.array' => 'Le champ étiquettes doit être un tableau.'
         ];
     }
