@@ -73,7 +73,7 @@ class DeleteTaskApiTest extends TestCase
         );
 
         $response->assertStatus(200);
-        $response->assertJson(['message' => 'Task deleted successfully.']);
+        $response->assertJson(['message' => 'Tâche supprimée avec succès.']);
     }
 
     /**
@@ -123,7 +123,7 @@ class DeleteTaskApiTest extends TestCase
         $response->assertStatus(403);
         $this->assertEquals(
             $response->json("message"),
-            "This project does not belong to the specified workspace."
+            "Ce projet n'appartient pas à l'espace de travail spécifié."
         );
     }
 
@@ -138,7 +138,7 @@ class DeleteTaskApiTest extends TestCase
         $response->assertStatus(403);
         $this->assertEquals(
             $response->json("message"),
-            "This task does not belong to the specified project."
+            "Cette tâche n'appartient pas au projet spécifié."
         );
     }
 }

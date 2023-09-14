@@ -85,7 +85,7 @@ class CreateTaskApiTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJson([
-                'message' => 'Task created successfully!'
+                'message' => 'Tâche créée avec succès!'
             ]);
     }
 
@@ -174,7 +174,7 @@ class CreateTaskApiTest extends TestCase
         $response->assertStatus(403);
         $this->assertEquals(
             $response->json("message"),
-            "This project does not belong to the specified workspace."
+            "Ce projet n'appartient pas à l'espace de travail spécifié."
         );
     }
 }
