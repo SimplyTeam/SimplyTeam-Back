@@ -39,8 +39,7 @@
     },
     "scripts": {
         "post-deploy": [
-            "@php artisan migrate --force",
-            "@php artisan passport:install"
+            "@php artisan migrate --force"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
