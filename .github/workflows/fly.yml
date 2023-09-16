@@ -2,7 +2,7 @@ name: Fly Deploy
 on:
   push:
     branches:
-      - develop
+      - main
 jobs:
   deploy:
     name: Deploy app
