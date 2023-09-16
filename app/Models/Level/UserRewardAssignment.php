@@ -16,9 +16,9 @@ class UserRewardAssignment
     }
 
     public function assignAllowedRewardOnUser() {
-        if (!$this->user->isPremiumValid(true)) {
-           return null;
-        }
+       // if (!$this->user->isPremiumValid(true)) {
+         //  return null;
+        // }
 
         $rewardService = new RewardService();
 

@@ -9,7 +9,6 @@ use App\Models\Project;
 use App\Models\Sprint;
 use App\Services\WorkspaceService;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class SprintController extends Controller
 {
@@ -55,20 +54,7 @@ class SprintController extends Controller
 
         $validatedata = $request->validated();
 
-        $beginDate = Carbon::parse($validatedata['begin_date']);
-        $endDate = Carbon::parse($validatedata['end_date']);
-
-        $overlappingSprint = $project->sprints()
-            ->whereBetween('begin_date', [$beginDate, $endDate])
-            ->orWhereBetween('end_date', [$beginDate, $endDate])
-            ->exists();
-
-        if ($overlappingSprint) {
-            return response()->json('Sprint dates overlap with an existing sprint', 400);
-        }
-
-        $sprint = new Sprint($request->all());
-        $project->sprints()->save($sprint);
+        $sprint = new Sprint($validatedata);        $project->sprints()->save($sprint);
 
         return response()->json($sprint, 201);
     }
@@ -76,7 +62,6 @@ class SprintController extends Controller
     public function update(UpdateSprintRequest $request, Workspace $workspace, Project $project, Sprint $sprint)
     {
         $user = $request->user();
-
         if(!$project->sprints->contains($sprint)) {
             return response()->json('Unauthorized', 401);
         }elseif ($workspace->created_by_id != $user->id && !$this->workspaceService->checkIfUserIsPOOfWorkspace($user, $workspace)) {
@@ -85,7 +70,6 @@ class SprintController extends Controller
 
         // Validate and get validated data
         $data = $request->validated();
-
         // Update the sprint
         $sprint->update($data);
 
