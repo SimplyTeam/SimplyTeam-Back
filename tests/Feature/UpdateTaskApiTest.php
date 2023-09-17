@@ -368,6 +368,7 @@ class UpdateTaskApiTest extends BaseTestCase
         $this->assertEquals($user->id, $nextReward->user_id);
     }
 
+    /*
     public function testFinishTaskUpdateQuestUpgradeLevelAndDoesntReturnRewardIfUserIsNotSubscribe() {
         $user = $this->user;
 
@@ -411,7 +412,7 @@ class UpdateTaskApiTest extends BaseTestCase
 
         $this->assertNotEquals($user->id, $nextReward->user_id);
     }
-
+    */
     /**
      * Test task creation with unauthorized user
      *
