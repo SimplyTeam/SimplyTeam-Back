@@ -30,3 +30,7 @@ console_command = "php /var/www/html/artisan tinker"
 
 [deploy]
     release_command = "composer run post-deploy"
+
+[mounts]
+  source="storage_vol"
+  destination="/var/www/html/storage"
