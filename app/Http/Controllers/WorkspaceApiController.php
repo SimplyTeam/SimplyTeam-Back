@@ -100,7 +100,7 @@ class WorkspaceApiController extends Controller
 
         if (
             $request->has('invitations') &&
-            $this->workspaceService->userCanInviteNUsersInWorkspaceIsAllow(
+            !$this->workspaceService->userCanInviteNUsersInWorkspaceIsAllow(
                 $user,
                 count($request['invitations']),
                 $workspace
